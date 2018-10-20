@@ -37,12 +37,34 @@ void Player::reset() {
 }
 
 
+void Player::hit(CollisionInfo const& info) {
+
+    // blast
+    if (info.distance > 0) {
+        m_pos += info.normal * info.distance;
+        transform(m_polygon, PLAYER_POLYGON, m_pos);
+
+        m_blast_vel = info.normal * 1.5f;
+        m_blast_delay = 15;
+
+    }
+
+    // damage
+}
+
+
 void Player::update(Input const& input) {
     ++m_tick;
-    m_blast_vel *= 0.85f;
+    m_blast_vel *= 0.87f;
 
-    float speed = 0.75;
-    if (input.a || m_shoot_delay > 0) speed *= 0.5;
+    float speed = 0;
+    if (m_blast_delay > 0) {
+        --m_blast_delay;
+    }
+    else {
+        speed = 0.75;
+        if (input.a || m_shoot_delay > 0) speed *= 0.5;
+    }
 
     // move
     m_pos += m_blast_vel + vec2(input.dx, input.dy) * speed;
@@ -50,10 +72,9 @@ void Player::update(Input const& input) {
     transform(m_polygon, PLAYER_POLYGON, m_pos);
 
     // collision
-    auto info = m_world.get_wall().check_collision(m_polygon);
+    CollisionInfo info = m_world.get_wall().check_collision(m_polygon);
     if (info.distance > 0) {
-        
-
+        hit(info);
     }
 
 

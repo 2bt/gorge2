@@ -53,6 +53,7 @@ void World::draw(SpriteRenderer& ren) {
     // wall
     m_wall.draw(ren);
 
+    ren.flush();
     m_player.update(get_input());
     m_player.draw(ren);
 }

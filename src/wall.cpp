@@ -181,7 +181,7 @@ void Wall::draw(SpriteRenderer& ren) {
     }
 
 
-    ren.set_color(84, 38, 89, 100);
+    ren.set_color(84, 38, 89);
 
 
     for (int y = 0; y < (int) m_data.size(); ++y) {
@@ -255,9 +255,8 @@ namespace {
     };
 }
 
-Wall::CollisionInfo Wall::check_collision(vec2 const* polygon, int len) const {
-    CollisionInfo info;
-    info.distance = 0;
+CollisionInfo Wall::check_collision(vec2 const* polygon, int len) const {
+    CollisionInfo info = {};
 
     vec2 min = polygon[0];
     vec2 max = min;
@@ -293,6 +292,10 @@ Wall::CollisionInfo Wall::check_collision(vec2 const* polygon, int len) const {
                 for (int i = 0; i < (int) poly.size(); ++i) ps[i] = poly[i] + pos;
 
                 DB_REN.filled_polygon(ps);
+
+                CollisionInfo ci = polygon_collision(polygon, len, ps.data(), ps.size());
+
+                if (ci.distance > info.distance) info = ci;
             }
 
         }

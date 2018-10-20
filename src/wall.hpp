@@ -11,12 +11,6 @@ public:
     void update();
     void draw(SpriteRenderer& ren);
 
-    struct CollisionInfo {
-        vec2  where;
-        vec2  normal;
-        float distance;
-    };
-
     CollisionInfo check_collision(vec2 const* polygon, int len) const;
     template<class T>
     CollisionInfo check_collision(T const& polygon) const {

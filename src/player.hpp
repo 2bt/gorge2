@@ -29,6 +29,8 @@ public:
     };
 
 private:
+    void hit(CollisionInfo const& info);
+
     World const&        m_world;
 
     std::array<vec2, 6> m_polygon;
