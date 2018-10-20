@@ -37,8 +37,6 @@ void SpriteRenderer::init() {
     m_rs.blend_func_src_alpha = gfx::BlendFunc::SrcAlpha;
     m_rs.blend_func_dst_rgb   = gfx::BlendFunc::OneMinusSrcAlpha;
     m_rs.blend_func_dst_alpha = gfx::BlendFunc::OneMinusSrcAlpha;
-//    m_rs.blend_func_dst_rgb   = gfx::BlendFunc::One;
-//    m_rs.blend_func_dst_alpha = gfx::BlendFunc::One;
 
     m_vb = gfx::VertexBuffer::create(gfx::BufferHint::StreamDraw);
     m_va = gfx::VertexArray::create();

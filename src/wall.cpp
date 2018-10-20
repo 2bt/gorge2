@@ -1,4 +1,5 @@
 #include "wall.hpp"
+#include "debug_renderer.hpp"
 #include <algorithm>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/norm.hpp>
@@ -144,6 +145,22 @@ void Wall::generate() {
     std::rotate(m_data.begin(), m_data.begin() + 1, m_data.end());
 }
 
+
+vec2 Wall::get_tile_position(int x, int y) const {
+    return {
+        (x - W / 2.0 + 0.5) * 8,
+        (m_data.size() / 2.0 - y) * 8 + m_offset,
+    };
+}
+
+glm::ivec2 Wall::get_tile_address(vec2 const& pos) const {
+    return {
+        floor(pos.x / 8 + W / 2.0),
+        floor((m_offset - pos.y) / 8 + m_data.size() / 2.0 + 0.5)
+    };
+}
+
+
 void Wall::draw(SpriteRenderer& ren) {
 
     // DEBUG
@@ -164,7 +181,7 @@ void Wall::draw(SpriteRenderer& ren) {
     }
 
 
-    ren.set_color(84, 38, 89);
+    ren.set_color(84, 38, 89, 100);
 
 
     for (int y = 0; y < (int) m_data.size(); ++y) {
@@ -175,10 +192,7 @@ void Wall::draw(SpriteRenderer& ren) {
             if (cell == 0) continue;
 
             ren.push();
-            ren.translate({
-                (x - W / 2.0 + 0.5) * 8,
-                (m_data.size() / 2.0 - y) * 8 + m_offset,
-            });
+            ren.translate(get_tile_position(x, y));
 
             int n = cell - 1;
 
@@ -228,4 +242,61 @@ void Wall::draw(SpriteRenderer& ren) {
     }
 
     ren.set_color();
+}
+
+
+namespace {
+    std::array<std::vector<vec2>, 5> WALL_POLYGONS = {
+        std::vector<vec2>{ {-4, -4}, {-4, 4}, {4, 4}, {4, -4} },
+        std::vector<vec2>{ {-4, -4}, {4, 4}, {4, -4} },
+		std::vector<vec2>{ {-4, 4}, {4, 4}, {4, -4} },
+		std::vector<vec2>{ {-4, -4}, {-4, 4}, {4, 4} },
+		std::vector<vec2>{ {-4, -4}, {-4, 4}, {4, -4} },
+    };
+}
+
+Wall::CollisionInfo Wall::check_collision(vec2 const* polygon, int len) const {
+    CollisionInfo info;
+    info.distance = 0;
+
+    vec2 min = polygon[0];
+    vec2 max = min;
+    for (int i = 1; i < len; ++i) {
+        min = glm::min(min, polygon[i]);
+        max = glm::max(max, polygon[i]);
+    }
+
+    auto addr1 = get_tile_address(min);
+    auto addr2 = get_tile_address(max);
+
+    min = get_tile_position(addr1.x, addr1.y);
+    max = get_tile_position(addr2.x, addr2.y);
+    DB_REN.rect(min - vec2(4, 4), max + vec2(4, 4));
+
+    DB_REN.set_color(200, 200, 0, 100);
+
+    for (int y = addr2.y; y <= addr1.y; ++y) {
+        if (y < 0 || y >= (int) m_data.size()) continue;
+        for (int x = addr1.x; x <= addr2.x; ++x) {
+            if (x < 0 || x >= W) continue;
+            int cell = m_data[y][x];
+            if (cell == 0) continue;
+
+
+            int index = cell - 1;
+            if (index < (int) WALL_POLYGONS.size()) {
+
+                vec2 pos = get_tile_position(x, y);
+
+                auto const& poly = WALL_POLYGONS[index];
+                std::vector<vec2> ps(poly.size());
+                for (int i = 0; i < (int) poly.size(); ++i) ps[i] = poly[i] + pos;
+
+                DB_REN.filled_polygon(ps);
+            }
+
+        }
+    }
+
+    return info;
 }

@@ -4,8 +4,13 @@
 #include <array>
 
 
+class World;
+
+
 class Player {
 public:
+    Player(World const& world) : m_world(world) {}
+
     struct Input {
         int dx;
         int dy;
@@ -24,6 +29,8 @@ public:
     };
 
 private:
+    World const&        m_world;
+
     std::array<vec2, 6> m_polygon;
 
     bool                m_alive;

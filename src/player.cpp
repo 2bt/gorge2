@@ -1,6 +1,7 @@
 #include "player.hpp"
 #include "sprite.hpp"
 #include "debug_renderer.hpp"
+#include "world.hpp"
 
 
 namespace {
@@ -48,6 +49,14 @@ void Player::update(Input const& input) {
 
     transform(m_polygon, PLAYER_POLYGON, m_pos);
 
+    // collision
+    auto info = m_world.get_wall().check_collision(m_polygon);
+    if (info.distance > 0) {
+        
+
+    }
+
+
     // shoot
 }
 
@@ -60,5 +69,5 @@ void Player::draw(SpriteRenderer& ren) {
 
     // debug
     DB_REN.set_color(255, 0, 0);
-    DB_REN.line_loop(m_polygon);
+    DB_REN.polygon(m_polygon);
 }

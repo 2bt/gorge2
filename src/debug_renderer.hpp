@@ -29,6 +29,7 @@ public:
 
         m_rs.line_width = 1;
 
+        m_rs.cull_face_enabled    = false;
         m_rs.blend_enabled = true;
         m_rs.blend_func_src_rgb   = gfx::BlendFunc::SrcAlpha;
         m_rs.blend_func_src_alpha = gfx::BlendFunc::SrcAlpha;
@@ -115,14 +116,29 @@ public:
         line(p2.x, p2.y, p2.x, p1.y);
         line(p2.x, p1.y, p1.x, p1.y);
     }
-    void line_loop(glm::vec2 const* poly, int len) {
+    void filled_rect(const glm::vec2& p1, const glm::vec2& p2) {
+        triangle(p1, p2, {p1.x, p2.y});
+        triangle(p1, {p2.x, p1.y}, p2);
+    }
+
+    void filled_polygon(glm::vec2 const* poly, int len) {
+        for (int i = 2; i < len; ++i) {
+            triangle(poly[0], poly[i - 1], poly[i]);
+        }
+    }
+    template<class T>
+    void filled_polygon(T const& poly) {
+        filled_polygon(poly.data(), poly.size());
+    }
+
+    void polygon(glm::vec2 const* poly, int len) {
         for (int i = 0; i < len; ++i) {
             line(poly[i], poly[(i + 1) % len]);
         }
     }
     template<class T>
-    void line_loop(T const& poly) {
-        line_loop(poly.data(), poly.size());
+    void polygon(T const& poly) {
+        polygon(poly.data(), poly.size());
     }
 
     void triangle(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3) {

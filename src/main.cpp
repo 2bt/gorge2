@@ -2,12 +2,12 @@
 #include "gfx.hpp"
 #include "sprite.hpp"
 #include "debug_renderer.hpp"
-#include "background.hpp"
-#include "wall.hpp"
-#include "player.hpp"
+#include "world.hpp"
 #include <SDL2/SDL.h>
 
+
 DebugRenderer DB_REN;
+
 
 class Game : public fx::App {
 public:
@@ -16,22 +16,18 @@ public:
     bool init() override {
         DB_REN.init();
 
-        m_background.init();
-
         m_atlas = gfx::Texture2D::create("media/atlas.png");
         m_ren.init();
         m_ren.set_texture(m_atlas);
 
+        m_world.init();
 
-        // reset randomly
-        m_random.seed();
-        reset(m_random.get_int(0, 0x7fffffff));
-
+        m_world.reset(0);
         return true;
     }
 
     void free() override {
-        m_background.free();
+        m_world.free();
 
         delete m_atlas;
         m_ren.free();
@@ -39,38 +35,18 @@ public:
         DB_REN.free();
     }
 
-    void reset(uint32_t seed) {
-        m_random.seed(seed);
-        m_background.reset(m_random.get_int(0, 0x7fffffff));
-        m_wall.reset(m_random.get_int(0, 0x7fffffff));
-        m_player.reset();
-    }
-
 
     void update() override {
 
         const Uint8* ks = SDL_GetKeyboardState(nullptr);
         if (ks[SDL_SCANCODE_TAB]) {
-            for (int i = 0; i < 7; ++i) tick();
+            for (int i = 0; i < 7; ++i) m_world.update();
         }
 
-        tick();
+        m_world.update();
+
+
         draw();
-    }
-
-    void tick() {
-
-        const Uint8* ks = SDL_GetKeyboardState(nullptr);
-        Player::Input input = {
-            ks[SDL_SCANCODE_RIGHT] - ks[SDL_SCANCODE_LEFT],
-            ks[SDL_SCANCODE_DOWN] - ks[SDL_SCANCODE_UP],
-            ks[SDL_SCANCODE_X],
-            ks[SDL_SCANCODE_Y] | ks[SDL_SCANCODE_Z],
-        };
-
-        m_background.update();
-        m_wall.update();
-        m_player.update(input);
     }
 
     void draw() {
@@ -86,17 +62,11 @@ public:
 //        m_ren.translate({0, 35});
 //        m_ren.scale(0.25);
 
-        // background
-        m_background.draw(m_ren);
 
-        // wall
-        m_wall.draw(m_ren);
-
-        m_player.draw(m_ren);
+        m_world.draw(m_ren);
 
 //        // title
 //        m_ren.draw(frame(Sprite::TITLE));
-
 
         m_ren.flush();
         DB_REN.flush();
@@ -106,15 +76,11 @@ private:
     SpriteRenderer  m_ren;
     gfx::Texture2D* m_atlas;
 
-    Random          m_random;
-    Background      m_background;
-    Wall            m_wall;
-    Player          m_player;
+    World           m_world;
 };
 
 
 int main(int argc, char** argv) {
-
 
 
     Game game;
