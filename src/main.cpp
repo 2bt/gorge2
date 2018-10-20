@@ -1,19 +1,21 @@
 #include "fx.hpp"
 #include "gfx.hpp"
-#include "sprite_renderer.hpp"
 #include "sprite.hpp"
+#include "debug_renderer.hpp"
 #include "background.hpp"
 #include "wall.hpp"
 #include "player.hpp"
-
 #include <SDL2/SDL.h>
 
+DebugRenderer DB_REN;
 
 class Game : public fx::App {
 public:
 
 
     bool init() override {
+        DB_REN.init();
+
         m_background.init();
 
         m_atlas = gfx::Texture2D::create("media/atlas.png");
@@ -33,6 +35,8 @@ public:
 
         delete m_atlas;
         m_ren.free();
+
+        DB_REN.free();
     }
 
     void reset(uint32_t seed) {
@@ -77,6 +81,7 @@ public:
         float s = 2.0 / 150;
         float r = fx::screen_height() / (float) fx::screen_width();
         m_ren.scale({s * r, s});
+        DB_REN.transform() = m_ren.transform();
 
 //        m_ren.translate({0, 35});
 //        m_ren.scale(0.25);
@@ -94,6 +99,7 @@ public:
 
 
         m_ren.flush();
+        DB_REN.flush();
     }
 
 private:

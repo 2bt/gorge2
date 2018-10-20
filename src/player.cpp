@@ -1,41 +1,38 @@
 #include "player.hpp"
 #include "sprite.hpp"
+#include "debug_renderer.hpp"
 
 
 namespace {
 	constexpr std::array<vec2, 6> PLAYER_POLYGON = {
-        vec2{16, 16},
-        vec2{16, 0},
-        vec2{4, -12},
-        vec2{-4, -12},
-        vec2{-16, 0},
-        vec2{-16, 16},
+        vec2{4, 4},
+        vec2{4, 0},
+        vec2{1, -3},
+        vec2{-1, -3},
+        vec2{-4, 0},
+        vec2{-4, 4},
     };
-
 
 	constexpr std::array<vec2, 8> FIELD_POLYGON = {
-		vec2{16, 24},
-        vec2{24, 16},
-        vec2{24, 0},
-        vec2{4, -20},
-        vec2{-4, -20},
-        vec2{-24, 0},
-        vec2{-24, 16},
-        vec2{-16, 24},
+		vec2{4, 6},
+        vec2{6, 4},
+        vec2{6, 0},
+        vec2{1, -5},
+        vec2{-1, -5},
+        vec2{-6, 0},
+        vec2{-6, 4},
+        vec2{-4, 6},
     };
 
 };
 
 
-std::vector<vec2> s_polygon = {
-
-};
-
 void Player::reset() {
-    m_tick      = 0;
-    m_shild     = 3;
-    m_pos       = { 0, 40 };
-    m_blast_vel = {};
+    m_tick        = 0;
+    m_shild       = 3;
+    m_pos         = { 0, 40 };
+    m_blast_vel   = {};
+    m_shoot_delay = 0;
 }
 
 
@@ -49,6 +46,7 @@ void Player::update(Input const& input) {
     // move
     m_pos += m_blast_vel + vec2(input.dx, input.dy) * speed;
 
+    transform(m_polygon, PLAYER_POLYGON, m_pos);
 
     // shoot
 }
@@ -58,4 +56,9 @@ void Player::draw(SpriteRenderer& ren) {
 
 
     ren.draw(frame(Sprite::PLAYER, m_tick / 8 % 2), m_pos);
+
+
+    // debug
+    DB_REN.set_color(255, 0, 0);
+    DB_REN.line_loop(m_polygon);
 }

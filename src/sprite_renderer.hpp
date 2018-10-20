@@ -38,6 +38,8 @@ public:
 
     void flush();
 
+    glm::mat3x2& transform() { return m_transforms[m_transform_index]; }
+
 private:
 
     struct State {
@@ -49,7 +51,6 @@ private:
     };
 
 
-    glm::mat3x2& transform() { return m_transforms[m_transform_index]; }
     State& state() { return m_states[m_state_index]; }
 
     struct Vert {

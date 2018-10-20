@@ -1,11 +1,10 @@
 // vim: et ts=4 sts=4 sw=4
 #pragma once
 #include "gfx.hpp"
-#include "fx.hpp"
 #include <array>
 
 
-class Renderer2D {
+class DebugRenderer {
 public:
 
     void init() {
@@ -17,8 +16,7 @@ public:
                 uniform vec2 resolution;
                 varying vec4 ex_color;
                 void main() {
-                    vec2 p = in_pos / resolution * 2.0 - vec2(1.0, 1.0);
-                    gl_Position = vec4(p.x, -p.y, 0.0, 1.0);
+                    gl_Position = vec4(in_pos.x, -in_pos.y, 0.0, 1.0);
                     ex_color = in_color;
                     gl_PointSize = in_point_size;
                 })",
@@ -117,6 +115,15 @@ public:
         line(p2.x, p2.y, p2.x, p1.y);
         line(p2.x, p1.y, p1.x, p1.y);
     }
+    void line_loop(glm::vec2 const* poly, int len) {
+        for (int i = 0; i < len; ++i) {
+            line(poly[i], poly[(i + 1) % len]);
+        }
+    }
+    template<class T>
+    void line_loop(T const& poly) {
+        line_loop(poly.data(), poly.size());
+    }
 
     void triangle(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3) {
         if (m_va->get_primitive_type() != gfx::PrimitiveType::Triangles) {
@@ -129,18 +136,17 @@ public:
     }
 
     void flush() {
-        m_shader->set_uniform("resolution", glm::vec2(fx::screen_width(), fx::screen_height()));
-
         m_vb->init_data(m_verts);
         m_va->set_count(m_verts.size());
         m_verts.clear();
         gfx::draw(m_rs, m_shader, m_va);
     }
 
+    glm::mat3x2& transform() { return m_transforms[m_transform_index]; }
+
 
 private:
 
-    glm::mat3x2& transform() { return m_transforms[m_transform_index]; }
 
     struct Vert {
         glm::vec2   pos;
@@ -150,19 +156,18 @@ private:
             : pos(p), color(c), size(s) {}
     };
 
-    glm::u8vec4                 m_color;
-    float                       m_point_size = 1;
+    glm::u8vec4                m_color;
+    float                      m_point_size = 1;
 
-    std::vector<Vert>           m_verts;
+    std::vector<Vert>          m_verts;
 
-    gfx::RenderState            m_rs;
-    gfx::Shader*                m_shader;
-    gfx::VertexArray*           m_va;
-    gfx::VertexBuffer*          m_vb;
+    gfx::RenderState           m_rs;
+    gfx::Shader*               m_shader;
+    gfx::VertexArray*          m_va;
+    gfx::VertexBuffer*         m_vb;
 
-    std::array<glm::mat3x2, 16> m_transforms;
-    size_t                      m_transform_index = 0;
+    std::array<glm::mat3x2, 4> m_transforms;
+    size_t                     m_transform_index = 0;
 };
 
-
-extern Renderer2D renderer2D;
+extern DebugRenderer DB_REN;
