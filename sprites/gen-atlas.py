@@ -102,7 +102,7 @@ for f in os.listdir("."):
     rects = []
 
     img = Image.open(f)
-    w, h = sprite_sizes.get(f, (img.height, img.height))
+    w, h = sprite_sizes.get(f, (min(img.width, img.height), img.height))
     for y in range(0, img.height, h):
         for x in range(0, img.width, w):
             sprite = img.crop((x, y, x + w, y + h))
@@ -125,13 +125,13 @@ f = open("../src/sprite.hpp", "w")
 
 keys = sorted(info.keys())
 print >>f, """#pragma once
-#include "types.hpp"
+#include "sprite_renderer.hpp"
 
 enum class Sprite {"""
 for k in keys: print >>f, "    %s," % k
 print >>f, "};"
 print >>f, """
-Rect const& frame(Sprite s, int frame = 0);
+SpriteRenderer::Rect const& frame(Sprite s, int frame = 0);
 int frame_count(Sprite s);
 """
 
@@ -142,7 +142,7 @@ print >>f, """#include "sprite.hpp"
 
 namespace {"""
 print >>f
-print >>f, "Rect sprites[] = {"
+print >>f, "SpriteRenderer::Rect sprites[] = {"
 for k in keys:
     print >>f, "    // %s" % k
     for p, s in info[k]:
@@ -159,7 +159,7 @@ print >>f, "};"
 print >>f
 print >>f, "}"
 print >>f, """
-Rect const& frame(Sprite s, int frame) {
+SpriteRenderer::Rect const& frame(Sprite s, int frame) {
     return sprites[offsets[static_cast<int>(s)] + frame];
 }
 

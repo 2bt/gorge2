@@ -3,6 +3,7 @@
 #include "background.hpp"
 #include "wall.hpp"
 #include "player.hpp"
+#include <memory>
 
 
 class World {
@@ -17,12 +18,15 @@ public:
 
 
     Wall const& get_wall() const { return m_wall; }
+    void make_laser(vec2 const& pos, vec2 const& vel);
 
 
 
 private:
-    Random          m_random;
-    Background      m_background;
-    Wall            m_wall;
-    Player          m_player{*this};
+    Random                              m_random;
+    Background                          m_background;
+    Wall                                m_wall;
+    Player                              m_player{*this};
+
+    std::vector<std::unique_ptr<Laser>> m_lasers;
 };

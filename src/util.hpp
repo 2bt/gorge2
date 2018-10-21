@@ -8,7 +8,7 @@ using Color = glm::u8vec4;
 
 template<class T>
 T clamp(T v, T minv, T maxv) {
-    return std::max(minv, std::min(maxv, v));
+    return glm::max(minv, glm::min(maxv, v));
 }
 
 void transform(vec2* dst, vec2 const* src, int len, vec2 const& pos, float ang = 0);

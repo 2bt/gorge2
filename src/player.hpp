@@ -9,7 +9,7 @@ class World;
 
 class Player {
 public:
-    Player(World const& world) : m_world(world) {}
+    Player(World& world) : m_world(world) {}
 
     struct Input {
         int dx;
@@ -21,7 +21,7 @@ public:
 
     void reset();
     void update(Input const& input);
-    void draw(SpriteRenderer& ren);
+    void draw(SpriteRenderer& ren) const;
 
     enum {
         MAX_SHIELD = 3,
@@ -31,7 +31,7 @@ public:
 private:
     void hit(CollisionInfo const& info);
 
-    World const&        m_world;
+    World&              m_world;
 
     std::array<vec2, 6> m_polygon;
 
@@ -57,3 +57,24 @@ private:
     // balls
     // energy blast
 };
+
+
+
+class Laser {
+public:
+    Laser(World const& world, vec2 const& pos, vec2 const& vel);
+    bool update();
+    void draw(SpriteRenderer& ren) const;
+
+private:
+    World const&        m_world;
+
+    vec2                m_pos;
+    vec2                m_vel;
+    float               m_ang;
+
+    std::array<vec2, 4> m_polygon;
+
+};
+
+

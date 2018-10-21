@@ -13,17 +13,20 @@ void World::init() {
 
 }
 
-
 void World::free() {
     m_background.free();
 }
-
 
 void World::reset(uint32_t seed) {
     m_random.seed(seed);
     m_background.reset(m_random.get_int(0, 0x7fffffff));
     m_wall.reset(m_random.get_int(0, 0x7fffffff));
     m_player.reset();
+}
+
+
+void World::make_laser(vec2 const& pos, vec2 const& vel) {
+    m_lasers.push_back(std::make_unique<Laser>(*this, pos, vel));
 }
 
 
@@ -35,6 +38,7 @@ Player::Input get_input() {
         ks[SDL_SCANCODE_X],
         ks[SDL_SCANCODE_Y] | ks[SDL_SCANCODE_Z],
     };
+
 }
 
 
@@ -54,6 +58,14 @@ void World::draw(SpriteRenderer& ren) {
     m_wall.draw(ren);
 
     ren.flush();
+
     m_player.update(get_input());
     m_player.draw(ren);
+
+    for (auto it = m_lasers.begin(); it != m_lasers.end();) {
+         if ((*it)->update()) ++it;
+         else it = m_lasers.erase(it);
+    }
+    for (auto& l : m_lasers) l->draw(ren);
+
 }

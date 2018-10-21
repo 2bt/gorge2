@@ -91,8 +91,8 @@ void SpriteRenderer::translate(vec2 const& v) {
 }
 
 void SpriteRenderer::rotate(float r) {
-    float si = sinf(r);
-    float co = cosf(r);
+    float si = std::sin(r);
+    float co = std::cos(r);
     auto rot = glm::mat2(transform()) * glm::mat2(co, si, -si, co);
     transform()[0] = rot[0];
     transform()[1] = rot[1];

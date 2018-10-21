@@ -56,8 +56,8 @@ void Wall::generate() {
         // move cursor
         float ang = m_random.get_float(0.1, 0.6) * M_PI;
         if (m_random.get_int(0, 1) == 1) ang = -ang;
-        m_cursor.y += cosf(ang) * m_radius;
-        m_cursor.x += sinf(ang) * m_radius;
+        m_cursor.y += std::cos(ang) * m_radius;
+        m_cursor.x += std::sin(ang) * m_radius;
         m_cursor.x = clamp(m_cursor.x, padding, W - 1 - padding);
         m_radius = m_random.get_float(2.6, 10.8);
 
@@ -270,9 +270,9 @@ CollisionInfo Wall::check_collision(vec2 const* polygon, int len) const {
 
     min = get_tile_position(addr1.x, addr1.y);
     max = get_tile_position(addr2.x, addr2.y);
-    DB_REN.rect(min - vec2(4, 4), max + vec2(4, 4));
 
-    DB_REN.set_color(200, 200, 0, 100);
+//    DB_REN.set_color(200, 200, 0, 100);
+//    DB_REN.rect(min - vec2(4, 4), max + vec2(4, 4));
 
     for (int y = addr2.y; y <= addr1.y; ++y) {
         if (y < 0 || y >= (int) m_data.size()) continue;
@@ -286,18 +286,15 @@ CollisionInfo Wall::check_collision(vec2 const* polygon, int len) const {
             if (index < (int) WALL_POLYGONS.size()) {
 
                 vec2 pos = get_tile_position(x, y);
-
                 auto const& poly = WALL_POLYGONS[index];
                 std::vector<vec2> ps(poly.size());
                 for (int i = 0; i < (int) poly.size(); ++i) ps[i] = poly[i] + pos;
 
-                DB_REN.filled_polygon(ps);
+//                DB_REN.filled_polygon(ps);
 
                 CollisionInfo ci = polygon_collision(polygon, len, ps.data(), ps.size());
-
                 if (ci.distance > info.distance) info = ci;
             }
-
         }
     }
 

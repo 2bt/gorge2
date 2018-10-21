@@ -30,7 +30,7 @@ public:
         m_rs.line_width = 1;
 
         m_rs.cull_face_enabled    = false;
-        m_rs.blend_enabled = true;
+        m_rs.blend_enabled        = true;
         m_rs.blend_func_src_rgb   = gfx::BlendFunc::SrcAlpha;
         m_rs.blend_func_src_alpha = gfx::BlendFunc::SrcAlpha;
         m_rs.blend_func_dst_rgb   = gfx::BlendFunc::OneMinusSrcAlpha;
