@@ -52,26 +52,36 @@ void World::update() {
 
     m_background.update();
     m_wall.update();
+
     m_player.update(get_input());
+    update_all(m_enemies);
+
     update_all(m_lasers);
+
     update_all(m_particles);
 }
 
 
 void World::draw(SpriteRenderer& ren) {
-    // background
     m_background.draw(ren);
 
-    // wall
-    m_wall.draw(ren);
-
-    ren.flush();
 
     m_player.draw(ren);
+    for (auto& e : m_enemies) e->draw(ren);
 
     for (auto& l : m_lasers) l->draw(ren);
-    for (auto& p : m_particles) p->draw(ren);
+    for (auto& p : m_particles) {
+        if (p->layer() == Particle::BACK) p->draw(ren);
+    }
 
 
+    m_wall.draw(ren);
+
+    // TODO: bump
+
+
+    for (auto& p : m_particles) {
+        if (p->layer() == Particle::FRONT) p->draw(ren);
+    }
 
 }

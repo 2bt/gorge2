@@ -13,7 +13,7 @@ public:
     virtual ~Particle() {}
     virtual bool update() = 0;
     virtual void draw(SpriteRenderer& ren) const = 0;
-    virtual Layer layer() const = 0;
+    virtual Layer layer() const { return FRONT; }
 };
 
 
@@ -23,7 +23,6 @@ public:
     SparkParticle(World const& world, vec2 const& pos);
     bool update() override;
     void draw(SpriteRenderer& ren) const override;
-    Layer layer() const override { return BACK; }
 
 protected:
     World const& m_world;

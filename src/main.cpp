@@ -22,6 +22,7 @@ public:
 
         m_world.init();
 
+        rnd.seed();
         m_world.reset(rnd.get_int(0, 0x7fffffff));
         return true;
     }

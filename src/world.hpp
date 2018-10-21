@@ -4,6 +4,7 @@
 #include "wall.hpp"
 #include "player.hpp"
 #include "particle.hpp"
+#include "enemy.hpp"
 #include <memory>
 
 
@@ -31,5 +32,6 @@ private:
     Player                                 m_player{*this};
 
     std::vector<std::unique_ptr<Laser>>    m_lasers;
+    std::vector<std::unique_ptr<Enemy>>    m_enemies;
     std::vector<std::unique_ptr<Particle>> m_particles;
 };
