@@ -1,12 +1,12 @@
-CF = `$(PKG) --cflags $(LIBS)` -std=c++17 -Wall -Og -g
-LF = -Wall `$(PKG) --libs $(LIBS)`
-PKG = pkg-config
-LIBS = sdl2 SDL2_image glew gl
+LIBS := sdl2 SDL2_image glew gl
+CF   := -std=c++17 -Wall -Og -g $(shell pkg-config --cflags $(LIBS))
+LF   := -Wall $(shell pkg-config --libs $(LIBS))
 
-CXX = g++
-SRC = $(wildcard src/*.cpp)
-OBJ = $(SRC:src/%.cpp=obj/%.o)
-TRG = gorge
+CXX  := g++
+SRC  := $(wildcard src/*.cpp)
+OBJ  := $(SRC:src/%.cpp=obj/%.o)
+TRG  := gorge
+
 
 all: $(TRG)
 
