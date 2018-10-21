@@ -6,11 +6,6 @@
 
 void World::init() {
     m_background.init();
-
-//    // reset randomly
-//    m_random.seed();
-//    reset(m_random.get_int(0, 0x7fffffff));
-
 }
 
 void World::free() {
@@ -29,7 +24,11 @@ void World::make_laser(vec2 const& pos, vec2 const& vel) {
     m_lasers.push_back(std::make_unique<Laser>(*this, pos, vel));
 }
 
+void World::add_particle(std::unique_ptr<Particle> p) {
+    m_particles.push_back(std::move(p));
+}
 
+// TODO
 Player::Input get_input() {
     Uint8 const* ks = SDL_GetKeyboardState(nullptr);
     return {
@@ -41,12 +40,21 @@ Player::Input get_input() {
 
 }
 
+template<class T>
+void update_all(std::vector<std::unique_ptr<T>>& vs) {
+    for (auto it = vs.begin(); it != vs.end();) {
+         if ((*it)->update()) ++it;
+         else it = vs.erase(it);
+    }
+}
 
 void World::update() {
 
     m_background.update();
     m_wall.update();
-    //m_player.update(input);
+    m_player.update(get_input());
+    update_all(m_lasers);
+    update_all(m_particles);
 }
 
 
@@ -59,13 +67,11 @@ void World::draw(SpriteRenderer& ren) {
 
     ren.flush();
 
-    m_player.update(get_input());
     m_player.draw(ren);
 
-    for (auto it = m_lasers.begin(); it != m_lasers.end();) {
-         if ((*it)->update()) ++it;
-         else it = m_lasers.erase(it);
-    }
     for (auto& l : m_lasers) l->draw(ren);
+    for (auto& p : m_particles) p->draw(ren);
+
+
 
 }

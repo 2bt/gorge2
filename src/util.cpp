@@ -2,9 +2,12 @@
 #include <limits>
 
 
+Random rnd;
+
+
 void transform(vec2* dst, vec2 const* src, int len, vec2 const& pos, float ang) {
-	float si = std::sin(ang);
-	float co = std::cos(ang);
+    float si = std::sin(ang);
+    float co = std::cos(ang);
     for (int i = 0; i < len; ++i) {
         dst[i].x = pos.x + src[i].x *  co + src[i].y * si;
         dst[i].y = pos.y + src[i].x * -si + src[i].y * co;
@@ -20,11 +23,8 @@ CollisionInfo polygon_collision(vec2 const* poly1, int len1, vec2 const* poly2, 
         for (int i = 0; i < len1; ++i) {
             vec2 const& p1 = poly1[(i ?: len1) - 1];
             vec2 const& p2 = poly1[i];
- 
-            CollisionInfo ci = {
-                0,
-                {p1.y - p2.y, p2.x - p1.x},
-            };
+
+            CollisionInfo ci = { 0, {p1.y - p2.y, p2.x - p1.x} };
 
             for (int j = 0; j < len2; ++j) {
                 vec2 const& w = poly2[j];

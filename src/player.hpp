@@ -62,12 +62,12 @@ private:
 
 class Laser {
 public:
-    Laser(World const& world, vec2 const& pos, vec2 const& vel);
+    Laser(World& world, vec2 const& pos, vec2 const& vel);
     bool update();
     void draw(SpriteRenderer& ren) const;
 
 private:
-    World const&        m_world;
+    World&              m_world;
 
     vec2                m_pos;
     vec2                m_vel;

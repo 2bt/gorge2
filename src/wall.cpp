@@ -9,6 +9,7 @@ void Wall::reset(uint32_t seed) {
     m_random.seed(seed);
     m_row_counter = 0;
     m_offset = 0;
+    m_speed  = 0.25;
     m_cursor = { W * 0.5 - 0.5, 19 };
     m_radius = W * 0.4;
     m_island_delay = 80;
@@ -22,7 +23,7 @@ void Wall::reset(uint32_t seed) {
 
 void Wall::update() {
 
-    m_offset += 0.25;
+    m_offset += m_speed;
     while (m_offset >= 8) {
         m_offset -= 8;
         generate();
@@ -292,7 +293,12 @@ CollisionInfo Wall::check_collision(vec2 const* polygon, int len) const {
 
 //                DB_REN.filled_polygon(ps);
 
-                CollisionInfo ci = polygon_collision(polygon, len, ps.data(), ps.size());
+                // XXX: we pass polys in reverse order because `info.where` is *better*
+                //CollisionInfo ci = polygon_collision(polygon, len, ps.data(), ps.size());
+                CollisionInfo ci = polygon_collision(ps.data(), ps.size(), polygon, len);
+                ci.normal = -ci.normal;
+
+
                 if (ci.distance > info.distance) info = ci;
             }
         }

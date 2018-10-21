@@ -22,7 +22,7 @@ public:
 
         m_world.init();
 
-        m_world.reset(0);
+        m_world.reset(rnd.get_int(0, 0x7fffffff));
         return true;
     }
 
@@ -85,5 +85,5 @@ int main(int argc, char** argv) {
 
 
     Game game;
-	return fx::run(game);
+    return fx::run(game);
 }

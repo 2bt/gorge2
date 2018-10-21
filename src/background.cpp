@@ -85,6 +85,7 @@ void Background::update() {
 }
 
 void Background::draw(SpriteRenderer& ren) {
+    ren.set_color();
 
 //    if (m_tick % 10 == 0) {
     if (1) {

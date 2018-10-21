@@ -1,9 +1,13 @@
 #pragma once
 #include <glm/glm.hpp>
+#include "random.hpp"
 
 
 using vec2 = glm::vec2;
 using Color = glm::u8vec4;
+
+
+extern Random rnd;
 
 
 template<class T>
