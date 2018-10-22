@@ -1,7 +1,6 @@
 #pragma once
 #include "sprite.hpp"
 #include "util.hpp"
-#include "random.hpp"
 #include <array>
 
 class Wall {

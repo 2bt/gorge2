@@ -1,5 +1,5 @@
 #pragma once
-#include "sprite_renderer.hpp"
+#include "sprite.hpp"
 #include "util.hpp"
 
 
@@ -8,23 +8,39 @@ class World;
 
 class Enemy {
 public:
-    Enemy(World& world) : m_world(world) {}
+    Enemy(World& world, uint32_t seed) : m_world(world) {
+        m_random.seed(seed);
+    }
     virtual ~Enemy() {}
-    virtual bool update() = 0;
-    virtual void draw(SpriteRenderer& ren) const = 0;
+    bool update();
+    void draw(SpriteRenderer& ren) const;
+    virtual void die() {};
+    virtual void sub_update() = 0;
+    std::vector<vec2> const& get_polygon() const { return m_polygon; }
 protected:
     World& m_world;
+    Random m_random;
+    int    m_tick  = 0;
+    bool   m_alive = true;
+
+    // set these in subclass
+    vec2   m_pos;
+    Sprite m_sprite;
+    int    m_frame_length = 4;
+    int    m_shild        = 1;
+
+    std::vector<vec2> m_polygon;
 };
 
 
 
-class FooEnemy : public Enemy {
+class SquareEnemy : public Enemy {
 public:
-    FooEnemy(World const& world, vec2 const& pos);
-    bool update() override;
-    void draw(SpriteRenderer& ren) const override;
+    SquareEnemy(World& world, uint32_t seed, vec2 const& pos);
+    void sub_update() override;
 
 protected:
-    vec2         m_pos;
-    vec2         m_vel;
+
+    vec2 m_vel;
+    int  m_delay;
 };

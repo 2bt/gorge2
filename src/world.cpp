@@ -17,15 +17,27 @@ void World::reset(uint32_t seed) {
     m_background.reset(m_random.get_int(0, 0x7fffffff));
     m_wall.reset(m_random.get_int(0, 0x7fffffff));
     m_player.reset();
+
+    m_enemies.clear();
+    m_lasers.clear();
+    m_particles.clear();
+
+
+    // spawn enemy
+    spawn_enemy<SquareEnemy>(vec2(0, -50));
 }
 
 
-void World::make_laser(vec2 const& pos, vec2 const& vel) {
+void World::spawn_laser(vec2 const& pos, vec2 const& vel) {
     m_lasers.push_back(std::make_unique<Laser>(*this, pos, vel));
 }
 
-void World::add_particle(std::unique_ptr<Particle> p) {
+void World::spawn_particle(std::unique_ptr<Particle> p) {
     m_particles.push_back(std::move(p));
+}
+
+void World::spawn_enemy(std::unique_ptr<Enemy> e) {
+    m_enemies.push_back(std::move(e));
 }
 
 // TODO

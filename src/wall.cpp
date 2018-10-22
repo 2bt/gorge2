@@ -10,7 +10,8 @@ void Wall::reset(uint32_t seed) {
     m_row_counter = 0;
     m_offset = 0;
     m_speed  = 0.25;
-    m_cursor = { W * 0.5 - 0.5, 19 };
+    m_speed  = 0;
+    m_cursor = { W * 0.5 - 0.5, 10 };
     m_radius = W * 0.4;
     m_island_delay = 80;
 

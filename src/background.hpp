@@ -1,7 +1,6 @@
 #pragma once
 #include "gfx.hpp"
 #include "sprite.hpp"
-#include "random.hpp"
 #include "util.hpp"
 #include <array>
 

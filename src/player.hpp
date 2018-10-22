@@ -1,5 +1,5 @@
 #pragma once
-#include "sprite_renderer.hpp"
+#include "sprite.hpp"
 #include "util.hpp"
 #include <array>
 

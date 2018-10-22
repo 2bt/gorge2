@@ -1,5 +1,4 @@
 #pragma once
-#include "random.hpp"
 #include "background.hpp"
 #include "wall.hpp"
 #include "player.hpp"
@@ -20,9 +19,19 @@ public:
 
 
     Wall const& get_wall() const { return m_wall; }
-    void make_laser(vec2 const& pos, vec2 const& vel);
+    void spawn_laser(vec2 const& pos, vec2 const& vel);
 
-    void add_particle(std::unique_ptr<Particle> p);
+    void spawn_particle(std::unique_ptr<Particle> p);
+
+    void spawn_enemy(std::unique_ptr<Enemy> e);
+    template<class T, typename... Args>
+    void spawn_enemy(Args&&... args) {
+        spawn_enemy(std::make_unique<T>(
+            *this,
+            m_random.get_int(0, 0x7fffffff),
+            std::forward<Args>(args)...));
+    }
+
 
 
 private:

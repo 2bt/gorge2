@@ -1,6 +1,4 @@
 #include "player.hpp"
-#include "sprite.hpp"
-#include "debug_renderer.hpp"
 #include "world.hpp"
 
 
@@ -13,7 +11,6 @@ namespace {
         vec2{-4, 0},
         vec2{-4, 4},
     };
-
     constexpr std::array<vec2, 8> FIELD_POLYGON = {
         vec2{4, 6},
         vec2{6, 4},
@@ -24,14 +21,12 @@ namespace {
         vec2{-6, 4},
         vec2{-4, 6},
     };
-
     constexpr std::array<vec2, 4> LASER_POLYGON = {
         vec2{-0.5, 2.5},
         vec2{0.5, 2.5},
         vec2{0.5, -2.5},
         vec2{-0.5, -2.5},
     };
-
 };
 
 
@@ -93,7 +88,7 @@ void Player::update(Input const& input) {
     if (input.a && m_shoot_delay == 0 && m_blast_delay == 0) {
         m_shoot_delay = 10;
 
-        m_world.make_laser(m_pos - vec2(0, 1), {0, -1});
+        m_world.spawn_laser(m_pos - vec2(0, 1), {0, -1});
     }
 
 }
@@ -125,7 +120,7 @@ bool Laser::update() {
         CollisionInfo info = m_world.get_wall().check_collision(m_polygon);
         if (info.distance > 0) {
             for (int i = 0; i < 10; ++i) {
-                m_world.add_particle(std::make_unique<LaserParticle>(m_world, info.where));
+                m_world.spawn_particle(std::make_unique<LaserParticle>(m_world, info.where));
             }
             return false;
         }
