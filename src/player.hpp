@@ -23,6 +23,11 @@ public:
     void update(Input const& input);
     void draw(SpriteRenderer& ren) const;
 
+    bool is_alive() const { return m_alive; }
+    vec2 const& get_pos() const { return m_pos; }
+
+    void inc_score(int points) { m_score += points; }
+
     enum {
         MAX_SHIELD = 3,
         MAX_ENERGY = 30
@@ -68,13 +73,10 @@ public:
 
 private:
     World&              m_world;
-
     vec2                m_pos;
     vec2                m_vel;
     float               m_ang;
-
     std::array<vec2, 4> m_polygon;
-
 };
 
 

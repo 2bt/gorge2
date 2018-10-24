@@ -10,7 +10,6 @@ void Wall::reset(uint32_t seed) {
     m_row_counter = 0;
     m_offset = 0;
     m_speed  = 0.25;
-    m_speed  = 0;
     m_cursor = { W * 0.5 - 0.5, 10 };
     m_radius = W * 0.4;
     m_island_delay = 80;
@@ -307,3 +306,27 @@ CollisionInfo Wall::check_collision(vec2 const* polygon, int len) const {
 
     return info;
 }
+
+
+bool Wall::check_sight(vec2 const& a, vec2 const& b) const {
+    vec2 normal = glm::normalize(b - a);
+    normal = vec2(normal.y, -normal.x);
+
+    auto addr1 = get_tile_address(a);
+    auto addr2 = get_tile_address(b);
+    auto min = glm::min(addr1, addr2);
+    auto max = glm::max(addr1, addr2);
+
+    min = glm::max(min, {0, 0});
+    max = glm::min(max, {W - 1, m_data.size() - 1});
+
+	for (int y = min.y; y <= max.y; ++y) {
+        for (int x = min.x; x <= max.x; ++x) {
+            if (m_data[y][x] == 0) continue;
+            float dist = glm::abs(glm::dot(normal, a - get_tile_position(x, y)));
+            if (dist < 5) return true;
+		}
+	}
+	return false;
+}
+

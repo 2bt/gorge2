@@ -20,16 +20,20 @@ void World::reset(uint32_t seed) {
 
     m_enemies.clear();
     m_lasers.clear();
+    m_bullets.clear();
     m_particles.clear();
 
 
     // spawn enemy
-    spawn_enemy<SquareEnemy>(vec2(0, -50));
+    spawn_enemy<SquareEnemy>(vec2(0, -70));
 }
 
 
 void World::spawn_laser(vec2 const& pos, vec2 const& vel) {
     m_lasers.push_back(std::make_unique<Laser>(*this, pos, vel));
+}
+void World::spawn_bullet(vec2 const& pos, vec2 const& vel, Bullet::Desc const& desc) {
+    m_bullets.push_back(std::make_unique<Bullet>(*this, pos, vel, desc));
 }
 
 void World::spawn_particle(std::unique_ptr<Particle> p) {
@@ -49,7 +53,6 @@ Player::Input get_input() {
         ks[SDL_SCANCODE_X],
         ks[SDL_SCANCODE_Y] | ks[SDL_SCANCODE_Z],
     };
-
 }
 
 template<class T>
@@ -61,39 +64,30 @@ void update_all(std::vector<std::unique_ptr<T>>& vs) {
 }
 
 void World::update() {
-
     m_background.update();
     m_wall.update();
-
     m_player.update(get_input());
     update_all(m_enemies);
-
     update_all(m_lasers);
-
+    update_all(m_bullets);
     update_all(m_particles);
 }
 
 
 void World::draw(SpriteRenderer& ren) {
     m_background.draw(ren);
-
-
     m_player.draw(ren);
     for (auto& e : m_enemies) e->draw(ren);
-
     for (auto& l : m_lasers) l->draw(ren);
+    for (auto& b : m_bullets) b->draw(ren);
     for (auto& p : m_particles) {
-        if (p->layer() == Particle::BACK) p->draw(ren);
+        if (p->get_layer() == Particle::BACK) p->draw(ren);
     }
-
-
     m_wall.draw(ren);
-
     // TODO: bump
 
 
     for (auto& p : m_particles) {
-        if (p->layer() == Particle::FRONT) p->draw(ren);
+        if (p->get_layer() == Particle::FRONT) p->draw(ren);
     }
-
 }

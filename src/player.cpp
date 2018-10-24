@@ -38,6 +38,8 @@ void Player::reset() {
     m_blast_delay = 0;
     m_shoot_delay = 0;
     m_side_shot   = false;
+
+    m_score       = 0;
 }
 
 
@@ -120,7 +122,14 @@ bool Laser::update() {
         CollisionInfo info = m_world.get_wall().check_collision(m_polygon);
         if (info.distance > 0) {
             for (int i = 0; i < 10; ++i) {
-                m_world.spawn_particle(std::make_unique<LaserParticle>(m_world, info.where));
+
+
+                static const SparkParticle::Desc LAZER_PARTICLE_DESC = {
+                    {0, 155, 155, 155},
+                    0.7
+                };
+
+                m_world.spawn_particle<SparkParticle>(info.where, LAZER_PARTICLE_DESC);
             }
             return false;
         }

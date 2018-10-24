@@ -2,8 +2,8 @@
 #include "world.hpp"
 
 
-SparkParticle::SparkParticle(World const& world, vec2 const& pos)
-    : m_world(world)
+SparkParticle::SparkParticle(World const& world, vec2 const& pos, Desc const& desc)
+    : m_world(world), m_desc(desc)
 {
     m_pos = pos;
     float ang = rnd.get_float(0, M_PI * 2);
@@ -14,11 +14,11 @@ SparkParticle::SparkParticle(World const& world, vec2 const& pos)
 bool SparkParticle::update() {
     m_pos += m_vel;
     m_pos.y += m_world.get_wall().get_speed();
-    m_vel *= m_friction;
+    m_vel *= m_desc.friction;
     return --m_ttl > 0;
 }
 
 void SparkParticle::draw(SpriteRenderer& ren) const {
-    ren.set_color(m_color);
+    ren.set_color(m_desc.color);
     ren.draw(frame(Sprite::SPARK), m_pos);
 }

@@ -18,6 +18,8 @@ public:
         return check_collision(polygon.data(), polygon.size());
     }
 
+    bool check_sight(vec2 const& a, vec2 const& b) const;
+
 private:
     void generate();
     vec2 get_tile_position(int x, int y) const;

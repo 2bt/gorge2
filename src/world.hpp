@@ -19,28 +19,47 @@ public:
 
 
     Wall const& get_wall() const { return m_wall; }
+    Player& get_player() { return m_player; }
+    Player const& get_player() const { return m_player; }
+
     void spawn_laser(vec2 const& pos, vec2 const& vel);
+    void spawn_bullet(vec2 const& pos, vec2 const& vel, Bullet::Desc const& desc);
 
     void spawn_particle(std::unique_ptr<Particle> p);
-
     void spawn_enemy(std::unique_ptr<Enemy> e);
+
     template<class T, typename... Args>
-    void spawn_enemy(Args&&... args) {
-        spawn_enemy(std::make_unique<T>(
+    T* spawn_particle(Args&&... args) {
+        auto unique = std::make_unique<T>(
             *this,
-            m_random.get_int(0, 0x7fffffff),
-            std::forward<Args>(args)...));
+            std::forward<Args>(args)...);
+        auto raw = unique.get();
+        spawn_particle(std::move(unique));
+        return raw;
     }
 
+    template<class T, typename... Args>
+    T* spawn_enemy(Args&&... args) {
+        auto unique = std::make_unique<T>(
+            *this,
+            m_random.get_int(0, 0x7fffffff),
+            std::forward<Args>(args)...);
+        auto raw = unique.get();
+        spawn_enemy(std::move(unique));
+        return raw;
+    }
 
 
 private:
     Random                                 m_random;
     Background                             m_background;
     Wall                                   m_wall;
+
     Player                                 m_player{*this};
+    std::vector<std::unique_ptr<Enemy>>    m_enemies;
 
     std::vector<std::unique_ptr<Laser>>    m_lasers;
-    std::vector<std::unique_ptr<Enemy>>    m_enemies;
+    std::vector<std::unique_ptr<Bullet>>   m_bullets;
+
     std::vector<std::unique_ptr<Particle>> m_particles;
 };
