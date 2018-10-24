@@ -73,16 +73,3 @@ private:
 
     Desc const&         m_desc;
 };
-
-
-
-
-class SquareEnemy : public Enemy {
-public:
-    SquareEnemy(World& world, uint32_t seed, vec2 const& pos);
-    void sub_update() override;
-
-protected:
-    vec2 m_vel;
-    int  m_delay;
-};

@@ -1,5 +1,5 @@
 #include "world.hpp"
-#include "sprite.hpp"
+#include "square_enemy.hpp"
 
 #include <SDL2/SDL.h>
 

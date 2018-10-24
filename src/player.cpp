@@ -57,6 +57,7 @@ void Player::hit(CollisionInfo const& info) {
     }
 
     // damage
+    --m_shield;
 }
 
 

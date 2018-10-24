@@ -25,8 +25,10 @@ public:
 
     bool is_alive() const { return m_alive; }
     vec2 const& get_pos() const { return m_pos; }
+    std::array<vec2, 6> const& get_polygon() const { return m_polygon; }
 
     void inc_score(int points) { m_score += points; }
+    void hit(CollisionInfo const& info = {});
 
     enum {
         MAX_SHIELD = 3,
@@ -34,7 +36,6 @@ public:
     };
 
 private:
-    void hit(CollisionInfo const& info);
 
     World&              m_world;
 

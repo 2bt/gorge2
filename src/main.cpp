@@ -5,7 +5,6 @@
 #include "world.hpp"
 #include <SDL2/SDL.h>
 
-
 DebugRenderer DB_REN;
 
 
