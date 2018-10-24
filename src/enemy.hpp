@@ -83,7 +83,6 @@ public:
     void sub_update() override;
 
 protected:
-
     vec2 m_vel;
     int  m_delay;
 };

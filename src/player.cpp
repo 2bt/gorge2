@@ -32,13 +32,14 @@ namespace {
 
 void Player::reset() {
     m_tick        = 0;
-    m_shild       = 3;
     m_pos         = { 0, 40 };
     m_blast_vel   = {};
     m_blast_delay = 0;
     m_shoot_delay = 0;
     m_side_shot   = false;
 
+    m_alive       = true;
+    m_shield      = 3;
     m_score       = 0;
 }
 
@@ -97,6 +98,8 @@ void Player::update(Input const& input) {
 
 
 void Player::draw(SpriteRenderer& ren) const {
+    if (!m_alive) return;
+
     ren.draw(frame(Sprite::PLAYER, m_tick / 8 % 2), m_pos);
 
     // debug
@@ -122,20 +125,16 @@ bool Laser::update() {
         CollisionInfo info = m_world.get_wall().check_collision(m_polygon);
         if (info.distance > 0) {
             for (int i = 0; i < 10; ++i) {
-
-
                 static const SparkParticle::Desc LAZER_PARTICLE_DESC = {
                     {0, 155, 155, 155},
                     0.7
                 };
-
                 m_world.spawn_particle<SparkParticle>(info.where, LAZER_PARTICLE_DESC);
             }
             return false;
         }
 
     }
-
     return true;
 }
 

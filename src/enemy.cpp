@@ -11,7 +11,6 @@ bool Enemy::update() {
 
     ++m_tick;
 
-
     sub_update();
     return true;
 }
@@ -76,6 +75,7 @@ void Bullet::draw(SpriteRenderer& ren) const {
     ren.draw(frame(m_desc.sprite, m_tick / m_desc.frame_length % frame_count(m_desc.sprite)));
     ren.pop();
 }
+
 
 namespace {
     constexpr std::array<vec2, 8> SQUARE_ENEMY_POLYGON = {
@@ -167,23 +167,17 @@ void SquareEnemy::sub_update() {
 
 
     // shoot
-
-    printf("delay %d\n", m_delay);
-
+    --m_delay;
     if (m_delay == 20 && !can_see_player()) {
-        m_delay = m_random.get_int(11, 60);
+        m_delay = m_random.get_int(22, 70);
     }
     if (m_delay == 10 || m_delay == 0) {
         vec2 dir = m_world.get_player().get_pos() - m_pos;
         float ang = std::atan2(dir.x, dir.y) + m_random.get_float(-0.2, 0.2);
         vec2 vel = vec2(std::sin(ang), std::cos(ang)) * m_random.get_float(0.5, 0.53);
         m_world.spawn_bullet(m_pos, vel, RAPID_BULLET_DESC);
-
-        if (m_delay == 0) m_delay = m_random.get_int(200, 300);
     }
-    --m_delay;
+    if (m_delay <= 0) m_delay = m_random.get_int(200, 300);
 }
-
-
 
 

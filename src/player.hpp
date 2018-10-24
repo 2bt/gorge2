@@ -46,7 +46,7 @@ private:
     int                 m_tick;
 
     int                 m_score;
-    int                 m_shild;
+    int                 m_shield;
     int                 m_energy;
     bool                m_field_active;
     int                 m_speed_boost;
