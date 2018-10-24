@@ -24,6 +24,7 @@ public:
     void draw(SpriteRenderer& ren) const;
 
     bool is_alive() const { return m_alive; }
+    bool is_invincible() const { return m_invincible_delay > 0; }
     vec2 const& get_pos() const { return m_pos; }
     std::array<vec2, 6> const& get_polygon() const { return m_polygon; }
 
@@ -51,7 +52,7 @@ private:
     int                 m_energy;
     bool                m_field_active;
     int                 m_speed_boost;
-    int                 m_invcible_delay;
+    int                 m_invincible_delay;
 
     int                 m_shoot_delay;
     bool                m_side_shot;

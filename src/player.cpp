@@ -31,21 +31,21 @@ namespace {
 
 
 void Player::reset() {
-    m_tick        = 0;
-    m_pos         = { 0, 40 };
-    m_blast_vel   = {};
-    m_blast_delay = 0;
-    m_shoot_delay = 0;
-    m_side_shot   = false;
+    m_tick             = 0;
+    m_pos              = { 0, 40 };
+    m_blast_vel        = {};
+    m_blast_delay      = 0;
+    m_shoot_delay      = 0;
+    m_side_shot        = false;
 
-    m_alive       = true;
-    m_shield      = 3;
-    m_score       = 0;
+    m_alive            = true;
+    m_shield           = 3;
+    m_invincible_delay = 0;
+    m_score            = 0;
 }
 
 
 void Player::hit(CollisionInfo const& info) {
-
     // blast
     if (info.distance > 0) {
         m_pos += info.normal * info.distance;
@@ -57,11 +57,18 @@ void Player::hit(CollisionInfo const& info) {
     }
 
     // damage
-    --m_shield;
+    if (!is_invincible()) {
+        m_invincible_delay = 120;
+        if (--m_shield <= 0) {
+            // game over
+            m_alive = false;
+        }
+    }
 }
 
 
 void Player::update(Input const& input) {
+    if (!m_alive) return;
 
     ++m_tick;
     m_blast_vel *= 0.87f;
@@ -95,11 +102,14 @@ void Player::update(Input const& input) {
         m_world.spawn_laser(m_pos - vec2(0, 1), {0, -1});
     }
 
+
+    if (m_invincible_delay > 0) --m_invincible_delay;
 }
 
 
 void Player::draw(SpriteRenderer& ren) const {
     if (!m_alive) return;
+	if (m_invincible_delay % 8 >= 4) return;
 
     ren.draw(frame(Sprite::PLAYER, m_tick / 8 % 2), m_pos);
 
