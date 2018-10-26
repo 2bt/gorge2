@@ -2,10 +2,26 @@
 #include "world.hpp"
 #include "debug_renderer.hpp"
 
+namespace {
+    class BulletSparkParticle : public SparkParticle {
+    public:
+        BulletSparkParticle(vec2 const& pos, Color const& color) {
+            m_color    = color;
+            m_friction = 0.9;
+            m_layer    = FRONT;
+            m_pos      = pos;
+            float ang  = rnd.get_float(0, M_PI * 2);
+            m_vel      = vec2(std::sin(ang), std::cos(ang)) * rnd.get_float(0.5, 1);
+            m_ttl      = rnd.get_int(3, 7);
+        }
+    };
+}
+
 
 bool Enemy::update() {
     if (!m_alive) {
         die();
+        m_world.make_explosion(m_pos);
         return false;
     }
 
@@ -38,6 +54,7 @@ void Enemy::draw(SpriteRenderer& ren) const {
 //    DB_REN.line(m_pos, m_world.get_player().get_pos());
 }
 
+
 Bullet::Bullet(World& world, vec2 const& pos, vec2 const& vel, Desc const& desc)
     : m_world(world), m_pos(pos), m_vel(vel), m_desc(desc)
 {
@@ -57,7 +74,7 @@ bool Bullet::update() {
         CollisionInfo info = m_world.get_wall().check_collision(m_polygon);
         if (info.distance > 0) {
             for (int i = 0; i < 10; ++i) {
-                m_world.spawn_particle<SparkParticle>(info.where, m_desc.spark_desc);
+                m_world.spawn_particle<BulletSparkParticle>(info.where, m_desc.spark_color);
             }
             return false;
         }
@@ -71,7 +88,7 @@ bool Bullet::update() {
             if (info.distance > 0) {
                 player.hit();
                 for (int i = 0; i < 10; ++i) {
-                    m_world.spawn_particle<SparkParticle>(info.where, m_desc.spark_desc);
+                    m_world.spawn_particle<BulletSparkParticle>(info.where, m_desc.spark_color);
                 }
                 return false;
             }

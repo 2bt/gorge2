@@ -11,31 +11,23 @@ public:
     enum Layer { BACK, FRONT };
 
     virtual ~Particle() {}
-    virtual bool update() = 0;
+    virtual bool update();
     virtual void draw(SpriteRenderer& ren) const = 0;
-    virtual Layer get_layer() const { return FRONT; }
-};
+    Layer get_layer() const { return m_layer; }
 
+protected:
+    Layer m_layer = FRONT;
+    float m_friction;
+
+    vec2  m_pos;
+    vec2  m_vel;
+    int   m_ttl;
+};
 
 
 class SparkParticle : public Particle {
 public:
-
-    struct Desc {
-        Color color;
-        float friction;
-    };
-
-    SparkParticle(World const& world, vec2 const& pos, Desc const& desc);
-    bool update() override;
     void draw(SpriteRenderer& ren) const override;
-
 protected:
-    World const& m_world;
-    vec2         m_pos;
-    vec2         m_vel;
-    int          m_ttl;
-
-    Desc const&  m_desc;
+    Color m_color;
 };
-

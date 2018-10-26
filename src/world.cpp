@@ -17,15 +17,13 @@ void World::reset(uint32_t seed) {
     m_background.reset(m_random.get_int(0, 0x7fffffff));
     m_wall.reset(m_random.get_int(0, 0x7fffffff));
     m_player.reset();
+    m_tick = 0;
 
     m_enemies.clear();
     m_lasers.clear();
     m_bullets.clear();
     m_particles.clear();
 
-
-    // spawn enemy
-    spawn_enemy<SquareEnemy>(vec2(0, -70));
 }
 
 
@@ -42,6 +40,10 @@ void World::spawn_particle(std::unique_ptr<Particle> p) {
 
 void World::spawn_enemy(std::unique_ptr<Enemy> e) {
     m_enemies.push_back(std::move(e));
+}
+
+void World::make_explosion(vec2 const& pos) {
+
 }
 
 // TODO
@@ -63,7 +65,15 @@ void update_all(std::vector<std::unique_ptr<T>>& vs) {
     }
 }
 
+
 void World::update() {
+
+    // spawn enemy
+    if (m_tick % 100 == 0) {
+        spawn_enemy<SquareEnemy>(vec2(0, -70));
+    }
+    ++m_tick;
+
     m_background.update();
     m_wall.update();
     m_player.update(get_input());

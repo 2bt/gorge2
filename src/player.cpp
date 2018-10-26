@@ -27,7 +27,20 @@ namespace {
         vec2{0.5, -2.5},
         vec2{-0.5, -2.5},
     };
-};
+
+    class LaserSparkParticle : public SparkParticle {
+    public:
+        LaserSparkParticle(vec2 const& pos) {
+            m_color    = Color(0, 155, 155, 200);
+            m_friction = 0.7;
+            m_layer    = FRONT;
+            m_pos      = pos;
+            float ang  = rnd.get_float(0, M_PI * 2);
+            m_vel      = vec2(std::sin(ang), std::cos(ang)) * rnd.get_float(0.5, 1);
+            m_ttl      = rnd.get_int(3, 7);
+        }
+    };
+}
 
 
 void Player::reset() {
@@ -38,6 +51,7 @@ void Player::reset() {
     m_shoot_delay      = 0;
     m_side_shot        = false;
 
+    m_shoot_period     = 15; // 10
     m_alive            = true;
     m_shield           = 3;
     m_invincible_delay = 0;
@@ -92,12 +106,22 @@ void Player::update(Input const& input) {
     if (info.distance > 0) hit(info);
 
 
+    // collision with enemies
+    for (auto& e : m_world.get_enemies()) {
+        CollisionInfo info = polygon_collision(m_polygon, e->get_polygon());
+        if (info.distance > 0) {
+            hit(info);
+            e->hit(2);
+        }
+    }
+
+
     // shoot
     if (input.dy > 0) m_side_shot = false;
     if (input.dy < 0) m_side_shot = true;
     if (m_shoot_delay > 0) --m_shoot_delay;
     if (input.a && m_shoot_delay == 0 && m_blast_delay == 0) {
-        m_shoot_delay = 10;
+        m_shoot_delay = m_shoot_period;
 
         m_world.spawn_laser(m_pos - vec2(0, 1), {0, -1});
     }
@@ -128,23 +152,29 @@ Laser::Laser(World& world, vec2 const& pos, vec2 const& vel)
 bool Laser::update() {
     for (int i = 0; i < 4; ++i) {
         m_pos += m_vel;
-        if (std::abs(m_pos.x) > 124 || std::abs(m_pos.y) > 80) {
-            return false;
-        }
-
+        if (std::abs(m_pos.x) > 124 || std::abs(m_pos.y) > 80)  return false;
         transform(m_polygon, LASER_POLYGON, m_pos, m_ang);
+
+        // collision with wall
         CollisionInfo info = m_world.get_wall().check_collision(m_polygon);
         if (info.distance > 0) {
             for (int i = 0; i < 10; ++i) {
-                static const SparkParticle::Desc LAZER_PARTICLE_DESC = {
-                    Color(0, 155, 155, 200),
-                    0.7
-                };
-                m_world.spawn_particle<SparkParticle>(info.where, LAZER_PARTICLE_DESC);
+                m_world.spawn_particle<LaserSparkParticle>(info.where);
             }
             return false;
         }
 
+        // collision with enemies
+        for (auto& e : m_world.get_enemies()) {
+            CollisionInfo info = polygon_collision(m_polygon, e->get_polygon());
+            if (info.distance > 0) {
+                e->hit(2); // damage
+                for (int i = 0; i < 10; ++i) {
+                    m_world.spawn_particle<LaserSparkParticle>(info.where);
+                }
+                return false;
+            }
+        }
     }
     return true;
 }

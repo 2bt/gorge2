@@ -21,6 +21,7 @@ public:
     Wall const& get_wall() const { return m_wall; }
     Player& get_player() { return m_player; }
     Player const& get_player() const { return m_player; }
+    std::vector<std::unique_ptr<Enemy>> const& get_enemies() const { return m_enemies; }
 
     void spawn_laser(vec2 const& pos, vec2 const& vel);
     void spawn_bullet(vec2 const& pos, vec2 const& vel, Bullet::Desc const& desc);
@@ -28,11 +29,12 @@ public:
     void spawn_particle(std::unique_ptr<Particle> p);
     void spawn_enemy(std::unique_ptr<Enemy> e);
 
+    void make_explosion(vec2 const& pos);
+
+
     template<class T, typename... Args>
     T* spawn_particle(Args&&... args) {
-        auto unique = std::make_unique<T>(
-            *this,
-            std::forward<Args>(args)...);
+        auto unique = std::make_unique<T>(std::forward<Args>(args)...);
         auto raw = unique.get();
         spawn_particle(std::move(unique));
         return raw;
@@ -54,6 +56,7 @@ private:
     Random                                 m_random;
     Background                             m_background;
     Wall                                   m_wall;
+    int                                    m_tick;
 
     Player                                 m_player{*this};
     std::vector<std::unique_ptr<Enemy>>    m_enemies;

@@ -55,7 +55,7 @@ public:
         Sprite              sprite;
         int                 frame_length;
         std::array<vec2, 4> polygon;
-        SparkParticle::Desc spark_desc;
+        Color               spark_color;
     };
 
     Bullet(World& world, vec2 const& pos, vec2 const& vel, Desc const& desc);

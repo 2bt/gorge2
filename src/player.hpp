@@ -25,6 +25,7 @@ public:
 
     bool is_alive() const { return m_alive; }
     bool is_invincible() const { return m_invincible_delay > 0; }
+
     vec2 const& get_pos() const { return m_pos; }
     std::array<vec2, 6> const& get_polygon() const { return m_polygon; }
 
@@ -56,6 +57,7 @@ private:
 
     int                 m_shoot_delay;
     bool                m_side_shot;
+    int                 m_shoot_period;
 
     int                 m_blast_delay;
     vec2                m_blast_vel;
