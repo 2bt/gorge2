@@ -250,9 +250,9 @@ namespace {
     std::array<std::vector<vec2>, 5> WALL_POLYGONS = {
         std::vector<vec2>{ {-4, -4}, {-4, 4}, {4, 4}, {4, -4} },
         std::vector<vec2>{ {-4, -4}, {4, 4}, {4, -4} },
-		std::vector<vec2>{ {-4, 4}, {4, 4}, {4, -4} },
-		std::vector<vec2>{ {-4, -4}, {-4, 4}, {4, 4} },
-		std::vector<vec2>{ {-4, -4}, {-4, 4}, {4, -4} },
+        std::vector<vec2>{ {-4, 4}, {4, 4}, {4, -4} },
+        std::vector<vec2>{ {-4, -4}, {-4, 4}, {4, 4} },
+        std::vector<vec2>{ {-4, -4}, {-4, 4}, {4, -4} },
     };
 }
 

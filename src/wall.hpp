@@ -10,7 +10,7 @@ public:
     void update();
     void draw(SpriteRenderer& ren);
 
-    float get_speed() const { return m_speed; };
+    float get_speed() const { return m_speed; }
 
     CollisionInfo check_collision(vec2 const* polygon, int len) const;
     template<class T>

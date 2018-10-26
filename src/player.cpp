@@ -137,7 +137,7 @@ bool Laser::update() {
         if (info.distance > 0) {
             for (int i = 0; i < 10; ++i) {
                 static const SparkParticle::Desc LAZER_PARTICLE_DESC = {
-                    {0, 155, 155, 155},
+                    Color(0, 155, 155, 200),
                     0.7
                 };
                 m_world.spawn_particle<SparkParticle>(info.where, LAZER_PARTICLE_DESC);
