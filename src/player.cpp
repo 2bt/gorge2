@@ -75,6 +75,7 @@ void Player::hit(CollisionInfo const& info) {
         m_invincible_delay = 120;
         if (--m_shield <= 0) {
             // game over
+            m_world.make_explosion(m_pos);
             m_alive = false;
         }
     }
