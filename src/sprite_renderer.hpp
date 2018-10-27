@@ -26,13 +26,15 @@ public:
     void push_state();
     void pop_state();
 
-    void set_color(uint8_t r = 255, uint8_t g = 255, uint8_t b = 255, uint8_t a = 255) { set_color({ r, g, b, a }); }
-    void set_color(Color c);
+    void reset_color() { set_color({ 255, 255, 255, 255 }); }
+    void set_color(glm::u8vec3 const& c) { set_color(Color(c, 255)); }
+    void set_color(Color const& c);
     void set_blendmode(BlendMode b);
     void set_texture(gfx::Texture2D* tex = nullptr);
     void set_shader(gfx::Shader* shader = nullptr);
     void set_framebuffer(gfx::Framebuffer* fb = nullptr);
 
+    void clear(Color const& color);
     void draw(Rect const& quad, vec2 const& pos = {});
     void draw(vec2 const& pos = {});
 

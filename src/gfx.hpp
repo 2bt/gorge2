@@ -32,31 +32,31 @@ struct Rect { int x, y, w, h; };
 
 
 struct RenderState {
-    Rect          viewport                = { 0, 0, 0, 0 };
+    Rect          viewport             = { 0, 0, 0, 0 };
 
     // depth
-    bool          depth_test_enabled      = false;
-    DepthTestFunc depth_test_func         = DepthTestFunc::LEqual;
+    bool          depth_test_enabled   = false;
+    DepthTestFunc depth_test_func      = DepthTestFunc::LEqual;
 
     // cull face
-    bool          cull_face_enabled       = true;
-    CullFace      cull_face               = CullFace::Back;
+    bool          cull_face_enabled    = true;
+    CullFace      cull_face            = CullFace::Back;
 
     // scissor
-    bool          scissor_test_enabled    = false;
-    Rect          scissor_box             = { 0, 0, 0, 0 };
+    bool          scissor_test_enabled = false;
+    Rect          scissor_box          = { 0, 0, 0, 0 };
 
     // blend
-    bool          blend_enabled           = false;
-    BlendFunc     blend_func_src_rgb      = BlendFunc::One;
-    BlendFunc     blend_func_src_alpha    = BlendFunc::Zero;
-    BlendFunc     blend_func_dst_rgb      = BlendFunc::One;
-    BlendFunc     blend_func_dst_alpha    = BlendFunc::Zero;
-    BlendEquation blend_equation_rgb      = BlendEquation::Add;
-    BlendEquation blend_equation_alpha    = BlendEquation::Add;
-    glm::vec4     blend_color             = { 0, 0, 0, 0 };
+    bool          blend_enabled        = false;
+    BlendFunc     blend_func_src_rgb   = BlendFunc::One;
+    BlendFunc     blend_func_src_alpha = BlendFunc::Zero;
+    BlendFunc     blend_func_dst_rgb   = BlendFunc::One;
+    BlendFunc     blend_func_dst_alpha = BlendFunc::Zero;
+    BlendEquation blend_equation_rgb   = BlendEquation::Add;
+    BlendEquation blend_equation_alpha = BlendEquation::Add;
+    glm::vec4     blend_color          = { 0, 0, 0, 0 };
 
-    float         line_width              = 1;
+    float         line_width           = 1;
 };
 
 

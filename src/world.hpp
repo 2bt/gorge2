@@ -1,4 +1,5 @@
 #pragma once
+#include "bump.hpp"
 #include "background.hpp"
 #include "wall.hpp"
 #include "player.hpp"
@@ -12,12 +13,14 @@ public:
 
     void init();
     void free();
+    void resized();
 
     void reset(uint32_t seed);
     void update();
     void draw(SpriteRenderer& ren);
 
 
+    Bump& get_bump() { return m_bump; }
     Wall const& get_wall() const { return m_wall; }
     Player& get_player() { return m_player; }
     Player const& get_player() const { return m_player; }
@@ -51,6 +54,7 @@ public:
 
 private:
     Random                                 m_random;
+    Bump                                   m_bump;
     Background                             m_background;
     Wall                                   m_wall;
     int                                    m_tick;

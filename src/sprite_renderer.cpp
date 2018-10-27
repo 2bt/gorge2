@@ -103,8 +103,12 @@ void SpriteRenderer::scale(vec2 const& v) {
     transform()[1][1] *= v.y;
 }
 
-void SpriteRenderer::set_color(Color c) {
+void SpriteRenderer::set_color(Color const& c) {
     state().color = c;
+}
+
+void SpriteRenderer::clear(Color const& color) {
+    gfx::clear(color, state().framebuffer);
 }
 
 void SpriteRenderer::draw(vec2 const& pos) {

@@ -1,19 +1,25 @@
 #include "world.hpp"
 #include "square_enemy.hpp"
-
-#include <SDL2/SDL.h>
+#include "fx.hpp"
 
 
 void World::init() {
+    m_bump.free();
     m_background.init();
 }
 
 void World::free() {
+    m_bump.free();
     m_background.free();
+}
+
+void World::resized() {
+    m_bump.resized();
 }
 
 void World::reset(uint32_t seed) {
     m_random.seed(seed);
+    m_bump.reset();
     m_background.reset(m_random.get_int(0, 0x7fffffff));
     m_wall.reset(m_random.get_int(0, 0x7fffffff));
     m_player.reset();
@@ -43,17 +49,6 @@ void World::spawn_enemy(std::unique_ptr<Enemy> e) {
 }
 
 
-// TODO
-Player::Input get_input() {
-    Uint8 const* ks = SDL_GetKeyboardState(nullptr);
-    return {
-        ks[SDL_SCANCODE_RIGHT] - ks[SDL_SCANCODE_LEFT],
-        ks[SDL_SCANCODE_DOWN] - ks[SDL_SCANCODE_UP],
-        ks[SDL_SCANCODE_X],
-        ks[SDL_SCANCODE_Y] | ks[SDL_SCANCODE_Z],
-    };
-}
-
 template<class T>
 void update_all(std::vector<std::unique_ptr<T>>& vs) {
     for (auto it = vs.begin(); it != vs.end();) {
@@ -71,9 +66,10 @@ void World::update() {
     }
     ++m_tick;
 
+    m_bump.update();
     m_background.update();
     m_wall.update();
-    m_player.update(get_input());
+    m_player.update(fx::input());
     update_all(m_enemies);
     update_all(m_lasers);
     update_all(m_bullets);
@@ -82,16 +78,20 @@ void World::update() {
 
 
 void World::draw(SpriteRenderer& ren) {
-    m_background.draw(ren);
-    m_player.draw(ren);
-    for (auto& e : m_enemies) e->draw(ren);
-    for (auto& l : m_lasers) l->draw(ren);
-    for (auto& b : m_bullets) b->draw(ren);
-    for (auto& p : m_particles) {
-        if (p->get_layer() == Particle::BACK) p->draw(ren);
+
+    m_bump.draw_begin(ren);
+    {
+        m_background.draw(ren);
+        m_player.draw(ren);
+        for (auto& e : m_enemies) e->draw(ren);
+        for (auto& l : m_lasers) l->draw(ren);
+        for (auto& b : m_bullets) b->draw(ren);
+        for (auto& p : m_particles) {
+            if (p->get_layer() == Particle::BACK) p->draw(ren);
+        }
+        m_wall.draw(ren);
     }
-    m_wall.draw(ren);
-    // TODO: bump
+    m_bump.draw_end(ren);
 
 
     for (auto& p : m_particles) {

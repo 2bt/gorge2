@@ -7,6 +7,7 @@ namespace fx {
         virtual void free() {}
         virtual void key(int code) {}
         virtual void update() {}
+        virtual void resized() {}
     };
 
     int run(App& App);

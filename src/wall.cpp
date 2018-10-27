@@ -167,8 +167,8 @@ void Wall::draw(SpriteRenderer& ren) {
     // DEBUG
     for (int y = 0; y < (int) m_gen_data.size(); ++y) {
         auto const& row = m_gen_data[y];
-        ren.set_color(70, 70, 70);
-        if (y == 1) ren.set_color(100, 70, 70);
+        ren.set_color({70, 70, 70});
+        if (y == 1) ren.set_color({100, 70, 70});
         for (int x = 0; x < (int) row.size(); ++x) {
             if (row[x] == 0) continue;
 
@@ -182,7 +182,7 @@ void Wall::draw(SpriteRenderer& ren) {
     }
 
 
-    ren.set_color(84, 38, 89);
+    ren.set_color({84, 38, 89});
 
 
     for (int y = 0; y < (int) m_data.size(); ++y) {
@@ -242,7 +242,7 @@ void Wall::draw(SpriteRenderer& ren) {
 
     }
 
-    ren.set_color();
+    ren.reset_color();
 }
 
 

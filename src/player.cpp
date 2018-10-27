@@ -39,7 +39,7 @@ namespace {
             m_ttl      = rnd.get_int(3, 7);
         }
         void draw(SpriteRenderer& ren) const override {
-            ren.set_color(0, 155, 155, 200);
+            ren.set_color({0, 155, 155, 200});
             ren.draw(frame(Sprite::SPARK), m_pos);
         }
     };
@@ -85,7 +85,7 @@ void Player::hit(CollisionInfo const& info) {
 }
 
 
-void Player::update(Input const& input) {
+void Player::update(fx::Input const& input) {
     if (!m_alive) return;
 
     ++m_tick;
@@ -101,7 +101,7 @@ void Player::update(Input const& input) {
     }
 
     // move
-    m_pos += m_blast_vel + vec2(input.dx, input.dy) * speed;
+    m_pos += m_blast_vel + vec2(input.x, input.y) * speed;
     m_pos = clamp(m_pos, { -124, -72 }, { 124, 71 });
 
     // collision with wall
@@ -121,8 +121,8 @@ void Player::update(Input const& input) {
 
 
     // shoot
-    if (input.dy > 0) m_side_shot = false;
-    if (input.dy < 0) m_side_shot = true;
+    if (input.y > 0) m_side_shot = false;
+    if (input.y < 0) m_side_shot = true;
     if (m_shoot_delay > 0) --m_shoot_delay;
     if (input.a && m_shoot_delay == 0 && m_blast_delay == 0) {
         m_shoot_delay = m_shoot_period;

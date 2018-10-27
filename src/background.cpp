@@ -85,10 +85,10 @@ void Background::update() {
 }
 
 void Background::draw(SpriteRenderer& ren) {
-    ren.set_color();
+    ren.reset_color();
 
-//    if (m_tick % 10 == 0) {
-    if (1) {
+    if (m_tick % 10 == 0) {
+//    if (1) {
         m_cloud_shader->set_uniform("tick", float(m_tick / 10));
         ren.push();
         ren.push_state();

@@ -21,7 +21,7 @@ namespace {
         }
         void draw(SpriteRenderer& ren) const override {
             int f = std::max<int>(0, frame_count(Sprite::SMOKE) - 1 - std::floor(m_ttl * 0.33));
-            ren.set_color(30, 30, 30, 150);
+            ren.set_color({30, 30, 30, 150});
             ren.draw(frame(Sprite::SMOKE, f), m_pos);
         }
     };
@@ -58,7 +58,7 @@ namespace {
         }
         void draw(SpriteRenderer& ren) const override {
             int f = frame_count(Sprite::EXPLOSION) - m_ttl / 3 - 1;
-            ren.set_color();
+            ren.reset_color();
             ren.draw(frame(Sprite::EXPLOSION, f), m_pos);
         }
     private:
@@ -70,7 +70,6 @@ namespace {
 
 
 void make_explosion(World& world, vec2 const& pos) {
-    // TODO: heat wave
     for (int i = 0; i < 10; ++i) world.spawn_particle<SmokeParticle>(pos);
     for (int i = 0; i < 20; ++i) {
         vec2 p = {
@@ -80,4 +79,5 @@ void make_explosion(World& world, vec2 const& pos) {
         world.spawn_particle<SparkParticle>(pos + p);
     }
     world.spawn_particle<ExplosionParticle>(pos);
+    world.get_bump().spawn(pos);
 }

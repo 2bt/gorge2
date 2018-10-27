@@ -15,9 +15,9 @@ public:
     bool init() override {
         DB_REN.init();
 
-        m_atlas = gfx::Texture2D::create("media/atlas.png");
+        m_atlas_tex = gfx::Texture2D::create("media/atlas.png");
         m_ren.init();
-        m_ren.set_texture(m_atlas);
+        m_ren.set_texture(m_atlas_tex);
 
         m_world.init();
 
@@ -29,12 +29,15 @@ public:
     void free() override {
         m_world.free();
 
-        delete m_atlas;
+        delete m_atlas_tex;
         m_ren.free();
 
         DB_REN.free();
     }
 
+    void resized() override {
+        m_world.resized();
+    }
 
     void update() override {
 
@@ -50,7 +53,7 @@ public:
     }
 
     void draw() {
-        gfx::clear({0, 0, 0, 1});
+        m_ren.clear({});
 
         // init transform
         m_ren.origin();
@@ -75,7 +78,7 @@ public:
 
 private:
     SpriteRenderer  m_ren;
-    gfx::Texture2D* m_atlas;
+    gfx::Texture2D* m_atlas_tex;
 
     World           m_world;
 };
