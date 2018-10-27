@@ -6,7 +6,6 @@ enum class Sprite {
     BALL_FIELD,
     BALL_ITEM,
     BLOCKADE,
-    BOOM,
     CANNON,
     ENERGY_ITEM,
     EXPLOSION,
