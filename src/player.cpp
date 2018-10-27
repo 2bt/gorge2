@@ -28,16 +28,19 @@ namespace {
         vec2{-0.5, -2.5},
     };
 
-    class LaserSparkParticle : public SparkParticle {
+    class LaserParticle : public Particle {
     public:
-        LaserSparkParticle(vec2 const& pos) {
-            m_color    = Color(0, 155, 155, 200);
+        LaserParticle(vec2 const& pos) {
             m_friction = 0.7;
             m_layer    = FRONT;
             m_pos      = pos;
             float ang  = rnd.get_float(0, M_PI * 2);
             m_vel      = vec2(std::sin(ang), std::cos(ang)) * rnd.get_float(0.5, 1);
             m_ttl      = rnd.get_int(3, 7);
+        }
+        void draw(SpriteRenderer& ren) const override {
+            ren.set_color(0, 155, 155, 200);
+            ren.draw(frame(Sprite::SPARK), m_pos);
         }
     };
 }
@@ -75,7 +78,7 @@ void Player::hit(CollisionInfo const& info) {
         m_invincible_delay = 120;
         if (--m_shield <= 0) {
             // game over
-            m_world.make_explosion(m_pos);
+            make_explosion(m_world, m_pos);
             m_alive = false;
         }
     }
@@ -160,7 +163,7 @@ bool Laser::update() {
         CollisionInfo info = m_world.get_wall().check_collision(m_polygon);
         if (info.distance > 0) {
             for (int i = 0; i < 10; ++i) {
-                m_world.spawn_particle<LaserSparkParticle>(info.where);
+                m_world.spawn_particle<LaserParticle>(info.where);
             }
             return false;
         }
@@ -171,7 +174,7 @@ bool Laser::update() {
             if (info.distance > 0) {
                 e->hit(2); // damage
                 for (int i = 0; i < 10; ++i) {
-                    m_world.spawn_particle<LaserSparkParticle>(info.where);
+                    m_world.spawn_particle<LaserParticle>(info.where);
                 }
                 return false;
             }

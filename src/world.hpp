@@ -29,9 +29,6 @@ public:
     void spawn_particle(std::unique_ptr<Particle> p);
     void spawn_enemy(std::unique_ptr<Enemy> e);
 
-    void make_explosion(vec2 const& pos);
-
-
     template<class T, typename... Args>
     T* spawn_particle(Args&&... args) {
         auto unique = std::make_unique<T>(std::forward<Args>(args)...);

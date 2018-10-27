@@ -4,26 +4,6 @@
 #include <SDL2/SDL.h>
 
 
-namespace {
-    class SmokeParticle : public Particle {
-    public:
-        SmokeParticle(vec2 const& pos) {
-            m_friction = 0.8;
-            m_layer    = BACK;
-            m_pos      = pos;
-            float ang  = rnd.get_float(0, M_PI * 2);
-            m_vel      = vec2(std::sin(ang), std::cos(ang)) * rnd.get_float(0.5, 1.25);
-            m_ttl      = rnd.get_int(18, 26);
-        }
-        void draw(SpriteRenderer& ren) const override {
-            int f = std::max<int>(0, frame_count(Sprite::SMOKE) - 1 - std::floor(m_ttl * 0.33));
-            ren.set_color(30, 30, 30, 150);
-            ren.draw(frame(Sprite::SMOKE, f), m_pos);
-        }
-    };
-}
-
-
 void World::init() {
     m_background.init();
 }
@@ -62,13 +42,6 @@ void World::spawn_enemy(std::unique_ptr<Enemy> e) {
     m_enemies.push_back(std::move(e));
 }
 
-
-void World::make_explosion(vec2 const& pos) {
-    // TODO: heat wave
-    for (int i = 0; i < 10; ++i) spawn_particle<SmokeParticle>(pos);
-
-
-}
 
 // TODO
 Player::Input get_input() {

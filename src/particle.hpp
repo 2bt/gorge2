@@ -25,9 +25,4 @@ protected:
 };
 
 
-class SparkParticle : public Particle {
-public:
-    void draw(SpriteRenderer& ren) const override;
-protected:
-    Color m_color;
-};
+void make_explosion(World& world, vec2 const& pos);

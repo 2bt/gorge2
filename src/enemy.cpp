@@ -3,9 +3,9 @@
 #include "debug_renderer.hpp"
 
 namespace {
-    class BulletSparkParticle : public SparkParticle {
+    class BulletParticle : public Particle {
     public:
-        BulletSparkParticle(vec2 const& pos, Color const& color) {
+        BulletParticle(vec2 const& pos, Color const& color) {
             m_color    = color;
             m_friction = 0.9;
             m_layer    = FRONT;
@@ -14,6 +14,12 @@ namespace {
             m_vel      = vec2(std::sin(ang), std::cos(ang)) * rnd.get_float(0.5, 1);
             m_ttl      = rnd.get_int(3, 7);
         }
+        void draw(SpriteRenderer& ren) const override {
+            ren.set_color(m_color);
+            ren.draw(frame(Sprite::SPARK), m_pos);
+        }
+    private:
+        Color m_color;
     };
 }
 
@@ -21,7 +27,7 @@ namespace {
 bool Enemy::update() {
     if (!m_alive) {
         die();
-        m_world.make_explosion(m_pos);
+        make_explosion(m_world, m_pos);
         return false;
     }
 
@@ -74,7 +80,7 @@ bool Bullet::update() {
         CollisionInfo info = m_world.get_wall().check_collision(m_polygon);
         if (info.distance > 0) {
             for (int i = 0; i < 10; ++i) {
-                m_world.spawn_particle<BulletSparkParticle>(info.where, m_desc.spark_color);
+                m_world.spawn_particle<BulletParticle>(info.where, m_desc.spark_color);
             }
             return false;
         }
@@ -82,13 +88,13 @@ bool Bullet::update() {
 
         Player& player = m_world.get_player();
 
-        if (player.is_alive()) {
+        if (player.is_alive() && !player.is_invincible()) {
 
             CollisionInfo info = polygon_collision(m_polygon, player.get_polygon());
             if (info.distance > 0) {
                 player.hit();
                 for (int i = 0; i < 10; ++i) {
-                    m_world.spawn_particle<BulletSparkParticle>(info.where, m_desc.spark_color);
+                    m_world.spawn_particle<BulletParticle>(info.where, m_desc.spark_color);
                 }
                 return false;
             }
