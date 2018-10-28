@@ -8,9 +8,37 @@
 class World;
 
 
+class Ball {
+public:
+    Ball(World& world, int dir);
+    void reset();
+    void activate(vec2 const& player_pos, int player_tick);
+    void shoot(bool side_shot);
+    void update(vec2 const& player_pos);
+    void draw(SpriteRenderer& ren) const;
+
+private:
+    World&              m_world;
+    int const           m_dir;
+    vec2 const          m_offset;
+
+    std::array<vec2, 4> m_polygon;
+
+    bool                m_alive;
+    vec2                m_pos;
+    float               m_glide;
+    int                 m_tick;
+
+
+};
+
+
 class Player {
 public:
-    Player(World& world) : m_world(world) {}
+    Player(World& world)
+        : m_world(world)
+        , m_balls({ Ball(world, -1), Ball(world, 1) })
+    {}
 
     void reset();
     void update(fx::Input const& input);
@@ -55,6 +83,8 @@ private:
     int                 m_blast_delay;
     vec2                m_blast_vel;
 
+    std::array<Ball, 2> m_balls;
+
     // TODO:
     // balls
     // energy blast
@@ -64,7 +94,7 @@ private:
 
 class Laser {
 public:
-    Laser(World& world, vec2 const& pos, vec2 const& vel);
+    Laser(World& world, vec2 const& pos, vec2 const& vel, bool is_small);
     bool update();
     void draw(SpriteRenderer& ren) const;
 
@@ -74,6 +104,7 @@ private:
     vec2                m_vel;
     float               m_ang;
     std::array<vec2, 4> m_polygon;
+    bool                m_is_small;
 };
 
 

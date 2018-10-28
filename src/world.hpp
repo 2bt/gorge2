@@ -26,9 +26,9 @@ public:
     Player const& get_player() const { return m_player; }
     std::vector<std::unique_ptr<Enemy>> const& get_enemies() const { return m_enemies; }
 
-    void spawn_laser(vec2 const& pos, vec2 const& vel);
-    void spawn_bullet(vec2 const& pos, vec2 const& vel, Bullet::Desc const& desc);
 
+    void spawn_laser(std::unique_ptr<Laser> l);
+    void spawn_bullet(vec2 const& pos, vec2 const& vel, Bullet::Desc const& desc);
     void spawn_particle(std::unique_ptr<Particle> p);
     void spawn_enemy(std::unique_ptr<Enemy> e);
 

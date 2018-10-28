@@ -32,9 +32,8 @@ void World::reset(uint32_t seed) {
 
 }
 
-
-void World::spawn_laser(vec2 const& pos, vec2 const& vel) {
-    m_lasers.push_back(std::make_unique<Laser>(*this, pos, vel));
+void World::spawn_laser(std::unique_ptr<Laser> l) {
+    m_lasers.push_back(std::move(l));
 }
 void World::spawn_bullet(vec2 const& pos, vec2 const& vel, Bullet::Desc const& desc) {
     m_bullets.push_back(std::make_unique<Bullet>(*this, pos, vel, desc));
