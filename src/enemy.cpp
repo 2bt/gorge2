@@ -66,7 +66,11 @@ Bullet::Bullet(World& world, vec2 const& pos, vec2 const& vel, Desc const& desc)
 {
     m_ang = m_desc.rotate ? std::atan2(m_vel.x, -m_vel.y) : 0;
 }
-
+void Bullet::make_sparks(vec2 const& pos) {
+    for (int i = 0; i < 10; ++i) {
+        m_world.spawn_particle<BulletParticle>(pos, m_desc.spark_color);
+    }
+}
 bool Bullet::update() {
     ++m_tick;
     for (int i = 0; i < 2; ++i) {
@@ -79,25 +83,35 @@ bool Bullet::update() {
         transform(m_polygon, m_desc.polygon, m_pos, m_ang);
         CollisionInfo info = m_world.get_wall().check_collision(m_polygon);
         if (info.distance > 0) {
-            for (int i = 0; i < 10; ++i) {
-                m_world.spawn_particle<BulletParticle>(info.where, m_desc.spark_color);
-            }
+            make_sparks(info.where);
             return false;
         }
 
 
         Player& player = m_world.get_player();
+        if (player.is_alive()) {
 
-        if (player.is_alive() && !player.is_invincible()) {
-
-            CollisionInfo info = polygon_collision(m_polygon, player.get_polygon());
-            if (info.distance > 0) {
-                player.hit();
-                for (int i = 0; i < 10; ++i) {
-                    m_world.spawn_particle<BulletParticle>(info.where, m_desc.spark_color);
+            // collision with player
+            if (!!player.is_invincible()) {
+                CollisionInfo info = polygon_collision(m_polygon, player.get_polygon());
+                if (info.distance > 0) {
+                    player.hit();
+                    make_sparks(info.where);
+                    return false;
                 }
-                return false;
             }
+
+            // collision with balls
+            for (Ball& b : player.get_balls()) {
+                if (!b.is_alive()) continue;
+                CollisionInfo info = polygon_collision(m_polygon, b.get_polygon());
+                if (info.distance > 0) {
+                    b.hit();
+                    make_sparks(info.where);
+                    return false;
+                }
+            }
+
 
         }
 

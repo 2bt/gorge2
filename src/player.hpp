@@ -14,8 +14,12 @@ public:
     void reset();
     void activate(vec2 const& player_pos, int player_tick);
     void shoot(bool side_shot);
+    void hit();
     void update(vec2 const& player_pos);
     void draw(SpriteRenderer& ren) const;
+
+    bool is_alive() const { return m_alive; }
+    std::array<vec2, 4> const& get_polygon() const { return m_polygon; }
 
 private:
     World&              m_world;
@@ -28,8 +32,6 @@ private:
     vec2                m_pos;
     float               m_glide;
     int                 m_tick;
-
-
 };
 
 
@@ -46,9 +48,9 @@ public:
 
     bool is_alive() const { return m_alive; }
     bool is_invincible() const { return m_invincible_delay > 0; }
-
     vec2 const& get_pos() const { return m_pos; }
     std::array<vec2, 6> const& get_polygon() const { return m_polygon; }
+    std::array<Ball, 2>& get_balls() { return m_balls; }
 
     void inc_score(int points) { m_score += points; }
     void hit(CollisionInfo const& info = {});

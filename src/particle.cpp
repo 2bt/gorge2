@@ -81,3 +81,17 @@ void make_explosion(World& world, vec2 const& pos) {
     world.spawn_particle<ExplosionParticle>(pos);
     world.get_bump().spawn(pos);
 }
+
+
+void make_small_explosion(World& world, vec2 const& pos, bool smoke) {
+    if (smoke) {
+        for (int i = 0; i < 3; ++i) world.spawn_particle<SmokeParticle>(pos);
+    }
+    for (int i = 0; i < 10; ++i) {
+        vec2 p = {
+            rnd.get_float(-0.5, 0.5),
+            rnd.get_float(-0.5, 0.5)
+        };
+        world.spawn_particle<SparkParticle>(pos + p);
+    }
+}

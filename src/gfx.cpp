@@ -651,9 +651,7 @@ bool init() {
 }
 
 
-void free() {
-
-}
+void free() {}
 
 
 void clear(const glm::vec4& color, Framebuffer* fb) {

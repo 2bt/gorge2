@@ -16,7 +16,7 @@ public:
     bool update();
     void draw(SpriteRenderer& ren) const;
 
-    virtual void die() {};
+    virtual void die() {}
     virtual void sub_update() = 0;
 
     bool is_alive() const { return m_alive; }
@@ -63,6 +63,7 @@ public:
     void draw(SpriteRenderer& ren) const;
 
 private:
+    void make_sparks(vec2 const& pos);
 
     World&              m_world;
     vec2                m_pos;

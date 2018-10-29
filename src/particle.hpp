@@ -26,3 +26,4 @@ protected:
 
 
 void make_explosion(World& world, vec2 const& pos);
+void make_small_explosion(World& world, vec2 const& pos, bool smoke);

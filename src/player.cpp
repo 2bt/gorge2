@@ -85,12 +85,30 @@ void Ball::shoot(bool side_shot) {
     }
     m_world.spawn_laser(std::make_unique<Laser>(m_world, pos, vel, true));
 }
+void Ball::hit() {
+    assert(m_alive);
+    m_alive = false;
+    make_small_explosion(m_world, m_pos, true);
+}
 void Ball::update(vec2 const& player_pos) {
     if (!m_alive) return;
     ++m_tick;
     m_glide = std::min(m_glide + 0.02f, 0.3f);
     m_pos += (player_pos + m_offset - m_pos) * m_glide;
     transform(m_polygon, BALL_POLYGON, m_pos);
+
+    // collision with wall
+    CollisionInfo info = m_world.get_wall().check_collision(m_polygon);
+    if (info.distance > 0) hit();
+
+    // collision with enemies
+    for (auto& e : m_world.get_enemies()) {
+        CollisionInfo info = polygon_collision(m_polygon, e->get_polygon());
+        if (info.distance > 0) {
+            hit();
+            e->hit(2);
+        }
+    }
 }
 void Ball::draw(SpriteRenderer& ren) const {
     if (!m_alive) return;
@@ -129,10 +147,9 @@ void Player::hit(CollisionInfo const& info) {
     if (info.distance > 0) {
         m_pos += info.normal * info.distance;
         transform(m_polygon, PLAYER_POLYGON, m_pos);
-
         m_blast_vel = info.normal * 1.5f;
         m_blast_delay = 15;
-
+        make_small_explosion(m_world, info.where, false);
     }
 
     // damage
@@ -166,14 +183,10 @@ void Player::update(fx::Input const& input) {
     m_pos += m_blast_vel + vec2(input.x, input.y) * speed;
     m_pos = clamp(m_pos, { -124, -72 }, { 124, 71 });
 
-    m_balls[0].update(m_pos);
-    m_balls[1].update(m_pos);
-
     // collision with wall
     transform(m_polygon, PLAYER_POLYGON, m_pos);
     CollisionInfo info = m_world.get_wall().check_collision(m_polygon);
     if (info.distance > 0) hit(info);
-
 
     // collision with enemies
     for (auto& e : m_world.get_enemies()) {
@@ -184,6 +197,9 @@ void Player::update(fx::Input const& input) {
         }
     }
 
+    // update balls
+    m_balls[0].update(m_pos);
+    m_balls[1].update(m_pos);
 
     // shoot
     if (input.y > 0) m_side_shot = false;
@@ -191,7 +207,6 @@ void Player::update(fx::Input const& input) {
     if (m_shoot_delay > 0) --m_shoot_delay;
     if (input.a && m_shoot_delay == 0 && m_blast_delay == 0) {
         m_shoot_delay = m_shoot_period;
-
         m_world.spawn_laser(std::make_unique<Laser>(m_world, m_pos - vec2(0, 1), vec2(0, -1), false));
         m_balls[0].shoot(m_side_shot);
         m_balls[1].shoot(m_side_shot);
