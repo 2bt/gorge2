@@ -58,7 +58,7 @@ namespace {
         }
         void draw(SpriteRenderer& ren) const override {
             int f = frame_count(Sprite::EXPLOSION) - m_ttl / 3 - 1;
-            ren.reset_color();
+            ren.set_color();
             ren.draw(frame(Sprite::EXPLOSION, f), m_pos);
         }
     private:

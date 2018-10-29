@@ -66,4 +66,6 @@ private:
     std::vector<std::unique_ptr<Bullet>>   m_bullets;
 
     std::vector<std::unique_ptr<Particle>> m_particles;
+
+    gfx::Shader*                           m_flash_shader;
 };

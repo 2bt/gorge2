@@ -26,7 +26,7 @@ public:
     void push_state();
     void pop_state();
 
-    void reset_color() { set_color({ 255, 255, 255, 255 }); }
+    void set_color() { set_color({ 255, 255, 255, 255 }); }
     void set_color(glm::u8vec3 const& c) { set_color(Color(c, 255)); }
     void set_color(Color const& c);
     void set_blendmode(BlendMode b);

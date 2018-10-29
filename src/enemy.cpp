@@ -24,6 +24,17 @@ namespace {
 }
 
 
+void Enemy::hit(int damage) {
+    m_flash = 5;
+    m_shield -= damage;
+    if (m_shield <= 0) {
+        m_alive = false;
+        m_world.get_player().inc_score(m_score);
+    }
+}
+bool Enemy::can_see_player() const {
+    return !m_world.get_wall().check_sight(m_pos, m_world.get_player().get_pos());
+}
 bool Enemy::update() {
     if (!m_alive) {
         die();
@@ -32,25 +43,13 @@ bool Enemy::update() {
     }
 
     ++m_tick;
+    if (m_flash > 0) --m_flash;
 
     sub_update();
     return true;
 }
-
-void Enemy::hit(int damage) {
-    m_flash = 3;
-    m_shield -= damage;
-    if (m_shield <= 0) {
-        m_alive = false;
-        m_world.get_player().inc_score(m_score);
-    }
-}
-
-bool Enemy::can_see_player() const {
-    return !m_world.get_wall().check_sight(m_pos, m_world.get_player().get_pos());
-}
-
 void Enemy::draw(SpriteRenderer& ren) const {
+    ren.set_color({255, 255, 255, m_flash > 0 ? 127 : 255});
     ren.draw(frame(m_sprite, m_tick / m_frame_length % frame_count(m_sprite)), m_pos);
 
     // DEBUG

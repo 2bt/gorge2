@@ -242,7 +242,7 @@ void Wall::draw(SpriteRenderer& ren) {
 
     }
 
-    ren.reset_color();
+    ren.set_color();
 }
 
 
