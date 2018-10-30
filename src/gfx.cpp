@@ -13,29 +13,29 @@ namespace {
 
 
 constexpr uint32_t map_to_gl(ComponentType t) {
-    const uint32_t lut[] = {
+    constexpr uint32_t lut[] = {
         GL_BYTE, GL_UNSIGNED_BYTE, GL_SHORT, GL_UNSIGNED_SHORT,
         GL_INT, GL_UNSIGNED_INT, GL_FLOAT, GL_HALF_FLOAT,
     };
     return lut[static_cast<int>(t)];
 }
 constexpr uint32_t map_to_gl(BufferHint h) {
-    const uint32_t lut[] = { GL_STREAM_DRAW, GL_DYNAMIC_DRAW, GL_STATIC_DRAW };
+    constexpr uint32_t lut[] = { GL_STREAM_DRAW, GL_DYNAMIC_DRAW, GL_STATIC_DRAW };
     return lut[static_cast<int>(h)];
 }
 constexpr uint32_t map_to_gl(DepthTestFunc dtf) {
-    const uint32_t lut[] = { GL_NEVER, GL_LESS, GL_EQUAL, GL_LEQUAL, };
+    constexpr uint32_t lut[] = { GL_NEVER, GL_LESS, GL_EQUAL, GL_LEQUAL, };
     return lut[static_cast<int>(dtf)];
 }
 constexpr uint32_t map_to_gl(PrimitiveType pt) {
-    const uint32_t lut[] = {
+    constexpr uint32_t lut[] = {
         GL_POINTS, GL_LINE_STRIP, GL_LINE_LOOP, GL_LINES,
         GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_TRIANGLES
     };
     return lut[static_cast<int>(pt)];
 }
 constexpr uint32_t map_to_gl(BlendFunc bf) {
-    const uint32_t lut[] = {
+    constexpr uint32_t lut[] = {
         GL_ZERO, GL_ONE, GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR, GL_DST_COLOR, GL_ONE_MINUS_DST_COLOR,
         GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA,
         GL_CONSTANT_COLOR, GL_ONE_MINUS_CONSTANT_COLOR,
@@ -45,15 +45,15 @@ constexpr uint32_t map_to_gl(BlendFunc bf) {
     return lut[static_cast<int>(bf)];
 }
 constexpr uint32_t map_to_gl(BlendEquation be) {
-    const uint32_t lut[] = { GL_FUNC_ADD, GL_FUNC_SUBTRACT, GL_FUNC_REVERSE_SUBTRACT };
+    constexpr uint32_t lut[] = { GL_FUNC_ADD, GL_FUNC_SUBTRACT, GL_FUNC_REVERSE_SUBTRACT };
     return lut[static_cast<int>(be)];
 }
 constexpr uint32_t map_to_gl(CullFace cf) {
-    const uint32_t lut[] = { GL_FRONT, GL_BACK, GL_FRONT_AND_BACK };
+    constexpr uint32_t lut[] = { GL_FRONT, GL_BACK, GL_FRONT_AND_BACK };
     return lut[static_cast<int>(cf)];
 }
 constexpr uint32_t map_to_gl(TextureFormat tf) {
-    const uint32_t lut[] = { GL_RED, GL_RGB, GL_RGBA, GL_DEPTH_COMPONENT, GL_STENCIL_INDEX, GL_DEPTH_STENCIL };
+    constexpr uint32_t lut[] = { GL_RED, GL_RGB, GL_RGBA, GL_DEPTH_COMPONENT, GL_STENCIL_INDEX, GL_DEPTH_STENCIL };
     return lut[static_cast<int>(tf)];
 }
 
