@@ -91,7 +91,7 @@ bool Bullet::update() {
         if (player.is_alive()) {
 
             // collision with player
-            if (!!player.is_invincible()) {
+            if (!player.is_invincible()) {
                 CollisionInfo info = polygon_collision(m_polygon, player.get_polygon());
                 if (info.distance > 0) {
                     player.hit();

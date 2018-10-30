@@ -116,9 +116,10 @@ void SpriteRenderer::draw(vec2 const& pos) {
 }
 
 void SpriteRenderer::draw(Rect const& quad, vec2 const& pos) {
-
     vec2 const& s = quad.size;
     Color       c = state().color;
+
+    if (s.x == 0 || s.y == 0) return;
 
     Vert vs[] = {
         Vert(transform() * glm::vec3(pos + s * vec2(-0.5, -0.5), 1), quad.pos + vec2(  0,   0), c),
