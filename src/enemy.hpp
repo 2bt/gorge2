@@ -9,7 +9,7 @@ class World;
 
 class Enemy {
 public:
-    Enemy(World& world, uint32_t seed) : m_world(world) {
+    Enemy(World& world, uint32_t seed, vec2 const& pos) : m_world(world), m_pos(pos) {
         m_random.seed(seed);
     }
     virtual ~Enemy() {}
@@ -38,11 +38,11 @@ protected:
 
     // set these in subclass
     vec2              m_pos;
+    int               m_shield;
+
+    int               m_score;
     Sprite            m_sprite;
     int               m_frame_length = 4;
-    int               m_shield;
-    int               m_score;
-
 };
 
 

@@ -39,8 +39,7 @@ namespace {
 
 }
 
-SquareEnemy::SquareEnemy(World& world, uint32_t seed, vec2 const& pos) : Enemy(world, seed) {
-    m_pos    = pos;
+SquareEnemy::SquareEnemy(World& world, uint32_t seed, vec2 const& pos) : Enemy(world, seed, pos) {
     m_sprite = Sprite::SQUARE;
     m_shield = 4;
     m_score  = 350;

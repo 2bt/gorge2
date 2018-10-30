@@ -1,5 +1,5 @@
 #pragma once
-#include <glm/glm.hpp>
+#include "sprite_renderer.hpp"
 #include "random.hpp"
 
 
@@ -34,3 +34,7 @@ template<class T1, class T2>
 CollisionInfo polygon_collision(T1 const& poly1, T2 const& poly2) {
     return polygon_collision(poly1.data(), poly1.size(), poly2.data(), poly2.size());
 }
+
+
+void print(SpriteRenderer &ren, char const* str);
+void shadow_print(SpriteRenderer &ren, char const* str);

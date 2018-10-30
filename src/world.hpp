@@ -5,6 +5,7 @@
 #include "player.hpp"
 #include "particle.hpp"
 #include "enemy.hpp"
+#include "item.hpp"
 #include <memory>
 
 
@@ -61,11 +62,10 @@ private:
 
     Player                                 m_player{*this};
     std::vector<std::unique_ptr<Enemy>>    m_enemies;
-
     std::vector<std::unique_ptr<Laser>>    m_lasers;
     std::vector<std::unique_ptr<Bullet>>   m_bullets;
-
     std::vector<std::unique_ptr<Particle>> m_particles;
+    std::vector<std::unique_ptr<Item>>     m_items;
 
     gfx::Shader*                           m_flash_shader;
 };

@@ -99,6 +99,7 @@ void World::update() {
     update_all(m_lasers);
     update_all(m_bullets);
     update_all(m_particles);
+    update_all(m_items);
 }
 
 
@@ -107,23 +108,35 @@ void World::draw(SpriteRenderer& ren) {
     m_bump.draw_begin(ren);
     {
         m_background.draw(ren);
+        for (auto& p : m_particles) {
+            if (p->get_layer() == Particle::BACK) p->draw(ren);
+        }
+        for (auto& i : m_items) i->draw(ren);
         m_player.draw(ren);
 
+        // use special shader for enemies
         ren.set_shader(m_flash_shader);
         for (auto& e : m_enemies) e->draw(ren);
         ren.set_shader();
 
         for (auto& l : m_lasers) l->draw(ren);
         for (auto& b : m_bullets) b->draw(ren);
-        for (auto& p : m_particles) {
-            if (p->get_layer() == Particle::BACK) p->draw(ren);
-        }
         m_wall.draw(ren);
     }
     m_bump.draw_end(ren);
 
-
     for (auto& p : m_particles) {
         if (p->get_layer() == Particle::FRONT) p->draw(ren);
     }
+
+
+    // HUD
+    char str[32];
+    sprintf(str, "%07d", m_player.get_score());
+    ren.push();
+    float w = fx::screen_width() / (float) fx::screen_height() * 75;
+    ren.translate({ w - 5 * 8, -71});
+    shadow_print(ren, str);
+    ren.pop();
+
 }

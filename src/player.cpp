@@ -220,6 +220,7 @@ void Player::update(fx::Input const& input) {
 void Player::draw(SpriteRenderer& ren) const {
     if (!m_alive) return;
 
+    ren.set_color();
     m_balls[0].draw(ren);
     m_balls[1].draw(ren);
 

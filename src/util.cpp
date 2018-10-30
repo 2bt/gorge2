@@ -1,4 +1,5 @@
 #include "util.hpp"
+#include "sprite.hpp"
 #include <limits>
 
 
@@ -53,3 +54,24 @@ CollisionInfo polygon_collision(vec2 const* poly1, int len1, vec2 const* poly2, 
     return info;
 }
 
+
+void print(SpriteRenderer& ren, char const* str) {
+    int count = frame_count(Sprite::FONT);
+    while (char c = *str++) {
+        if (c < 0 || c >= count) continue;
+        ren.draw(frame(Sprite::FONT, c));
+        ren.translate({6, 0});
+    }
+}
+
+void shadow_print(SpriteRenderer& ren, char const* str) {
+    ren.push();
+    ren.translate({0, 1});
+    ren.set_color({32, 32, 32, 127});
+    print(ren, str);
+    ren.pop();
+    ren.push();
+    ren.set_color();
+    print(ren, str);
+    ren.pop();
+}
