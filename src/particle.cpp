@@ -61,8 +61,6 @@ namespace {
             ren.set_color();
             ren.draw(frame(Sprite::EXPLOSION, f), m_pos);
         }
-    private:
-        Color m_color;
     };
 
 

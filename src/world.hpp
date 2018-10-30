@@ -32,6 +32,7 @@ public:
     void spawn_bullet(vec2 const& pos, vec2 const& vel, Bullet::Desc const& desc);
     void spawn_particle(std::unique_ptr<Particle> p);
     void spawn_enemy(std::unique_ptr<Enemy> e);
+    void spawn_item(std::unique_ptr<Item> i);
 
     template<class T, typename... Args>
     T* spawn_particle(Args&&... args) {
@@ -49,6 +50,14 @@ public:
             std::forward<Args>(args)...);
         auto raw = unique.get();
         spawn_enemy(std::move(unique));
+        return raw;
+    }
+
+    template<class T, typename... Args>
+    T* spawn_item(Args&&... args) {
+        auto unique = std::make_unique<T>(*this, std::forward<Args>(args)...);
+        auto raw = unique.get();
+        spawn_item(std::move(unique));
         return raw;
     }
 

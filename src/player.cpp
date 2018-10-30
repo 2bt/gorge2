@@ -67,6 +67,7 @@ void Ball::reset() {
     m_alive = false;
 }
 void Ball::activate(vec2 const& player_pos, int player_tick) {
+    if (m_alive) return;
     m_alive = true;
     m_pos   = player_pos;
     m_tick  = player_tick;
@@ -136,11 +137,12 @@ void Player::reset() {
 
     m_balls[0].reset();
     m_balls[1].reset();
+}
 
+void Player::activate_balls() {
     m_balls[0].activate(m_pos, m_tick);
     m_balls[1].activate(m_pos, m_tick);
 }
-
 
 void Player::hit(CollisionInfo const& info) {
     // blast
@@ -162,7 +164,6 @@ void Player::hit(CollisionInfo const& info) {
         }
     }
 }
-
 
 void Player::update(fx::Input const& input) {
     if (!m_alive) return;

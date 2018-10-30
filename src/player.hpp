@@ -46,6 +46,8 @@ public:
     void update(fx::Input const& input);
     void draw(SpriteRenderer& ren) const;
 
+    void activate_balls();
+
     bool is_alive() const { return m_alive; }
     bool is_invincible() const { return m_invincible_delay > 0; }
     vec2 const& get_pos() const { return m_pos; }

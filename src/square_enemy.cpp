@@ -50,6 +50,10 @@ SquareEnemy::SquareEnemy(World& world, uint32_t seed, vec2 const& pos) : Enemy(w
     m_polygon.resize(SQUARE_ENEMY_POLYGON.size());
 }
 
+void SquareEnemy::die() {
+    m_world.spawn_item<BallItem>(m_pos);
+}
+
 void SquareEnemy::sub_update() {
 
     m_pos += m_vel;

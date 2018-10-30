@@ -64,13 +64,14 @@ void World::spawn_laser(std::unique_ptr<Laser> l) {
 void World::spawn_bullet(vec2 const& pos, vec2 const& vel, Bullet::Desc const& desc) {
     m_bullets.push_back(std::make_unique<Bullet>(*this, pos, vel, desc));
 }
-
 void World::spawn_particle(std::unique_ptr<Particle> p) {
     m_particles.push_back(std::move(p));
 }
-
 void World::spawn_enemy(std::unique_ptr<Enemy> e) {
     m_enemies.push_back(std::move(e));
+}
+void World::spawn_item(std::unique_ptr<Item> i) {
+    m_items.push_back(std::move(i));
 }
 
 
