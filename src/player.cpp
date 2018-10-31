@@ -128,12 +128,13 @@ void Player::reset() {
     m_blast_delay      = 0;
     m_shoot_delay      = 0;
     m_side_shot        = false;
+    m_invincible_delay = 0;
 
     m_shoot_period     = 10; // 10
     m_alive            = true;
     m_shield           = 3;
-    m_invincible_delay = 0;
     m_score            = 0;
+    m_energy           = 0;
 
     m_balls[0].reset();
     m_balls[1].reset();

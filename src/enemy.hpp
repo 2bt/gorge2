@@ -40,6 +40,7 @@ protected:
     vec2              m_pos;
     int               m_shield;
 
+    int               m_energy = 0;
     int               m_score;
     Sprite            m_sprite;
     int               m_frame_length = 4;

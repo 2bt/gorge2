@@ -132,15 +132,9 @@ void World::draw(SpriteRenderer& ren) {
 
 
     // HUD
-    char str[32];
-    sprintf(str, "%07d", m_player.get_score());
-    ren.push();
     float w = fx::screen_width() / (float) fx::screen_height() * 75;
-    ren.translate({w - 5 * 8, -71});
-    shadow_print(ren, str);
-    ren.pop();
-
     // hearts
+    ren.set_color();
     for (int i = 0; i < Player::MAX_SHIELD; ++i) {
         int f = 1;
         if (i <= m_player.get_shield() - 1 ) {
@@ -149,4 +143,24 @@ void World::draw(SpriteRenderer& ren) {
         }
         ren.draw(frame(Sprite::HEALTH, f), {-w + 6 + i * 8 , -70});
     }
+    // score
+    char str[32];
+    sprintf(str, "%07d", m_player.get_score());
+    ren.push();
+    ren.translate({w - 5 * 8, -71});
+    shadow_print(ren, str);
+    ren.pop();
+
+    // energy
+    ren.set_color({60, 60, 60, 100});
+    rectangle(ren, {-15, -73}, {15, -72});
+    ren.set_color({0, 200, 200});
+//    if (m_player.is_field_active()) {
+    if (false) {
+        if (m_tick % 8 < 4) ren.set_color({0, 127, 127});
+    }
+    else if (m_player.get_energy() == Player::MAX_ENERGY) {
+        if (m_tick % 8 < 4) ren.set_color();
+    }
+    rectangle(ren, {-15, -73}, {-15 + m_player.get_energy(), -72});
 }

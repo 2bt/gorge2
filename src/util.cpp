@@ -75,3 +75,13 @@ void shadow_print(SpriteRenderer& ren, char const* str) {
     print(ren, str);
     ren.pop();
 }
+
+void rectangle(SpriteRenderer& ren, vec2 const& min, vec2 const& max) {
+    vec2 pos = (min + max) * 0.5f;
+    vec2 size = max - min;
+    ren.push();
+    ren.translate(pos);
+    ren.scale(size / 8.0f);
+    ren.draw(frame(Sprite::WALLS));
+    ren.pop();
+}

@@ -25,22 +25,22 @@ namespace {
 
 
 void Enemy::hit(int damage) {
+    assert(m_alive);
     m_flash = 5;
     m_shield -= damage;
     if (m_shield <= 0) {
         m_alive = false;
+        make_explosion(m_world, m_pos);
+        make_energy_items(m_world, m_random, m_pos, m_energy);
         m_world.get_player().inc_score(m_score);
+        die();
     }
 }
 bool Enemy::can_see_player() const {
     return !m_world.get_wall().check_sight(m_pos, m_world.get_player().get_pos());
 }
 bool Enemy::update() {
-    if (!m_alive) {
-        die();
-        make_explosion(m_world, m_pos);
-        return false;
-    }
+    if (!m_alive) return false;
 
     ++m_tick;
     if (m_flash > 0) --m_flash;

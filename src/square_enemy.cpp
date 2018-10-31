@@ -43,6 +43,7 @@ SquareEnemy::SquareEnemy(World& world, uint32_t seed, vec2 const& pos) : Enemy(w
     m_sprite = Sprite::SQUARE;
     m_shield = 4;
     m_score  = 350;
+    m_energy = 2;
     m_tick  = m_random.get_int(0, 100);
     m_delay = m_random.get_int(30, 300);
     m_vel   = {m_random.get_float(-5, 5), 1};
@@ -51,7 +52,6 @@ SquareEnemy::SquareEnemy(World& world, uint32_t seed, vec2 const& pos) : Enemy(w
 }
 
 void SquareEnemy::die() {
-    make_energy_items(m_world, m_random, m_pos, 3);
 //    m_world.spawn_item<BallItem>(m_pos);
 }
 

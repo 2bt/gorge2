@@ -38,3 +38,4 @@ CollisionInfo polygon_collision(T1 const& poly1, T2 const& poly2) {
 
 void print(SpriteRenderer &ren, char const* str);
 void shadow_print(SpriteRenderer &ren, char const* str);
+void rectangle(SpriteRenderer& ren, vec2 const& min, vec2 const& max);
