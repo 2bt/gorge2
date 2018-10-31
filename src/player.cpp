@@ -129,7 +129,7 @@ void Player::reset() {
     m_shoot_delay      = 0;
     m_side_shot        = false;
 
-    m_shoot_period     = 15; // 10
+    m_shoot_period     = 10; // 10
     m_alive            = true;
     m_shield           = 3;
     m_invincible_delay = 0;

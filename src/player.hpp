@@ -57,6 +57,7 @@ public:
     std::array<Ball, 2>& get_balls() { return m_balls; }
 
     void inc_score(int points) { m_score += points; }
+    void inc_energy() { m_energy = std::min<int>(MAX_ENERGY, m_energy + 1); }
     void hit(CollisionInfo const& info = {});
 
     enum {

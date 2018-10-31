@@ -51,7 +51,8 @@ SquareEnemy::SquareEnemy(World& world, uint32_t seed, vec2 const& pos) : Enemy(w
 }
 
 void SquareEnemy::die() {
-    m_world.spawn_item<BallItem>(m_pos);
+    make_energy_items(m_world, m_random, m_pos, 3);
+//    m_world.spawn_item<BallItem>(m_pos);
 }
 
 void SquareEnemy::sub_update() {

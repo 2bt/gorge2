@@ -20,7 +20,7 @@ namespace {
             m_ttl      = rnd.get_int(18, 26);
         }
         void draw(SpriteRenderer& ren) const override {
-            int f = std::max<int>(0, frame_count(Sprite::SMOKE) - 1 - std::floor(m_ttl * 0.33));
+            int f = std::max<int>(0, frame_count(Sprite::SMOKE) - m_ttl / 3 - 1);
             ren.set_color({30, 30, 30, 150});
             ren.draw(frame(Sprite::SMOKE, f), m_pos);
         }
@@ -47,22 +47,50 @@ namespace {
         Color m_color;
     };
 
-    class ExplosionParticle : public Particle {
+
+    class AnimationParticle : public Particle {
     public:
-        ExplosionParticle(vec2 const& pos) {
+        AnimationParticle(Sprite sprite, int frame_length = 3)
+            : m_sprite(sprite)
+            , m_frame_length(frame_length)
+        {
+            m_ttl = frame_count(m_sprite) * m_frame_length ;
+        }
+        void draw(SpriteRenderer& ren) const override {
+            int f = std::max(0, frame_count(m_sprite) - m_ttl / m_frame_length - 1);
+            ren.set_color();
+            ren.draw(frame(m_sprite, f), m_pos);
+        }
+    private:
+        const Sprite m_sprite;
+        const int    m_frame_length;
+    };
+
+
+    class ExplosionParticle : public AnimationParticle {
+    public:
+        ExplosionParticle(vec2 const& pos)
+            : AnimationParticle(Sprite::EXPLOSION)
+        {
             m_layer    = FRONT;
             m_pos      = pos;
             m_friction = 1.0;
             m_vel      = {0, 0.25}; // XXX: move with walls
-            m_ttl      = frame_count(Sprite::EXPLOSION) * 3;
-        }
-        void draw(SpriteRenderer& ren) const override {
-            int f = frame_count(Sprite::EXPLOSION) - m_ttl / 3 - 1;
-            ren.set_color();
-            ren.draw(frame(Sprite::EXPLOSION, f), m_pos);
         }
     };
 
+    class SparkleParticle : public AnimationParticle {
+    public:
+        SparkleParticle(vec2 const& pos)
+            : AnimationParticle(Sprite::SPARKLE)
+        {
+            m_layer    = FRONT;
+            m_pos      = pos;
+            m_friction = 1.0;
+            m_vel      = {0, 0.25}; // XXX: move with walls
+        }
+        int& ttl() { return m_ttl; }
+    };
 
 }
 
@@ -91,5 +119,20 @@ void make_small_explosion(World& world, vec2 const& pos, bool smoke) {
             rnd.get_float(-0.5, 0.5)
         };
         world.spawn_particle<SparkParticle>(pos + p);
+    }
+}
+
+void make_sparkle(World& world, vec2 const& pos) {
+    world.spawn_particle<SparkleParticle>(pos);
+}
+
+void make_sparkles(World& world, vec2 const& pos) {
+    float ang = rnd.get_float(0, 2 * M_PI);
+    for (int i = 0; i < 3; ++i) {
+
+        auto p = world.spawn_particle<SparkleParticle>(pos + vec2(std::sin(ang), std::cos(ang)) * 3.0f);
+        p->ttl() -= i * 5;
+
+        ang += M_PI * 2 / 3;
     }
 }
