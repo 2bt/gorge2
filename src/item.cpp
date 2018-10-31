@@ -22,10 +22,10 @@ namespace {
     };
 
     constexpr std::array<vec2, 4> ENERGY_ITEM_POLYGON = {
-        vec2{2, 2},
-        vec2{2, -2},
-        vec2{-2, -2},
-        vec2{-2, 2},
+        vec2{1, 1},
+        vec2{1, -1},
+        vec2{-1, -1},
+        vec2{-1, 1},
     };
 }
 

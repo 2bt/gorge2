@@ -136,8 +136,17 @@ void World::draw(SpriteRenderer& ren) {
     sprintf(str, "%07d", m_player.get_score());
     ren.push();
     float w = fx::screen_width() / (float) fx::screen_height() * 75;
-    ren.translate({ w - 5 * 8, -71});
+    ren.translate({w - 5 * 8, -71});
     shadow_print(ren, str);
     ren.pop();
 
+    // hearts
+    for (int i = 0; i < Player::MAX_SHIELD; ++i) {
+        int f = 1;
+        if (i <= m_player.get_shield() - 1 ) {
+            if (m_player.get_shield() == 1) f = m_tick % 16 < 8;
+            else f = 0;
+        }
+        ren.draw(frame(Sprite::HEALTH, f), {-w + 6 + i * 8 , -70});
+    }
 }
