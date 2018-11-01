@@ -101,7 +101,7 @@ int run(App& app) {
         s_input.x = !!ks[SDL_SCANCODE_RIGHT] - !!ks[SDL_SCANCODE_LEFT];
         s_input.y = !!ks[SDL_SCANCODE_DOWN] - !!ks[SDL_SCANCODE_UP];
         s_input.a = !!ks[SDL_SCANCODE_X];
-        s_input.b = !!ks[SDL_SCANCODE_C];
+        s_input.b = !!ks[SDL_SCANCODE_Y] | !!ks[SDL_SCANCODE_Z];
 
         app.update();
 

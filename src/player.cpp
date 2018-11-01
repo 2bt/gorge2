@@ -1,5 +1,6 @@
 #include "player.hpp"
 #include "world.hpp"
+//#include "debug_renderer.hpp"
 
 
 namespace {
@@ -9,6 +10,16 @@ namespace {
         vec2{2.5, -2.5},
         vec2{-2.5, -2.5},
         vec2{ -2.5, 2.5},
+    };
+    constexpr std::array<vec2, 8> BALL_FIELD_POLYGON = {
+        vec2{2, 4},
+        vec2{4, 2},
+        vec2{4, -2},
+        vec2{2, -4},
+        vec2{-2, -4},
+        vec2{-4, -2},
+        vec2{-4, 2},
+        vec2{-2, 4}
     };
 
     constexpr std::array<vec2, 6> PLAYER_POLYGON = {
@@ -66,11 +77,10 @@ Ball::Ball(World& world, int dir)
 void Ball::reset() {
     m_alive = false;
 }
-void Ball::activate(vec2 const& player_pos, int player_tick) {
+void Ball::activate() {
     if (m_alive) return;
     m_alive = true;
-    m_pos   = player_pos;
-    m_tick  = player_tick;
+    m_pos   = m_world.get_player().get_pos();
     m_glide = 0;
 }
 void Ball::shoot(bool side_shot) {
@@ -86,38 +96,49 @@ void Ball::shoot(bool side_shot) {
     }
     m_world.spawn_laser(std::make_unique<Laser>(m_world, pos, vel, true));
 }
-void Ball::hit() {
+void Ball::hit(CollisionInfo const& info) {
+    if (m_world.get_player().is_field_active() && info.distance == 0) return;
     assert(m_alive);
     m_alive = false;
     make_small_explosion(m_world, m_pos, true);
 }
-void Ball::update(vec2 const& player_pos) {
+void Ball::update() {
     if (!m_alive) return;
-    ++m_tick;
     m_glide = std::min(m_glide + 0.02f, 0.3f);
-    m_pos += (player_pos + m_offset - m_pos) * m_glide;
+    m_pos += (m_world.get_player().get_pos() + m_offset - m_pos) * m_glide;
     transform(m_polygon, BALL_POLYGON, m_pos);
 
     // collision with wall
     CollisionInfo info = m_world.get_wall().check_collision(m_polygon);
-    if (info.distance > 0) hit();
+    if (info.distance > 0) hit(info);
 
     // collision with enemies
     for (auto& e : m_world.get_enemies()) {
         CollisionInfo info = polygon_collision(m_polygon, e->get_polygon());
         if (info.distance > 0) {
-            hit();
+            hit(info);
             e->hit(2);
         }
     }
 }
 void Ball::draw(SpriteRenderer& ren) const {
+    int tick = m_world.get_player().get_tick();
     if (!m_alive) return;
     ren.push();
     ren.translate(m_pos);
     ren.scale({m_dir, 1});
-    ren.draw(frame(Sprite::BALL, m_tick / 4 % frame_count(Sprite::BALL)));
+    ren.draw(frame(Sprite::BALL, tick / 4 % frame_count(Sprite::BALL)));
     ren.pop();
+}
+void Ball::draw_field(SpriteRenderer& ren) const {
+    int tick = m_world.get_player().get_tick();
+    if (!m_alive) return;
+    int f1 = tick / 4 % frame_count(Sprite::BALL_FIELD);
+    int f2 = (tick + 3) / 4 % frame_count(Sprite::BALL_FIELD);
+    ren.set_color({0, 80, 80, 60});
+    ren.draw(frame(Sprite::BALL_FIELD, f1), m_pos);
+    ren.set_color({100 + 100 * std::sin(tick / 2), 200, 200, 30});
+    ren.draw(frame(Sprite::BALL_FIELD, f2), m_pos);
 }
 
 
@@ -136,19 +157,17 @@ void Player::reset() {
     m_alive            = true;
     m_shield           = MAX_SHIELD;
     m_score            = 0;
-//    m_energy           = 0;
-    m_energy           = MAX_ENERGY;
+    m_energy           = 0;
 
     m_balls[0].reset();
     m_balls[1].reset();
-}
 
-void Player::activate_balls() {
-    m_balls[0].activate(m_pos, m_tick);
-    m_balls[1].activate(m_pos, m_tick);
+    m_balls[0].activate();
+    m_balls[1].activate();
 }
 
 void Player::hit(CollisionInfo const& info) {
+    if (m_field_active && info.distance == 0) return;
     // blast
     if (info.distance > 0) {
         m_pos += info.normal * info.distance;
@@ -203,8 +222,8 @@ void Player::update(fx::Input const& input) {
     }
 
     // update balls
-    m_balls[0].update(m_pos);
-    m_balls[1].update(m_pos);
+    m_balls[0].update();
+    m_balls[1].update();
 
     // shoot
     if (input.y > 0) m_side_shot = false;
@@ -233,6 +252,10 @@ void Player::update(fx::Input const& input) {
     else if (input.b && m_energy >= MAX_ENERGY) {
         m_field_active = true;
     }
+    if (m_field_active) {
+        transform(m_field_polygon, PLAYER_FIELD_POLYGON, m_pos);
+    }
+
     m_old_input_b = input.b;
 
 
@@ -242,6 +265,17 @@ void Player::update(fx::Input const& input) {
 
 void Player::draw(SpriteRenderer& ren) const {
     if (!m_alive) return;
+
+    if (m_field_active) {
+        m_balls[0].draw_field(ren);
+        m_balls[1].draw_field(ren);
+        int f1 = m_tick / 4 % frame_count(Sprite::FIELD);
+        int f2 = (m_tick + 3) / 4 % frame_count(Sprite::FIELD);
+        ren.set_color({0, 80, 80, 60});
+        ren.draw(frame(Sprite::FIELD, f1), m_pos);
+        ren.set_color({100 + 100 * std::sin(m_tick / 2), 200, 200, 30});
+        ren.draw(frame(Sprite::FIELD, f2), m_pos);
+    }
 
     ren.set_color();
     m_balls[0].draw(ren);
@@ -253,6 +287,7 @@ void Player::draw(SpriteRenderer& ren) const {
     // debug
 //    DB_REN.set_color(255, 0, 0);
 //    DB_REN.polygon(m_polygon);
+//    DB_REN.polygon(m_field_polygon);
 }
 
 

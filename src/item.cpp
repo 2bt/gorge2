@@ -117,5 +117,6 @@ bool BigItem::update() {
 
 
 void BallItem::collect() {
-    m_world.get_player().activate_balls();
+    m_world.get_player().get_balls()[0].activate();
+    m_world.get_player().get_balls()[1].activate();
 }

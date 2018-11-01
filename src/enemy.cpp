@@ -92,7 +92,13 @@ bool Bullet::update() {
 
             // collision with player
             if (!player.is_invincible()) {
-                CollisionInfo info = polygon_collision(m_polygon, player.get_polygon());
+                CollisionInfo info;
+                if (player.is_field_active()) {
+                    info = polygon_collision(m_polygon, player.get_field_polygon());
+                }
+                else {
+                    info = polygon_collision(m_polygon, player.get_polygon());
+                }
                 if (info.distance > 0) {
                     player.hit();
                     make_sparks(info.where);
@@ -103,7 +109,13 @@ bool Bullet::update() {
             // collision with balls
             for (Ball& b : player.get_balls()) {
                 if (!b.is_alive()) continue;
-                CollisionInfo info = polygon_collision(m_polygon, b.get_polygon());
+                CollisionInfo info;
+                if (player.is_field_active()) {
+                    info = polygon_collision(m_polygon, b.get_field_polygon());
+                }
+                else {
+                    info = polygon_collision(m_polygon, b.get_polygon());
+                }
                 if (info.distance > 0) {
                     b.hit();
                     make_sparks(info.where);
