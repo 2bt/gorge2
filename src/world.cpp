@@ -155,8 +155,7 @@ void World::draw(SpriteRenderer& ren) {
     ren.set_color({60, 60, 60, 100});
     rectangle(ren, {-15, -73}, {15, -72});
     ren.set_color({0, 200, 200});
-//    if (m_player.is_field_active()) {
-    if (false) {
+    if (m_player.is_field_active()) {
         if (m_tick % 8 < 4) ren.set_color({0, 127, 127});
     }
     else if (m_player.get_energy() == Player::MAX_ENERGY) {

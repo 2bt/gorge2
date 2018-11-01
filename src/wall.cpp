@@ -131,7 +131,7 @@ void Wall::generate() {
                 }
             }
         }
-        else if (x == 0) {
+        else if (s == 0) {
             int t = (x > 0     ? m_gen_data[1][x - 1] : 1)
                   + (x < W - 1 ? m_gen_data[1][x + 1] : 1)
                   + (x > 0     ? m_gen_data[3][x - 1] : 1)

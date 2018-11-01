@@ -129,12 +129,15 @@ void Player::reset() {
     m_shoot_delay      = 0;
     m_side_shot        = false;
     m_invincible_delay = 0;
+    m_field_active     = false;
+    m_old_input_b      = false;
 
-    m_shoot_period     = 10; // 10
+    m_shoot_period     = 10;
     m_alive            = true;
-    m_shield           = 3;
+    m_shield           = MAX_SHIELD;
     m_score            = 0;
-    m_energy           = 0;
+//    m_energy           = 0;
+    m_energy           = MAX_ENERGY;
 
     m_balls[0].reset();
     m_balls[1].reset();
@@ -213,6 +216,24 @@ void Player::update(fx::Input const& input) {
         m_balls[0].shoot(m_side_shot);
         m_balls[1].shoot(m_side_shot);
     }
+
+    // field
+    if (m_field_active) {
+        m_energy -= 0.075;
+        if (m_energy < 0) {
+            m_energy = 0;
+            m_field_active = false;
+        }
+        if (input.b && !m_old_input_b) {
+            // BLAST
+            m_energy = 0;
+            m_field_active = false;
+        }
+    }
+    else if (input.b && m_energy >= MAX_ENERGY) {
+        m_field_active = true;
+    }
+    m_old_input_b = input.b;
 
 
     if (m_invincible_delay > 0) --m_invincible_delay;

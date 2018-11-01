@@ -50,10 +50,11 @@ public:
 
     bool is_alive() const { return m_alive; }
     bool is_invincible() const { return m_invincible_delay > 0; }
+    bool is_field_active() const { return m_field_active; }
     vec2 const& get_pos() const { return m_pos; }
     int get_score() const { return m_score; }
     int get_shield() const { return m_shield; }
-    int get_energy() const { return m_energy; }
+    float get_energy() const { return m_energy; }
     std::array<vec2, 6> const& get_polygon() const { return m_polygon; }
     std::array<Ball, 2>& get_balls() { return m_balls; }
 
@@ -79,10 +80,11 @@ private:
 
     int                 m_score;
     int                 m_shield;
-    int                 m_energy;
+    float               m_energy;
     bool                m_field_active;
     int                 m_speed_boost;
     int                 m_invincible_delay;
+    bool                m_old_input_b;
 
     int                 m_shoot_delay;
     bool                m_side_shot;
