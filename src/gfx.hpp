@@ -109,17 +109,18 @@ struct VertexArray {
 };
 
 
-//enum class WrapMode { Clamp, Repeat, ClampZero, MirrowedRepeat };
+enum class WrapMode { Clamp, Repeat, MirrowedRepeat };
 
 enum class FilterMode { Nearest, Linear, Trilinear };
 
 enum class TextureFormat { Red, RGB, RGBA, Depth, Stencil, DepthStencil };
 
 struct Texture2D {
-    static Texture2D* create(SDL_Surface* s, FilterMode filter = FilterMode::Nearest);
-    static Texture2D* create(const char* filename, FilterMode filter = FilterMode::Nearest);
-    static Texture2D* create(TextureFormat format, int w, int h, void* data = nullptr,
-                             FilterMode filter = FilterMode::Nearest);
+    static Texture2D* create(SDL_Surface* s, FilterMode filter = FilterMode::Nearest, WrapMode wrap = WrapMode::Clamp);
+    static Texture2D* create(const char* filename, FilterMode filter = FilterMode::Nearest,
+                             WrapMode wrap = WrapMode::Clamp);
+    static Texture2D* create(TextureFormat format, int w, int h, void const* data = nullptr,
+                             FilterMode filter = FilterMode::Nearest, WrapMode wrap = WrapMode::Clamp);
 
     virtual ~Texture2D() {}
     virtual int get_width() const = 0;

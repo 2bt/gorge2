@@ -71,6 +71,93 @@ namespace {
 }
 
 
+void ShockWave::init() {
+    m_shader = gfx::Shader::create(R"(
+        #version 100
+        attribute vec2 in_pos;
+        attribute vec2 in_tex_coord;
+        attribute vec4 in_color;
+        void main() {
+            gl_Position = vec4(in_pos.x, -in_pos.y, 0.0, 1.0);
+        })", R"(
+        #version 100
+        precision mediump float;
+        uniform sampler2D table;
+        uniform float r1;
+        uniform float r2;
+        void main() {
+            float d = distance(gl_FragCoord.xy, vec2(40.0, 40.0));
+            if (d > r1) gl_FragColor = vec4(0.0);
+            else if (d < r2) gl_FragColor = texture2D(table, vec2((r2 - d) * 0.1 , 0.0));
+            else if (d < r1 - 1.0) gl_FragColor = vec4(0.0, 1.0, 1.0, 0.6);
+            else gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+        })");
+    m_canvas = gfx::Texture2D::create(gfx::TextureFormat::RGBA, 80, 80);
+    static const std::array<Color, 7> buf = {
+        Color(0, 0, 0, 0),
+        Color(0, 255, 255, 150),
+        Color(0, 255, 255, 150),
+        Color(0, 0, 0, 0),
+        Color(0, 0, 0, 0),
+        Color(0, 255, 255, 150),
+        Color(0, 0, 0, 0),
+    };
+    m_table = gfx::Texture2D::create(gfx::TextureFormat::RGBA, buf.size(), 1, (void const*) buf.data());
+    m_shader->set_uniform("table", m_table);
+    m_framebuffer = gfx::Framebuffer::create();
+    m_framebuffer->attach_color(m_canvas);
+}
+void ShockWave::free() {
+    delete m_shader;
+    delete m_framebuffer;
+    delete m_canvas;
+    delete m_table;
+}
+void ShockWave::reset() {
+    m_alive = false;
+}
+void ShockWave::activate(vec2 const& pos) {
+    m_alive  = true;
+    m_pos    = pos;
+    m_level  = 0;
+    m_radius = 0;
+    update();
+}
+void ShockWave::update() {
+    if (!m_alive) return;
+
+    m_pos.y += 0.25; // XXX
+
+    m_level += 0.025;
+    if (m_level > 1.25) m_alive = false;
+
+    m_radius = (1 - std::pow(2, (m_level * -4))) * 40;
+
+    m_shader->set_uniform("r1", m_radius);
+    float r2 = (1 - std::pow(2, (m_level * -1.8))) * 60;
+    m_shader->set_uniform("r2", r2);
+}
+void ShockWave::draw(SpriteRenderer& ren) const {
+    if (!m_alive) return;
+
+    ren.push();
+    ren.push_state();
+    ren.origin();
+    ren.set_shader(m_shader);
+    ren.set_framebuffer(m_framebuffer);
+    ren.clear({});
+    ren.draw({{}, {2, 2}});
+    ren.pop();
+    ren.pop_state();
+
+    ren.push_state();
+    ren.set_texture(m_canvas);
+    ren.set_color();
+    ren.draw(m_pos);
+    ren.pop_state();
+}
+
+
 Ball::Ball(World& world, int dir)
     : m_world(world), m_dir(dir), m_offset(7 * m_dir, 2)
 {}
@@ -157,7 +244,7 @@ void Player::reset() {
     m_alive            = true;
     m_shield           = MAX_SHIELD;
     m_score            = 0;
-    m_energy           = 0;
+    m_energy           = MAX_ENERGY;
 
     m_balls[0].reset();
     m_balls[1].reset();
@@ -247,6 +334,7 @@ void Player::update(fx::Input const& input) {
             // BLAST
             m_energy = 0;
             m_field_active = false;
+            m_world.get_shock_wave().activate(m_pos);
         }
     }
     else if (input.b && m_energy >= MAX_ENERGY) {

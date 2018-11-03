@@ -19,8 +19,8 @@ void Background::init() {
     rand.seed(42);
     std::vector<uint8_t> buf(size * size * 4);
     for (uint8_t& b : buf) b = rand.get_int(0, 255);
-    m_noise_tex = gfx::Texture2D::create(gfx::TextureFormat::RGBA,
-        size, size, (void*) buf.data(), gfx::FilterMode::Linear);
+    m_noise_tex = gfx::Texture2D::create(gfx::TextureFormat::RGBA, size, size, (void*)buf.data(),
+                                         gfx::FilterMode::Linear, gfx::WrapMode::Repeat);
 
     m_cloud_shader = gfx::Shader::create(R"(
         #version 100
@@ -50,11 +50,9 @@ void Background::init() {
             gl_FragColor = vec4(c, 1.0);
         })");
 
-
     m_canvas = gfx::Texture2D::create(gfx::TextureFormat::RGB, 267, 151);
     m_framebuffer = gfx::Framebuffer::create();
     m_framebuffer->attach_color(m_canvas);
-
 }
 
 void Background::free() {
@@ -88,7 +86,6 @@ void Background::draw(SpriteRenderer& ren) {
     ren.set_color();
 
     if (m_tick % 10 == 0) {
-//    if (1) {
         m_cloud_shader->set_uniform("tick", float(m_tick / 10));
         ren.push();
         ren.push_state();

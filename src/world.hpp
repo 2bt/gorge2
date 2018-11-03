@@ -25,6 +25,7 @@ public:
     Wall const& get_wall() const { return m_wall; }
     Player& get_player() { return m_player; }
     Player const& get_player() const { return m_player; }
+    ShockWave& get_shock_wave() { return m_shock_wave; }
     std::vector<std::unique_ptr<Enemy>> const& get_enemies() const { return m_enemies; }
 
 
@@ -69,6 +70,7 @@ private:
     Wall                                   m_wall;
     int                                    m_tick;
 
+    ShockWave                              m_shock_wave;
     Player                                 m_player{*this};
     std::vector<std::unique_ptr<Enemy>>    m_enemies;
     std::vector<std::unique_ptr<Laser>>    m_lasers;

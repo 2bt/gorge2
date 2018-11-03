@@ -56,6 +56,10 @@ constexpr uint32_t map_to_gl(TextureFormat tf) {
     constexpr uint32_t lut[] = { GL_RED, GL_RGB, GL_RGBA, GL_DEPTH_COMPONENT, GL_STENCIL_INDEX, GL_DEPTH_STENCIL };
     return lut[static_cast<int>(tf)];
 }
+constexpr uint32_t map_to_gl(WrapMode wm) {
+    constexpr uint32_t lut[] = { GL_CLAMP_TO_EDGE, GL_REPEAT, GL_MIRRORED_REPEAT };
+    return lut[static_cast<int>(wm)];
+}
 
 
 // opengl functions with caching
@@ -102,7 +106,7 @@ struct GpuBuffer : T {
         glDeleteBuffers(1, &m_handle);
     }
 
-    void init_data(const void* data, int size) override {
+    void init_data(void const* data, int size) override {
         m_size = size;
         gl.bind_vertex_array(0);
         bind();
@@ -142,7 +146,7 @@ struct VertexArrayImpl : VertexArray {
         static_cast<VertexBufferImpl*>(vb)->bind();
         glEnableVertexAttribArray(i);
         glVertexAttribPointer(i, component_count, map_to_gl(component_type),
-                              normalized, stride, reinterpret_cast<void*>(offset));
+                              normalized, stride, reinterpret_cast<void const*>(offset));
     }
     void set_attribute(int i, float f) override {
         gl.bind_vertex_array(m_handle);
@@ -202,24 +206,23 @@ struct Texture2DImpl : Texture2D {
 
 
 
-    bool init(const char* filename, FilterMode filter) {
+    bool init(const char* filename, FilterMode filter, WrapMode wrap) {
         SDL_Surface* s = IMG_Load(filename);
         if (!s) return false;
-        init(s, filter);
+        init(s, filter, wrap);
         SDL_FreeSurface(s);
         return true;
     }
-    bool init(SDL_Surface* s, FilterMode filter) {
+    bool init(SDL_Surface* s, FilterMode filter, WrapMode wrap) {
         TextureFormat f = s->format->BytesPerPixel == 1 ? TextureFormat::Red
                         : s->format->BytesPerPixel == 3 ? TextureFormat::RGB
                                                         : TextureFormat::RGBA;
-        return init(f, s->w, s->h, s->pixels, filter);
+        return init(f, s->w, s->h, s->pixels, filter, wrap);
     }
-    bool init(TextureFormat format, int w, int h, void* data, FilterMode filter) {
+    bool init(TextureFormat format, int w, int h, void const* data, FilterMode filter, WrapMode wrap) {
         //printf("error %d\n", glGetError());
         m_width  = w;
         m_height = h;
-        m_format = format;
 
         gl.bind_texture(0, GL_TEXTURE_2D, m_handle);
 
@@ -234,20 +237,20 @@ struct Texture2DImpl : Texture2D {
         }
 
         // XXX: the browser is very finicky. this is the result of trial and error.
-        if (m_format == TextureFormat::Depth) {
+        if (format == TextureFormat::Depth) {
             float c[] = { 1.0f, 1.0f, 1.0f, 1.0f };
             glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, c);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16,
-                         m_width, m_height, 0, map_to_gl(m_format),
+                         m_width, m_height, 0, map_to_gl(format),
                          GL_UNSIGNED_INT, data);
         }
         else {
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-            glTexImage2D(GL_TEXTURE_2D, 0, map_to_gl(m_format),
-                         m_width, m_height, 0, map_to_gl(m_format),
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, map_to_gl(wrap));
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, map_to_gl(wrap));
+            glTexImage2D(GL_TEXTURE_2D, 0, map_to_gl(format),
+                         m_width, m_height, 0, map_to_gl(format),
                          GL_UNSIGNED_BYTE, data);
         }
 
@@ -261,7 +264,6 @@ struct Texture2DImpl : Texture2D {
 
     int           m_width;
     int           m_height;
-    TextureFormat m_format;
     uint32_t      m_handle;
 };
 
@@ -518,21 +520,21 @@ Shader* Shader::create(const char* vs, const char* fs) {
     return s;
 }
 
-Texture2D* Texture2D::create(SDL_Surface* s, FilterMode filter) {
+Texture2D* Texture2D::create(SDL_Surface* s, FilterMode filter, WrapMode wrap) {
     auto t = new Texture2DImpl;
-    if (!t->init(s, filter)) return nullptr;
+    if (!t->init(s, filter, wrap)) return nullptr;
     return t;
 }
 
-Texture2D* Texture2D::create(const char* filename, FilterMode filter) {
+Texture2D* Texture2D::create(const char* filename, FilterMode filter, WrapMode wrap) {
     auto t = new Texture2DImpl;
-    if (!t->init(filename, filter)) return nullptr;
+    if (!t->init(filename, filter, wrap)) return nullptr;
     return t;
 }
 
-Texture2D* Texture2D::create(TextureFormat format, int w, int h, void* data, FilterMode filter) {
+Texture2D* Texture2D::create(TextureFormat format, int w, int h, void const* data, FilterMode filter, WrapMode wrap) {
     auto t = new Texture2DImpl;
-    if (!t->init(format, w, h, data, filter)) return nullptr;
+    if (!t->init(format, w, h, data, filter, wrap)) return nullptr;
     return t;
 }
 
@@ -712,7 +714,7 @@ void draw(const RenderState& rs, Shader* shader, VertexArray* va, Framebuffer* f
 
     if (vai->m_indexed) {
         glDrawElements(map_to_gl(vai->m_primitive_type), vai->m_count, GL_UNSIGNED_INT,
-                       reinterpret_cast<void*>(vai->m_first));
+                       reinterpret_cast<void const*>(vai->m_first));
     }
     else {
         glDrawArrays(map_to_gl(vai->m_primitive_type), vai->m_first, vai->m_count);

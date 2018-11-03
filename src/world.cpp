@@ -6,7 +6,7 @@
 void World::init() {
     m_bump.free();
     m_background.init();
-
+    m_shock_wave.init();
     m_flash_shader = gfx::Shader::create(R"(
         #version 100
         attribute vec2 in_pos;
@@ -30,12 +30,12 @@ void World::init() {
             tc = vec4(tc.rgb * ex_color.rgb, tc.a);
             gl_FragColor = tc + vec4(vec3(1.0) - tc.rgb, 0.0) * (1.0 - ex_color.a);
         })");
-
 }
 
 void World::free() {
     m_bump.free();
     m_background.free();
+    m_shock_wave.free();
     delete m_flash_shader;
 }
 
@@ -44,13 +44,16 @@ void World::resized() {
 }
 
 void World::reset(uint32_t seed) {
+    m_tick = 0;
+
     m_random.seed(seed);
+
     m_bump.reset();
     m_background.reset(m_random.get_int(0, 0x7fffffff));
     m_wall.reset(m_random.get_int(0, 0x7fffffff));
-    m_player.reset();
-    m_tick = 0;
 
+    m_shock_wave.reset();
+    m_player.reset();
     m_enemies.clear();
     m_lasers.clear();
     m_bullets.clear();
@@ -95,6 +98,7 @@ void World::update() {
     m_bump.update();
     m_background.update();
     m_wall.update();
+    m_shock_wave.update();
     m_player.update(fx::input());
     update_all(m_enemies);
     update_all(m_lasers);
@@ -114,6 +118,7 @@ void World::draw(SpriteRenderer& ren) {
         }
         for (auto& i : m_items) i->draw(ren);
         m_player.draw(ren);
+        m_shock_wave.draw(ren);
 
         // use special shader for enemies
         ren.set_shader(m_flash_shader);

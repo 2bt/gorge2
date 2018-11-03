@@ -8,6 +8,27 @@
 class World;
 
 
+class ShockWave {
+public:
+    void init();
+    void free();
+
+    void reset();
+    void activate(vec2 const& pos);
+    void update();
+    void draw(SpriteRenderer& ren) const;
+private:
+    vec2              m_pos;
+    bool              m_alive;
+    float             m_radius;
+    float             m_level;
+    gfx::Shader*      m_shader;
+    gfx::Framebuffer* m_framebuffer;
+    gfx::Texture2D*   m_canvas;
+    gfx::Texture2D*   m_table;
+};
+
+
 class Ball {
 public:
     Ball(World& world, int dir);
