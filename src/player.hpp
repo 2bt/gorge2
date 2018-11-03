@@ -17,6 +17,12 @@ public:
     void activate(vec2 const& pos);
     void update();
     void draw(SpriteRenderer& ren) const;
+
+    bool overlap(vec2 const* poly, int len) const;
+    template<class T>
+    bool overlap(T const& poly) const {
+        return overlap(poly.data(), poly.size());
+    }
 private:
     vec2              m_pos;
     bool              m_alive;
@@ -87,7 +93,7 @@ public:
 
     enum {
         MAX_SHIELD = 3,
-        MAX_ENERGY = 30
+        MAX_ENERGY = 30,
     };
 
 private:

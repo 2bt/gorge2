@@ -49,6 +49,7 @@ SquareEnemy::SquareEnemy(World& world, uint32_t seed, vec2 const& pos) : Enemy(w
     m_vel   = {m_random.get_float(-5, 5), 1};
     m_vel   = glm::normalize(m_vel) * 0.275f;
     m_polygon.resize(SQUARE_ENEMY_POLYGON.size());
+    transform(m_polygon, BOUNCE_POLYGON, m_pos);
 }
 
 void SquareEnemy::die() {

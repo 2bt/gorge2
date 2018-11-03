@@ -158,7 +158,7 @@ void World::draw(SpriteRenderer& ren) {
 
     // energy
     ren.set_color({60, 60, 60, 100});
-    rectangle(ren, {-15, -73}, {15, -72});
+    rectangle(ren, {Player::MAX_ENERGY * -0.5, -73}, {Player::MAX_ENERGY * 0.5, -72});
     ren.set_color({0, 200, 200});
     if (m_player.is_field_active()) {
         if (m_tick % 8 < 4) ren.set_color({0, 127, 127});
@@ -166,5 +166,5 @@ void World::draw(SpriteRenderer& ren) {
     else if (m_player.get_energy() == Player::MAX_ENERGY) {
         if (m_tick % 8 < 4) ren.set_color();
     }
-    rectangle(ren, {-15, -73}, {-15 + m_player.get_energy(), -72});
+    rectangle(ren, {Player::MAX_ENERGY * -0.5, -73}, {Player::MAX_ENERGY * -0.5 + m_player.get_energy(), -72});
 }

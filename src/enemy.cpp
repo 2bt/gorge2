@@ -41,9 +41,16 @@ bool Enemy::can_see_player() const {
 }
 bool Enemy::update() {
     if (!m_alive) return false;
-
     ++m_tick;
     if (m_flash > 0) --m_flash;
+
+    // TODO: check if enemy has passed the screen
+
+    // collision with shock wave
+    if (!m_hit_by_shock_wave && m_world.get_shock_wave().overlap(m_polygon)) {
+        m_hit_by_shock_wave = true;
+        hit(8);
+    }
 
     sub_update();
     return true;
@@ -86,6 +93,11 @@ bool Bullet::update() {
             return false;
         }
 
+        // collision with shock wave
+        if (m_world.get_shock_wave().overlap(m_polygon)) {
+            make_sparks(m_pos);
+            return false;
+        }
 
         Player& player = m_world.get_player();
         if (player.is_alive()) {
@@ -122,10 +134,7 @@ bool Bullet::update() {
                     return false;
                 }
             }
-
-
         }
-
     }
 
     return true;

@@ -1,6 +1,8 @@
 #include "player.hpp"
 #include "world.hpp"
 //#include "debug_renderer.hpp"
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/norm.hpp>
 
 
 namespace {
@@ -89,7 +91,7 @@ void ShockWave::init() {
             float d = distance(gl_FragCoord.xy, vec2(40.0, 40.0));
             if (d > r1) gl_FragColor = vec4(0.0);
             else if (d < r2) gl_FragColor = texture2D(table, vec2((r2 - d) * 0.1 , 0.0));
-            else if (d < r1 - 1.0) gl_FragColor = vec4(0.0, 1.0, 1.0, 0.6);
+            else if (d < r1 - 1.0) gl_FragColor = vec4(0.0, 1.0, 1.0, 0.8);
             else gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
         })");
     m_canvas = gfx::Texture2D::create(gfx::TextureFormat::RGBA, 80, 80);
@@ -99,7 +101,7 @@ void ShockWave::init() {
         Color(0, 255, 255, 150),
         Color(0, 0, 0, 0),
         Color(0, 0, 0, 0),
-        Color(0, 255, 255, 150),
+        Color(0, 255, 255, 100),
         Color(0, 0, 0, 0),
     };
     m_table = gfx::Texture2D::create(gfx::TextureFormat::RGBA, buf.size(), 1, (void const*) buf.data());
@@ -123,18 +125,21 @@ void ShockWave::activate(vec2 const& pos) {
     m_radius = 0;
     update();
 }
+bool ShockWave::overlap(vec2 const* poly, int len) const {
+    if (!m_alive) return false;
+    for (int i = 0; i < len; ++i) {
+        if (glm::distance2(poly[i], m_pos) < m_radius * m_radius) return true;
+    }
+    return false;
+}
 void ShockWave::update() {
     if (!m_alive) return;
-
     m_pos.y += 0.25; // XXX
-
-    m_level += 0.025;
-    if (m_level > 1.25) m_alive = false;
-
-    m_radius = (1 - std::pow(2, (m_level * -4))) * 40;
-
+    m_level += 0.018;
+    if (m_level > 1) m_alive = false;
+    m_radius = (1 - std::pow(2, (m_level * -5))) * 40;
+    float r2 = (1 - std::pow(2, (m_level * -2.25))) * 60;
     m_shader->set_uniform("r1", m_radius);
-    float r2 = (1 - std::pow(2, (m_level * -1.8))) * 60;
     m_shader->set_uniform("r2", r2);
 }
 void ShockWave::draw(SpriteRenderer& ren) const {

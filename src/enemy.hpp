@@ -30,9 +30,10 @@ protected:
     World&            m_world;
     Random            m_random;
 
-    int               m_flash = 0;
-    int               m_tick  = 0;
-    bool              m_alive = true;
+    int               m_flash             = 0;
+    int               m_tick              = 0;
+    bool              m_alive             = true;
+    bool              m_hit_by_shock_wave = false;
 
     std::vector<vec2> m_polygon;
 
