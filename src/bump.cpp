@@ -1,5 +1,6 @@
 #include "bump.hpp"
 #include "fx.hpp"
+#include "wall.hpp"
 
 
 void Bump::init() {
@@ -73,7 +74,7 @@ void Bump::spawn(vec2 const& pos) {
 void Bump::update() {
     for (auto it = m_waves.begin(); it != m_waves.end();) {
         it->l += + 0.015;
-        it->pos.y += 0.25; // XXX
+        it->pos.y += Wall::SPEED;
         if (it->l >= 1) it = m_waves.erase(it);
         else ++it;
     }

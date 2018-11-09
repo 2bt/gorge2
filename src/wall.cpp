@@ -9,7 +9,6 @@ void Wall::reset(uint32_t seed) {
     m_random.seed(seed);
     m_row_counter = 0;
     m_offset = 0;
-    m_speed  = 0.25;
     m_cursor = { W * 0.5 - 0.5, 10 };
     m_radius = W * 0.4;
     m_island_delay = 80;
@@ -23,7 +22,7 @@ void Wall::reset(uint32_t seed) {
 
 void Wall::update() {
 
-    m_offset += m_speed;
+    m_offset += SPEED;
     while (m_offset >= 8) {
         m_offset -= 8;
         generate();

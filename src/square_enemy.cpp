@@ -58,8 +58,7 @@ void SquareEnemy::die() {
 
 void SquareEnemy::sub_update() {
 
-    m_pos += m_vel;
-    m_pos.y += m_world.get_wall().get_speed();
+    m_pos += m_vel + vec2(0, Wall::SPEED);
 
     float p = std::sin(m_tick * 0.1);
 

@@ -3,7 +3,7 @@
 
 
 bool Particle::update() {
-    m_pos += m_vel;
+    m_pos += m_vel + vec2(0, Wall::SPEED);
     m_vel *= m_friction;
     return --m_ttl >= 0;
 }
@@ -75,7 +75,6 @@ namespace {
             m_layer    = FRONT;
             m_pos      = pos;
             m_friction = 1.0;
-            m_vel      = {0, 0.25}; // XXX: move with walls
         }
     };
 
@@ -87,7 +86,6 @@ namespace {
             m_layer    = FRONT;
             m_pos      = pos;
             m_friction = 1.0;
-            m_vel      = {0, 0.25}; // XXX: move with walls
         }
         int& ttl() { return m_ttl; }
     };

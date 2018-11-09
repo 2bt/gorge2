@@ -38,7 +38,7 @@ void Item::draw(SpriteRenderer& ren) {
 
 bool EnergyItem::update() {
     ++m_tick;
-    m_pos.y += m_world.get_wall().get_speed();
+    m_pos.y += Wall::SPEED;
     m_pos += m_vel;
     m_vel *= 0.98f;
     if (m_pos.y > 80) return false;
@@ -84,7 +84,7 @@ void make_energy_items(World& world, Random& rnd, vec2 const& pos, int count) {
 
 bool BigItem::update() {
     ++m_tick;
-    m_pos.y += m_world.get_wall().get_speed();
+    m_pos.y += Wall::SPEED;
     m_pos += vec2(std::cos(m_tick * 0.1), std::sin(m_tick * 0.1)) * 0.25f;
     if (m_pos.y > 80) return false;
 

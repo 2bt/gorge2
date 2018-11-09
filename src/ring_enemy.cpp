@@ -31,8 +31,7 @@ void RingEnemy::turn(float ang1, float ang2) {
 
 void RingEnemy::sub_update() {
 
-    m_pos += m_vel;
-    m_pos.y += m_world.get_wall().get_speed();
+    m_pos += m_vel + vec2(0, Wall::SPEED);
 
     transform(m_polygon, RING_ENEMY_POLYGON, m_pos);
     CollisionInfo info = m_world.get_wall().check_collision(m_polygon);

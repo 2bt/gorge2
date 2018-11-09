@@ -5,12 +5,11 @@
 
 class Wall {
 public:
+    static constexpr float SPEED = 0.25;
 
     void reset(uint32_t seed);
     void update();
     void draw(SpriteRenderer& ren);
-
-    float get_speed() const { return m_speed; }
 
     CollisionInfo check_collision(vec2 const* polygon, int len) const;
     template<class T>
@@ -36,7 +35,6 @@ private:
     Random      m_random;
     int         m_row_counter;
     float       m_offset;
-    float       m_speed;
 
     Grid<30, W> m_data;
     Grid<H, W>  m_gen_data;
