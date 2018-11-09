@@ -146,18 +146,17 @@ void Wall::generate() {
     std::rotate(m_data.begin(), m_data.begin() + 1, m_data.end());
 }
 
-
 vec2 Wall::get_tile_position(int x, int y) const {
     return {
         (x - W / 2.0 + 0.5) * 8,
-        (m_data.size() / 2.0 - y) * 8 + m_offset,
+        (10 - y) * 8 + m_offset,
     };
 }
 
 glm::ivec2 Wall::get_tile_address(vec2 const& pos) const {
     return {
         floor(pos.x / 8 + W / 2.0),
-        floor((m_offset - pos.y) / 8 + m_data.size() / 2.0 + 0.5)
+        floor((m_offset - pos.y) / 8 + 10 + 0.5)
     };
 }
 
@@ -174,7 +173,7 @@ void Wall::draw(SpriteRenderer& ren) {
 
             vec2 pos = {
                 (x - row.size() / 2.0 + 0.5) * 8,
-                (-16 - y) * 8 + m_offset,
+                (-21 - y) * 8 + m_offset,
             };
 
             ren.draw(frame(Sprite::WALLS, 0), pos);
