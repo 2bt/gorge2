@@ -41,10 +41,9 @@ bool Enemy::can_see_player() const {
 }
 bool Enemy::update() {
     if (!m_alive) return false;
+    if (m_pos.y > 85) return false;
     ++m_tick;
     if (m_flash > 0) --m_flash;
-
-    // TODO: check if enemy has passed the screen
 
     // collision with shock wave
     if (!m_hit_by_shock_wave && m_world.get_shock_wave().overlap(m_polygon)) {

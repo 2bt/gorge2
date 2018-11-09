@@ -1,5 +1,6 @@
 #include "world.hpp"
 #include "square_enemy.hpp"
+#include "ring_enemy.hpp"
 #include "fx.hpp"
 
 
@@ -91,7 +92,8 @@ void World::update() {
 
     // spawn enemy
     if (m_tick % 100 == 0) {
-        spawn_enemy<SquareEnemy>(vec2(0, -70));
+        if (m_tick / 100 % 2 == 0) spawn_enemy<SquareEnemy>(vec2(0, -70));
+        else                       spawn_enemy<RingEnemy>(vec2(0, -70));
     }
     ++m_tick;
 

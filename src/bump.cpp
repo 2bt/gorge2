@@ -97,6 +97,7 @@ void Bump::draw_begin(SpriteRenderer& ren) {
     ren.pop_state();
     ren.push_state();
     ren.set_framebuffer(m_main_framebuffer);
+    ren.clear({});
 }
 
 

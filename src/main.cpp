@@ -53,8 +53,6 @@ public:
     }
 
     void draw() {
-        m_ren.clear({});
-
         // init transform
         m_ren.origin();
         float s = 2.0 / 150;
