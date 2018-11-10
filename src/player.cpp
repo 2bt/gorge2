@@ -97,8 +97,8 @@ void ShockWave::init() {
     m_canvas = gfx::Texture2D::create(gfx::TextureFormat::RGBA, 80, 80);
     static const std::array<Color, 7> buf = {
         Color(0, 0, 0, 0),
-        Color(0, 255, 255, 150),
-        Color(0, 255, 255, 150),
+        Color(0, 255, 255, 160),
+        Color(0, 255, 255, 130),
         Color(0, 0, 0, 0),
         Color(0, 0, 0, 0),
         Color(0, 255, 255, 100),
@@ -134,7 +134,7 @@ bool ShockWave::overlap(vec2 const* poly, int len) const {
 }
 void ShockWave::update() {
     if (!m_alive) return;
-    m_pos.y += 0.25; // XXX
+    m_pos.y += Wall::SPEED;
     m_level += 0.018;
     if (m_level > 1) m_alive = false;
     m_radius = (1 - std::pow(2, (m_level * -5))) * 40;

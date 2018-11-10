@@ -124,10 +124,6 @@ private:
     vec2                m_blast_vel;
 
     std::array<Ball, 2> m_balls;
-
-    // TODO:
-    // balls
-    // energy blast
 };
 
 
