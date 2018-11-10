@@ -1,6 +1,7 @@
 #include "world.hpp"
 #include "square_enemy.hpp"
 #include "ring_enemy.hpp"
+#include "cannon_enemy.hpp"
 #include "fx.hpp"
 
 
@@ -92,8 +93,10 @@ void World::update() {
 
     // spawn enemy
     if (m_tick % 100 == 0) {
-        if (m_tick / 100 % 2 == 0) spawn_enemy<SquareEnemy>(vec2(0, -70));
-        else                       spawn_enemy<RingEnemy>(vec2(0, -70));
+        int i = m_tick / 100 % 3;
+        if (i == 0)      spawn_enemy<SquareEnemy>(vec2(0, -70));
+        else if (i == 1) spawn_enemy<RingEnemy>(vec2(0, -70));
+        else if (i == 2) spawn_enemy<CannonEnemy>(vec2(0, -70), F_NORTH);
     }
     ++m_tick;
 

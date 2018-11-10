@@ -74,7 +74,6 @@ namespace {
         {
             m_layer    = FRONT;
             m_pos      = pos;
-            m_friction = 1.0;
         }
     };
 
@@ -85,7 +84,6 @@ namespace {
         {
             m_layer    = FRONT;
             m_pos      = pos;
-            m_friction = 1.0;
         }
         int& ttl() { return m_ttl; }
     };

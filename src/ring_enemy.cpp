@@ -22,6 +22,7 @@ RingEnemy::RingEnemy(World& world, uint32_t seed, vec2 const& pos) : Enemy(world
     m_delay = m_random.get_int(0, 200);
     turn(0.2, M_PI - 0.2);
     m_polygon.resize(RING_ENEMY_POLYGON.size());
+    transform(m_polygon, RING_ENEMY_POLYGON, m_pos);
 }
 
 void RingEnemy::turn(float ang1, float ang2) {

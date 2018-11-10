@@ -17,10 +17,10 @@ public:
 
 protected:
     Layer m_layer = FRONT;
-    float m_friction;
+    float m_friction = 1;
 
     vec2  m_pos;
-    vec2  m_vel;
+    vec2  m_vel = {};
     int   m_ttl;
 };
 

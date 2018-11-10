@@ -1,6 +1,6 @@
 #include "player.hpp"
 #include "world.hpp"
-//#include "debug_renderer.hpp"
+#include "debug_renderer.hpp"
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/norm.hpp>
 
@@ -424,11 +424,7 @@ bool Laser::update() {
 }
 
 void Laser::draw(SpriteRenderer& ren) const {
-    ren.push();
-    ren.translate(m_pos);
-    ren.rotate(m_ang);
-    ren.draw(frame(m_is_small ? Sprite::SMALL_LASER : Sprite::LASER));
-    ren.pop();
+    ren.draw(frame(m_is_small ? Sprite::SMALL_LASER : Sprite::LASER), m_pos, m_ang);
 
     // debug
 //    DB_REN.set_color(255, 0, 0);

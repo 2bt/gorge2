@@ -36,6 +36,7 @@ public:
 
     void clear(Color const& color);
     void draw(Rect const& quad, vec2 const& pos = {});
+    void draw(Rect const& quad, vec2 const& pos, float ang);
     void draw(vec2 const& pos = {});
 
     void flush();

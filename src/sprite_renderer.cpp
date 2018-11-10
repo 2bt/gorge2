@@ -137,6 +137,14 @@ void SpriteRenderer::draw(Rect const& quad, vec2 const& pos) {
     m_verts.push_back(vs[3]);
 }
 
+void SpriteRenderer::draw(Rect const& quad, vec2 const& pos, float ang) {
+    push();
+    translate(pos);
+    rotate(ang);
+    draw(quad);
+    pop();
+}
+
 void SpriteRenderer::set_blendmode(BlendMode b) {
     if (state().blendmode == b) return;
     flush();

@@ -37,7 +37,9 @@ void Enemy::hit(int damage) {
     }
 }
 bool Enemy::can_see_player() const {
-    return !m_world.get_wall().check_sight(m_pos, m_world.get_player().get_pos());
+    Player const& player = m_world.get_player();
+    if (!player.is_alive()) return false;
+    return !m_world.get_wall().check_sight(m_pos, player.get_pos());
 }
 bool Enemy::update() {
     if (!m_alive) return false;
@@ -54,15 +56,15 @@ bool Enemy::update() {
     sub_update();
     return true;
 }
+void Enemy::sub_draw(SpriteRenderer& ren) const {
+    ren.draw(frame(m_sprite, m_tick / m_frame_length % frame_count(m_sprite)), m_pos);
+}
 void Enemy::draw(SpriteRenderer& ren) const {
     ren.set_color({255, 255, 255, m_flash > 0 ? 127 : 255});
-    ren.draw(frame(m_sprite, m_tick / m_frame_length % frame_count(m_sprite)), m_pos);
-
+    sub_draw(ren);
     // DEBUG
-//    bool c = m_world.get_wall().check_sight(m_pos, m_world.get_player().get_pos());
-//    if (c) DB_REN.set_color(255, 0, 0);
-//    else DB_REN.set_color(200, 200, 200);
-//    DB_REN.line(m_pos, m_world.get_player().get_pos());
+//    DB_REN.set_color(255, 0, 0);
+//    DB_REN.polygon(m_polygon);
 }
 
 
@@ -140,9 +142,5 @@ bool Bullet::update() {
 }
 
 void Bullet::draw(SpriteRenderer& ren) const {
-    ren.push();
-    ren.translate(m_pos);
-    ren.rotate(m_ang);
-    ren.draw(frame(m_desc.sprite, m_tick / m_desc.frame_length % frame_count(m_desc.sprite)));
-    ren.pop();
+    ren.draw(frame(m_desc.sprite, m_tick / m_desc.frame_length % frame_count(m_desc.sprite)), m_pos, m_ang);
 }

@@ -16,8 +16,10 @@ public:
     bool update();
     void draw(SpriteRenderer& ren) const;
 
-    virtual void die() {}
     virtual void sub_update() = 0;
+    virtual void sub_draw(SpriteRenderer& ren) const;
+
+    virtual void die() {}
 
     bool is_alive() const { return m_alive; }
     std::vector<vec2> const& get_polygon() const { return m_polygon; }
