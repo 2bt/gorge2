@@ -68,7 +68,7 @@ private:
     Random                                 m_random;
     Bump                                   m_bump;
     Background                             m_background;
-    Wall                                   m_wall;
+    Wall                                   m_wall{m_populator};
     Populator                              m_populator{*this};
     int                                    m_tick;
 

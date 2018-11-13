@@ -2,6 +2,7 @@
 #include "world.hpp"
 #include "debug_renderer.hpp"
 
+
 namespace {
     class BulletParticle : public Particle {
     public:
@@ -21,6 +22,18 @@ namespace {
     private:
         Color m_color;
     };
+}
+
+
+float get_angle(Footing f) {
+    static constexpr std::array<float, 5> ANGLES = {
+        0, // F_NONE
+        M_PI,
+        -M_PI / 2,
+        0,
+        M_PI / 2,
+    };
+    return ANGLES[f];
 }
 
 

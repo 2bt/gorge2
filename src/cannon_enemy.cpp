@@ -10,13 +10,6 @@ namespace {
         vec2{-4, 4},
     };
 
-    constexpr std::array<float, 4> ANGLES = {
-        M_PI,
-        -M_PI / 2,
-        0,
-        M_PI / 2,
-    };
-
     const Bullet::Desc PLASMA_BULLET_DESC = {
         false,
         Sprite::PLASMA_BULLET,
@@ -32,13 +25,13 @@ namespace {
 }
 
 CannonEnemy::CannonEnemy(World& world, uint32_t seed, vec2 const& pos, Footing footing) : Enemy(world, seed, pos) {
-    m_sprite = Sprite::CANNON;
-    m_shield = 2;
-    m_score  = 300;
-    m_energy = 2;
-    m_ang    = ANGLES[footing];
+    m_sprite     = Sprite::CANNON;
+    m_shield     = 2;
+    m_score      = 300;
+    m_energy     = 2;
+    m_ang        = get_angle(footing);
     m_cannon_ang = m_ang + m_random.get_float(-1.3, 1.3);
-    m_delay = m_random.get_int(100, 150);
+    m_delay      = m_random.get_int(100, 150);
     m_polygon.resize(CANNON_ENEMY_POLYGON.size());
     transform(m_polygon, CANNON_ENEMY_POLYGON, m_pos, m_ang);
 }

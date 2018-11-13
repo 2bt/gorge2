@@ -4,22 +4,71 @@
 #include "ring_enemy.hpp"
 #include "cannon_enemy.hpp"
 
+
 void Populator::reset(uint32_t seed) {
     m_random.seed(seed);
-    m_tick = 0;
+    m_tick           = 0;
+    m_wall_row_count = 0;
+    m_spots.clear();
+    m_wall_spots.clear();
 }
 
+enum {
+    Y = 27
+};
+
+void Populator::next_wall_row() {
+    ++m_wall_row_count;
+
+    m_spots.clear();
+    m_wall_spots.clear();
+
+    auto const& data = m_world.get_wall().get_data();
+
+    for (int x = 1; x < Wall::W - 1; ++x) {
+        if (data[Y][x] != 0) continue;
+        m_spots.push_back({ x });
+        if (data[Y + 1][x] == 1) m_wall_spots.push_back({ x, F_NORTH });
+        if (data[Y][x - 1] == 1) m_wall_spots.push_back({ x, F_WEST  });
+        if (data[Y - 1][x] == 1) m_wall_spots.push_back({ x, F_SOUTH });
+        if (data[Y][x + 1] == 1) m_wall_spots.push_back({ x, F_EAST  });
+    }
+}
+
+bool Populator::get_random_spot(Spot& s) {
+    if (m_spots.empty()) return false;
+    s = m_spots[m_random.get_int(0, m_spots.size() - 1)];
+    return true;
+}
+
+bool Populator::get_random_wall_spot(Spot& s) {
+    if (m_wall_spots.empty()) return false;
+    s = m_wall_spots[m_random.get_int(0, m_wall_spots.size() - 1)];
+    return true;
+}
+vec2 Populator::get_spot_pos(Spot s) const {
+    return m_world.get_wall().get_tile_position(s.x, Y);
+}
 
 void Populator::update() {
-
     ++m_tick;
 
     // spawn enemy
-    if (m_tick % 100 == 0) {
-        int i = m_tick / 100 % 3;
-        if (i == 0)      m_world.spawn_enemy<SquareEnemy>(vec2(0, -70));
-        else if (i == 1) m_world.spawn_enemy<RingEnemy>(vec2(0, -70));
-        else if (i == 2) m_world.spawn_enemy<CannonEnemy>(vec2(0, -70), F_NORTH);
+    if (m_tick % 70 == 0) {
+        int i = m_random.get_int(0, 2);
+
+        Spot s;
+        if (!get_random_spot(s)) return;
+        vec2 p = get_spot_pos(s);
+
+        if (i == 0)      m_world.spawn_enemy<SquareEnemy>(p);
+        else if (i == 1) m_world.spawn_enemy<RingEnemy>(p);
+        else if (i == 2) {
+            if (get_random_wall_spot(s)) {
+                vec2 p = get_spot_pos(s);
+                m_world.spawn_enemy<CannonEnemy>(p, s.footing);
+            }
+        }
     }
 
 }

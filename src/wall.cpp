@@ -1,4 +1,5 @@
 #include "wall.hpp"
+#include "populator.hpp"
 #include "debug_renderer.hpp"
 #include <algorithm>
 #define GLM_ENABLE_EXPERIMENTAL
@@ -21,14 +22,12 @@ void Wall::reset(uint32_t seed) {
 
 
 void Wall::update() {
-
     m_offset += SPEED;
     while (m_offset >= 8) {
         m_offset -= 8;
         generate();
-        // TODO: trigger enemy spawning
+        m_populator.next_wall_row();
     }
-
 }
 
 void Wall::generate() {

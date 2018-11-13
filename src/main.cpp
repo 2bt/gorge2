@@ -61,11 +61,18 @@ public:
 
 //        m_ren.translate({0, 35});
 //        m_ren.scale(0.25);
-//        m_ren.scale(0.8);
+
+//        m_ren.translate({0, 25});
+//        m_ren.scale(0.4);
+
         DB_REN.transform() = m_ren.transform();
 
 
         m_world.draw(m_ren);
+
+        m_ren.set_color({255, 255, 255, 50});
+        rectangle(m_ren, {-300, -78}, {300, -75});
+        rectangle(m_ren, {-300, 75}, {300, 78});
 
 //        // title
 //        m_ren.draw(frame(Sprite::TITLE));

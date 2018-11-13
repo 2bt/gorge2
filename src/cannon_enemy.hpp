@@ -3,14 +3,6 @@
 #include "world.hpp"
 
 
-enum Footing {
-    F_NORTH,
-    F_WEST,
-    F_SOUTH,
-    F_EAST,
-};
-
-
 class CannonEnemy : public Enemy {
 public:
     CannonEnemy(World& world, uint32_t seed, vec2 const& pos, Footing footing);

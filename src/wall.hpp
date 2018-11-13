@@ -3,9 +3,18 @@
 #include "util.hpp"
 #include <array>
 
+
+class Populator;
+
+
 class Wall {
 public:
     static constexpr float SPEED = 0.25;
+
+    template<size_t H, size_t W>
+    using Grid = std::array<std::array<int, W>, H>;
+
+    Wall(Populator& populator) : m_populator(populator) {}
 
     void reset(uint32_t seed);
     void update();
@@ -19,25 +28,23 @@ public:
 
     bool check_sight(vec2 const& a, vec2 const& b) const;
 
+    enum { W = 38, H = 30, G = 38 };
+    Grid<H, W> const& get_data() const { return m_data; }
+    vec2 get_tile_position(int x, int y) const;
+
 private:
     void generate();
-    vec2 get_tile_position(int x, int y) const;
     glm::ivec2 get_tile_address(vec2 const& pos) const;
 
-    enum {
-        W = 38,
-        H = 38
-    };
 
-    template<size_t H, size_t W>
-    using Grid = std::array<std::array<int, W>, H>;
 
+    Populator&  m_populator;
     Random      m_random;
     int         m_row_counter;
     float       m_offset;
 
-    Grid<30, W> m_data;
-    Grid<H, W>  m_gen_data;
+    Grid<H, W>  m_data;
+    Grid<G, W>  m_gen_data;
 
     float       m_radius;
     vec2        m_cursor;
