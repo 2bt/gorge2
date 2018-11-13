@@ -5,8 +5,10 @@
 
 class Random {
 public:
-    void seed(uint32_t seed = std::chrono::system_clock::now().time_since_epoch().count()) {
-        m_gen.seed(seed);
+    Random() {}
+    explicit Random(uint32_t s) { seed(s); }
+    void seed(uint32_t s = std::chrono::system_clock::now().time_since_epoch().count()) {
+        m_gen.seed(s);
     }
     int get_int(int min, int max) {
         return m_int_dist(m_gen, decltype(m_int_dist)::param_type{ min, max });

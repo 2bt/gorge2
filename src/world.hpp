@@ -2,6 +2,7 @@
 #include "bump.hpp"
 #include "background.hpp"
 #include "wall.hpp"
+#include "populator.hpp"
 #include "player.hpp"
 #include "particle.hpp"
 #include "enemy.hpp"
@@ -68,6 +69,7 @@ private:
     Bump                                   m_bump;
     Background                             m_background;
     Wall                                   m_wall;
+    Populator                              m_populator{*this};
     int                                    m_tick;
 
     ShockWave                              m_shock_wave;

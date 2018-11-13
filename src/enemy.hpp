@@ -9,9 +9,8 @@ class World;
 
 class Enemy {
 public:
-    Enemy(World& world, uint32_t seed, vec2 const& pos) : m_world(world), m_pos(pos) {
-        m_random.seed(seed);
-    }
+    Enemy(World& world, uint32_t seed, vec2 const& pos) : m_world(world), m_random(seed), m_pos(pos) {}
+
     virtual ~Enemy() {}
     bool update();
     void draw(SpriteRenderer& ren) const;

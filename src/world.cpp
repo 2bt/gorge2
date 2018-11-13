@@ -1,7 +1,4 @@
 #include "world.hpp"
-#include "square_enemy.hpp"
-#include "ring_enemy.hpp"
-#include "cannon_enemy.hpp"
 #include "fx.hpp"
 
 
@@ -53,6 +50,7 @@ void World::reset(uint32_t seed) {
     m_bump.reset();
     m_background.reset(m_random.get_int(0, 0x7fffffff));
     m_wall.reset(m_random.get_int(0, 0x7fffffff));
+    m_populator.reset(m_random.get_int(0, 0x7fffffff));
 
     m_shock_wave.reset();
     m_player.reset();
@@ -91,18 +89,12 @@ void update_all(std::vector<std::unique_ptr<T>>& vs) {
 
 void World::update() {
 
-    // spawn enemy
-    if (m_tick % 100 == 0) {
-        int i = m_tick / 100 % 3;
-        if (i == 0)      spawn_enemy<SquareEnemy>(vec2(0, -70));
-        else if (i == 1) spawn_enemy<RingEnemy>(vec2(0, -70));
-        else if (i == 2) spawn_enemy<CannonEnemy>(vec2(0, -70), F_NORTH);
-    }
     ++m_tick;
 
     m_bump.update();
     m_background.update();
     m_wall.update();
+    m_populator.update();
     m_shock_wave.update();
     m_player.update(fx::input());
     update_all(m_enemies);
