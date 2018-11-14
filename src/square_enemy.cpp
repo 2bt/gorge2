@@ -44,10 +44,10 @@ SquareEnemy::SquareEnemy(World& world, uint32_t seed, vec2 const& pos) : Enemy(w
     m_shield = 4;
     m_score  = 350;
     m_energy = 2;
-    m_tick  = m_random.get_int(0, 100);
-    m_delay = m_random.get_int(30, 300);
-    m_vel   = {m_random.get_float(-5, 5), 1};
-    m_vel   = glm::normalize(m_vel) * 0.275f;
+    m_tick   = m_random.get_int(0, 100);
+    m_delay  = m_random.get_int(30, 300);
+    m_vel    = {m_random.get_float(-5, 5), 1};
+    m_vel    = glm::normalize(m_vel) * 0.275f;
     m_polygon.resize(SQUARE_ENEMY_POLYGON.size());
     transform(m_polygon, BOUNCE_POLYGON, m_pos);
 }

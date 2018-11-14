@@ -46,12 +46,14 @@ protected:
     int               m_flash             = 0;
     int               m_tick              = 0;
     bool              m_alive             = true;
+    bool              m_entered_screen    = false;
     bool              m_hit_by_shock_wave = false;
 
     std::vector<vec2> m_polygon;
 
     // set these in subclass
     vec2              m_pos;
+    float             m_ang = 0;
     int               m_shield;
 
     int               m_energy = 0;

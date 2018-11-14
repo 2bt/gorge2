@@ -40,14 +40,15 @@ void CannonEnemy::sub_update() {
     m_pos.y += Wall::SPEED;
     transform(m_polygon, CANNON_ENEMY_POLYGON, m_pos, m_ang);
 
-    if (std::abs(m_pos.y) > 75) return;
+    if (std::abs(m_pos.y) > 80) return;
 
     Player const& player = m_world.get_player();
     if (!player.is_alive()) return;
 
 
     vec2 dir = player.get_pos() - m_pos;
-    float ang = std::atan2(-dir.x, -dir.y);
+
+    float ang = std::atan2(dir.x, -dir.y);
     float diff = std::fmod(m_ang - ang + 3 * M_PI, 2 * M_PI) - M_PI;
     if (std::abs(diff) < 1.75 && m_delay < 50 && can_see_player()) {
 
@@ -68,6 +69,6 @@ void CannonEnemy::sub_update() {
 }
 
 void CannonEnemy::sub_draw(SpriteRenderer& ren) const {
-    ren.draw(frame(m_sprite, 1), m_pos, -m_cannon_ang);
-    ren.draw(frame(m_sprite, 0), m_pos, -m_ang);
+    ren.draw(frame(m_sprite, 1), m_pos, m_cannon_ang);
+    ren.draw(frame(m_sprite, 0), m_pos, m_ang);
 }

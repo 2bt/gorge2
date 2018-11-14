@@ -29,16 +29,16 @@ float get_angle(Footing f) {
     static constexpr std::array<float, 5> ANGLES = {
         0, // F_NONE
         M_PI,
-        -M_PI / 2,
-        0,
         M_PI / 2,
+        0,
+        -M_PI / 2,
     };
     return ANGLES[f];
 }
 
 
 void Enemy::hit(int damage) {
-    assert(m_alive);
+    if (!m_alive) return;
     m_flash = 5;
     m_shield -= damage;
     if (m_shield <= 0) {
@@ -56,6 +56,7 @@ bool Enemy::can_see_player() const {
 }
 bool Enemy::update() {
     if (!m_alive) return false;
+    if (!m_entered_screen && m_pos.y < -85) m_entered_screen = true;
     if (m_pos.y > 85) return false;
     ++m_tick;
     if (m_flash > 0) --m_flash;
@@ -67,10 +68,10 @@ bool Enemy::update() {
     }
 
     sub_update();
-    return true;
+    return m_alive;
 }
 void Enemy::sub_draw(SpriteRenderer& ren) const {
-    ren.draw(frame(m_sprite, m_tick / m_frame_length % frame_count(m_sprite)), m_pos);
+    ren.draw(frame(m_sprite, m_tick / m_frame_length % frame_count(m_sprite)), m_pos, m_ang);
 }
 void Enemy::draw(SpriteRenderer& ren) const {
     ren.set_color({255, 255, 255, m_flash > 0 ? 127 : 255});

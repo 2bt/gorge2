@@ -88,13 +88,12 @@ void update_all(std::vector<std::unique_ptr<T>>& vs) {
 
 
 void World::update() {
-
     ++m_tick;
 
+    m_populator.update();
     m_bump.update();
     m_background.update();
     m_wall.update();
-    m_populator.update();
     m_shock_wave.update();
     m_player.update(fx::input());
     update_all(m_enemies);

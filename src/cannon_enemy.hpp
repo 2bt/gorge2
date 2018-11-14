@@ -9,7 +9,6 @@ public:
     void sub_update() override;
     void sub_draw(SpriteRenderer& ren) const override;
 protected:
-    float m_ang;
     float m_cannon_ang;
     int   m_delay;
 };

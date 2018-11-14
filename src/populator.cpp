@@ -3,6 +3,7 @@
 #include "square_enemy.hpp"
 #include "ring_enemy.hpp"
 #include "cannon_enemy.hpp"
+#include "rocket_enemy.hpp"
 
 
 void Populator::reset(uint32_t seed) {
@@ -55,20 +56,19 @@ void Populator::update() {
 
     // spawn enemy
     if (m_tick % 70 == 0) {
-        int i = m_random.get_int(0, 2);
-
         Spot s;
-        if (!get_random_spot(s)) return;
-        vec2 p = get_spot_pos(s);
-
-        if (i == 0)      m_world.spawn_enemy<SquareEnemy>(p);
-        else if (i == 1) m_world.spawn_enemy<RingEnemy>(p);
-        else if (i == 2) {
-            if (get_random_wall_spot(s)) {
-                vec2 p = get_spot_pos(s);
-                m_world.spawn_enemy<CannonEnemy>(p, s.footing);
-            }
+        int i = m_random.get_int(3, 3);
+        if (i < 2) {
+            if (!get_random_spot(s)) return;
+            vec2 p = get_spot_pos(s);
+            if (i == 0)      m_world.spawn_enemy<SquareEnemy>(p);
+            else if (i == 1) m_world.spawn_enemy<RingEnemy>(p);
+        }
+        else {
+            if (!get_random_wall_spot(s)) return;
+            vec2 p = get_spot_pos(s);
+            if (i == 2)      m_world.spawn_enemy<CannonEnemy>(p, s.footing);
+            else if (i == 3) m_world.spawn_enemy<RocketEnemy>(p, s.footing);
         }
     }
-
 }

@@ -19,6 +19,10 @@ namespace {
             m_vel      = vec2(std::sin(ang), std::cos(ang)) * rnd.get_float(0.5, 1.25);
             m_ttl      = rnd.get_int(18, 26);
         }
+        void do_rocket_smoke() {
+            m_ttl = 8;
+            m_vel = {};
+        }
         void draw(SpriteRenderer& ren) const override {
             int f = std::max<int>(0, frame_count(Sprite::SMOKE) - m_ttl / 3 - 1);
             ren.set_color({30, 30, 30, 150});
@@ -90,6 +94,9 @@ namespace {
 
 }
 
+void make_rocket_smoke(World& world, vec2 const& pos) {
+    world.spawn_particle<SmokeParticle>(pos)->do_rocket_smoke();
+}
 
 void make_explosion(World& world, vec2 const& pos) {
     for (int i = 0; i < 10; ++i) world.spawn_particle<SmokeParticle>(pos);
