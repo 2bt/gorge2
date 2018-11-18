@@ -61,7 +61,7 @@ void CannonEnemy::sub_update() {
             if (m_delay == 0) {
                 m_delay = m_random.get_int(150, 250);
                 dir = glm::normalize(dir);
-                m_world.spawn_bullet(m_pos + dir * 4.0f, dir * 0.5f, PLASMA_BULLET_DESC);
+                m_world.spawn_bullet(m_pos + dir * 4.0f, dir * 1.0f, PLASMA_BULLET_DESC);
             }
         }
     }

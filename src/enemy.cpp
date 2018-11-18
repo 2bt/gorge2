@@ -95,7 +95,7 @@ void Bullet::make_sparks(vec2 const& pos) {
 bool Bullet::update() {
     ++m_tick;
     for (int i = 0; i < 2; ++i) {
-        m_pos += m_vel;
+        m_pos += m_vel * 0.5f;
         if (std::abs(m_pos.x) > 124 || std::abs(m_pos.y) > 80) {
             return false;
         }

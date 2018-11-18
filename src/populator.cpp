@@ -4,6 +4,7 @@
 #include "ring_enemy.hpp"
 #include "cannon_enemy.hpp"
 #include "rocket_enemy.hpp"
+#include "spider_enemy.hpp"
 
 
 void Populator::reset(uint32_t seed) {
@@ -57,7 +58,7 @@ void Populator::update() {
     // spawn enemy
     if (m_tick % 70 == 0) {
         Spot s;
-        int i = m_random.get_int(3, 3);
+        int i = m_random.get_int(0, 4);
         if (i < 2) {
             if (!get_random_spot(s)) return;
             vec2 p = get_spot_pos(s);
@@ -69,6 +70,7 @@ void Populator::update() {
             vec2 p = get_spot_pos(s);
             if (i == 2)      m_world.spawn_enemy<CannonEnemy>(p, s.footing);
             else if (i == 3) m_world.spawn_enemy<RocketEnemy>(p, s.footing);
+            else if (i == 4) m_world.spawn_enemy<SpiderEnemy>(p, s.footing);
         }
     }
 }
