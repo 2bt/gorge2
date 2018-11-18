@@ -75,7 +75,6 @@ void SpiderEnemy::sub_update() {
         if (info.distance > 0) {
             m_pos += info.normal * info.distance;
             m_normal = info.normal;
-            transform(m_polygon, SPIDER_ENEMY_POLYGON, m_pos);
         }
 
         // turn

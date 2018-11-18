@@ -50,6 +50,7 @@ void Enemy::hit(int damage) {
     }
 }
 bool Enemy::can_see_player() const {
+    if (std::abs(m_pos.y) > 75) return false;
     Player const& player = m_world.get_player();
     if (!player.is_alive()) return false;
     return !m_world.get_wall().check_sight(m_pos, player.get_pos());
@@ -80,6 +81,20 @@ void Enemy::draw(SpriteRenderer& ren) const {
 //    DB_REN.set_color(255, 0, 0);
 //    DB_REN.polygon(m_polygon);
 }
+
+
+const Bullet::Desc PLASMA_BULLET_DESC = {
+    false,
+    Sprite::PLASMA_BULLET,
+    2,
+    {
+        vec2{-1, 1},
+        vec2{1, 1},
+        vec2{1, -1},
+        vec2{-1, -1},
+    },
+    Color(153, 21, 21, 200),
+};
 
 
 Bullet::Bullet(World& world, vec2 const& pos, vec2 const& vel, Desc const& desc)

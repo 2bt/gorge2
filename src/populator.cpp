@@ -2,6 +2,7 @@
 #include "world.hpp"
 #include "square_enemy.hpp"
 #include "ring_enemy.hpp"
+#include "twister_enemy.hpp"
 #include "cannon_enemy.hpp"
 #include "rocket_enemy.hpp"
 #include "spider_enemy.hpp"
@@ -39,13 +40,17 @@ void Populator::next_wall_row() {
 
 bool Populator::get_random_spot(Spot& s) {
     if (m_spots.empty()) return false;
-    s = m_spots[m_random.get_int(0, m_spots.size() - 1)];
+    int i = m_random.get_int(0, m_spots.size() - 1);
+    s = m_spots[i];
+    m_spots.erase(m_spots.begin() + i);
     return true;
 }
 
 bool Populator::get_random_wall_spot(Spot& s) {
     if (m_wall_spots.empty()) return false;
-    s = m_wall_spots[m_random.get_int(0, m_wall_spots.size() - 1)];
+    int i = m_random.get_int(0, m_wall_spots.size() - 1);
+    s = m_wall_spots[i];
+    m_wall_spots.erase(m_wall_spots.begin() + i);
     return true;
 }
 vec2 Populator::get_spot_pos(Spot s) const {
@@ -56,21 +61,26 @@ void Populator::update() {
     ++m_tick;
 
     // spawn enemy
-    if (m_tick % 70 == 0) {
+    if (m_tick % 60 == 0) {
+
+        int i = m_random.get_int(0, 5);
+
         Spot s;
-        int i = m_random.get_int(0, 4);
-        if (i < 2) {
+        if (i < 3) {
             if (!get_random_spot(s)) return;
             vec2 p = get_spot_pos(s);
-            if (i == 0)      m_world.spawn_enemy<SquareEnemy>(p);
+
+            if      (i == 0) m_world.spawn_enemy<SquareEnemy>(p);
             else if (i == 1) m_world.spawn_enemy<RingEnemy>(p);
+            else if (i == 2) m_world.spawn_enemy<TwisterEnemy>(p, F_NORTH);
         }
         else {
             if (!get_random_wall_spot(s)) return;
             vec2 p = get_spot_pos(s);
-            if (i == 2)      m_world.spawn_enemy<CannonEnemy>(p, s.footing);
-            else if (i == 3) m_world.spawn_enemy<RocketEnemy>(p, s.footing);
-            else if (i == 4) m_world.spawn_enemy<SpiderEnemy>(p, s.footing);
+
+            if      (i == 3) m_world.spawn_enemy<CannonEnemy>(p, s.footing);
+            else if (i == 4) m_world.spawn_enemy<RocketEnemy>(p, s.footing);
+            else if (i == 5) m_world.spawn_enemy<SpiderEnemy>(p, s.footing);
         }
     }
 }

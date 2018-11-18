@@ -63,7 +63,6 @@ protected:
 };
 
 
-
 class Bullet {
 public:
 
@@ -91,3 +90,6 @@ private:
 
     Desc const&         m_desc;
 };
+
+
+extern const Bullet::Desc PLASMA_BULLET_DESC;

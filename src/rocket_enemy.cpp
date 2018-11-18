@@ -40,14 +40,13 @@ void RocketEnemy::sub_update() {
         }
 
     }
-    else if (m_pos.y > -75 && player.is_alive()) {
-        vec2 d = player.get_pos() - m_pos;
-        float dot = glm::dot(m_normal, d);
-        if (dot > 0) {
-            float cross = m_normal.x * d.y - m_normal.y * d.x;
-            if (std::abs(cross) < 14 && can_see_player()) {
-                m_active = true;
-            }
+
+    vec2 d = player.get_pos() - m_pos;
+    float dot = glm::dot(m_normal, d);
+    if (dot > 0) {
+        float cross = m_normal.x * d.y - m_normal.y * d.x;
+        if (std::abs(cross) < 14 && can_see_player()) {
+            m_active = true;
         }
     }
 }

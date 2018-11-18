@@ -9,19 +9,6 @@ namespace {
         vec2{-4, 0},
         vec2{-4, 4},
     };
-
-    const Bullet::Desc PLASMA_BULLET_DESC = {
-        false,
-        Sprite::PLASMA_BULLET,
-        2,
-        {
-            vec2{-1, 1},
-            vec2{1, 1},
-            vec2{1, -1},
-            vec2{-1, -1},
-        },
-        Color(153, 21, 21, 200),
-    };
 }
 
 CannonEnemy::CannonEnemy(World& world, uint32_t seed, vec2 const& pos, Footing footing) : Enemy(world, seed, pos) {

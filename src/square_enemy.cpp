@@ -78,9 +78,6 @@ void SquareEnemy::sub_update() {
         transform(m_polygon, SQUARE_ENEMY_POLYGON, m_pos);
     }
 
-    if (std::abs(m_pos.y) > 75) return;
-    if (!m_world.get_player().is_alive()) return;
-
     // shoot
     --m_delay;
     if (m_delay == 20 && !can_see_player()) {
