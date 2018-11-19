@@ -72,7 +72,10 @@ void Populator::update() {
 
             if      (i == 0) m_world.spawn_enemy<SquareEnemy>(p);
             else if (i == 1) m_world.spawn_enemy<RingEnemy>(p);
-            else if (i == 2) m_world.spawn_enemy<TwisterEnemy>(p, F_NORTH);
+            //else if (i == 2) m_world.spawn_enemy<TwisterEnemy>(p, F_NORTH);
+            else if (i == 2) m_world.spawn_chain<TwisterEnemyChain>(p);
+
+
         }
         else {
             if (!get_random_wall_spot(s)) return;

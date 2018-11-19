@@ -28,23 +28,36 @@ namespace {
 }
 
 
-TwisterEnemy::TwisterEnemy(World& world, uint32_t seed, vec2 const& pos, Footing footing) : Enemy(world, seed, pos) {
+TwisterEnemyChain::TwisterEnemyChain(World& world, uint32_t seed, vec2 const& pos) : m_world(world) {
+    m_pos     = pos;
+    m_count   = 4;
+}
+bool TwisterEnemyChain::update() {
+    m_pos.y += Wall::SPEED;
+    if (m_tick++ % 32 == 0) {
+        m_world.spawn_enemy<TwisterEnemy>(m_pos, F_NORTH, m_seed);
+        if (--m_count <= 0) return false;
+    }
+    return true;
+}
+
+
+TwisterEnemy::TwisterEnemy(World& world, uint32_t seed, vec2 const& pos, Footing footing, uint32_t path_seed) : Enemy(world, seed, pos) {
     m_sprite  = Sprite::TWISTER;
     m_shield  = 2;
     m_score   = 120;
     m_energy  = 2;
     m_dst_ang = get_angle(footing) - M_PI * 0.5;
     m_ang     = m_dst_ang;
-    m_delay   = m_random.get_int(200, 300);
-    m_count   = m_random.get_int(10, 200);
-
+    m_count   = m_path_random.get_int(10, 200);
+    m_path_random.seed(path_seed ?: seed);
     m_polygon.resize(TWISTER_ENEMY_POLYGON.size());
     transform(m_polygon, TWISTER_ENEMY_POLYGON, m_pos);
 }
 
 void TwisterEnemy::sub_update() {
     m_pos.y += Wall::SPEED;
-    m_pos += vec2(std::cos(m_ang), std::sin(m_ang)) * 0.4f;
+    m_pos += vec2(std::cos(m_ang), std::sin(m_ang)) * 0.5f;
 
     if      (m_ang < m_dst_ang) m_ang = std::min(m_ang + 0.1f, m_dst_ang);
     else if (m_ang > m_dst_ang) m_ang = std::max(m_ang - 0.1f, m_dst_ang);
@@ -57,13 +70,13 @@ void TwisterEnemy::sub_update() {
         CollisionInfo r = m_world.get_wall().check_collision(m_polygon);
 
         if (m_count <= 0 || (l.distance > 0 && r.distance > 0)) {
-            m_count = m_random.get_int(10, 200);
-            if      (l.distance < r.distance) m_dst_ang -= M_PI * 0.5;
-            else if (l.distance > r.distance) m_dst_ang += M_PI * 0.5;
-            else {
-                if (m_pos.y < -60) m_dst_ang = M_PI * 0.5; // turn down
-                else m_dst_ang += (m_random.get_int(0, 1) ? -1 : 1) * M_PI * 0.5;
+            m_count = m_path_random.get_int(10, 200);
+            if (l.distance == 0 && r.distance == 0) {
+                if (std::abs(m_pos.y) > 75) m_dst_ang = M_PI * 0.5; // turn down
+                else m_dst_ang += (m_path_random.get_int(0, 1) ? -1 : 1) * M_PI * 0.5;
             }
+            else if (l.distance < r.distance) m_dst_ang -= M_PI * 0.5;
+            else                              m_dst_ang += M_PI * 0.5;
         }
     }
 
