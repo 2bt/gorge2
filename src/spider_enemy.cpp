@@ -38,7 +38,7 @@ SpiderEnemy::SpiderEnemy(World& world, uint32_t seed, vec2 const& pos, Footing f
     else if (footing == F_EAST) m_dir = -1;
     else                        m_dir = m_random.get_int(0, 1) ? -1 : 1;
     m_polygon.resize(SPIDER_ENEMY_POLYGON.size());
-    transform(m_polygon, SPIDER_ENEMY_POLYGON, m_pos);
+    transform_points(m_polygon, SPIDER_ENEMY_POLYGON, m_pos);
 }
 
 void SpiderEnemy::sub_update() {
@@ -46,14 +46,14 @@ void SpiderEnemy::sub_update() {
 
     if (m_floating) {
         m_sprite_ang += m_dir * 0.05;
-        transform(m_polygon, SPIDER_ENEMY_POLYGON, m_pos);
+        transform_points(m_polygon, SPIDER_ENEMY_POLYGON, m_pos);
         return;
     }
 
     // stick to wall
     vec2 old_pos = m_pos;
     m_pos -= m_normal * 0.25f;
-    transform(m_polygon, SPIDER_ENEMY_POLYGON, m_pos);
+    transform_points(m_polygon, SPIDER_ENEMY_POLYGON, m_pos);
     CollisionInfo info = m_world.get_wall().check_collision(m_polygon);
     if (info.distance > 0) {
         m_pos += info.normal * info.distance;
@@ -70,7 +70,7 @@ void SpiderEnemy::sub_update() {
 
         // crawl
         m_pos += vec2(-m_normal.y, m_normal.x) * (m_dir * 0.2f);
-        transform(m_polygon, SPIDER_ENEMY_POLYGON, m_pos);
+        transform_points(m_polygon, SPIDER_ENEMY_POLYGON, m_pos);
         CollisionInfo info = m_world.get_wall().check_collision(m_polygon);
         if (info.distance > 0) {
             m_pos += info.normal * info.distance;
@@ -109,7 +109,7 @@ void SpiderEnemy::sub_update() {
 
     }
 
-    transform(m_polygon, SPIDER_ENEMY_POLYGON, m_pos);
+    transform_points(m_polygon, SPIDER_ENEMY_POLYGON, m_pos);
 }
 void SpiderEnemy::sub_draw(SpriteRenderer& ren) const {
     int f = m_shooting ? 4 : 0;

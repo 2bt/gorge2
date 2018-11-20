@@ -22,7 +22,7 @@ RingEnemy::RingEnemy(World& world, uint32_t seed, vec2 const& pos) : Enemy(world
     m_delay = m_random.get_int(0, 200);
     turn(0.2, M_PI - 0.2);
     m_polygon.resize(RING_ENEMY_POLYGON.size());
-    transform(m_polygon, RING_ENEMY_POLYGON, m_pos);
+    transform_points(m_polygon, RING_ENEMY_POLYGON, m_pos);
 }
 
 void RingEnemy::turn(float ang1, float ang2) {
@@ -34,12 +34,12 @@ void RingEnemy::sub_update() {
 
     m_pos += m_vel + vec2(0, Wall::SPEED);
 
-    transform(m_polygon, RING_ENEMY_POLYGON, m_pos);
+    transform_points(m_polygon, RING_ENEMY_POLYGON, m_pos);
     CollisionInfo info = m_world.get_wall().check_collision(m_polygon);
     if (info.distance > 0) {
         m_pos += info.normal * info.distance;
         turn(0, 2 * M_PI);
-        transform(m_polygon, RING_ENEMY_POLYGON, m_pos);
+        transform_points(m_polygon, RING_ENEMY_POLYGON, m_pos);
     }
 
     m_delay += m_random.get_int(1, 4);

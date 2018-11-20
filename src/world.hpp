@@ -44,6 +44,7 @@ public:
         return raw;
     }
 
+    // XXX: bad design
     template<class T, typename... Args>
     T* spawn_chain(Args&&... args) {
         auto unique = std::make_unique<T>(

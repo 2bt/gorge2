@@ -52,7 +52,7 @@ TwisterEnemy::TwisterEnemy(World& world, uint32_t seed, vec2 const& pos, Footing
     m_count   = m_path_random.get_int(10, 200);
     m_path_random.seed(path_seed ?: seed);
     m_polygon.resize(TWISTER_ENEMY_POLYGON.size());
-    transform(m_polygon, TWISTER_ENEMY_POLYGON, m_pos);
+    transform_points(m_polygon, TWISTER_ENEMY_POLYGON, m_pos);
 }
 
 void TwisterEnemy::sub_update() {
@@ -64,9 +64,9 @@ void TwisterEnemy::sub_update() {
     else {
         --m_count;
 
-        transform(m_polygon, TURN_LEFT_POLYGON, m_pos, m_ang);
+        transform_points(m_polygon, TURN_LEFT_POLYGON, m_pos, m_ang);
         CollisionInfo l = m_world.get_wall().check_collision(m_polygon);
-        transform(m_polygon, TURN_RIGHT_POLYGON, m_pos, m_ang);
+        transform_points(m_polygon, TURN_RIGHT_POLYGON, m_pos, m_ang);
         CollisionInfo r = m_world.get_wall().check_collision(m_polygon);
 
         if (m_count <= 0 || (l.distance > 0 && r.distance > 0)) {
@@ -80,7 +80,7 @@ void TwisterEnemy::sub_update() {
         }
     }
 
-    transform(m_polygon, TWISTER_ENEMY_POLYGON, m_pos, m_ang);
+    transform_points(m_polygon, TWISTER_ENEMY_POLYGON, m_pos, m_ang);
 
     if (m_random.get_int(0, 600) == 0 && can_see_player()) {
         vec2 dir = m_world.get_player().get_pos() - m_pos;

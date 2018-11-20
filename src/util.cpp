@@ -6,7 +6,7 @@
 Random rnd;
 
 
-void transform(vec2* dst, vec2 const* src, int len, vec2 const& pos, float ang) {
+void transform_points(vec2* dst, vec2 const* src, int len, vec2 const& pos, float ang) {
     float si = std::sin(ang);
     float co = std::cos(ang);
     for (int i = 0; i < len; ++i) {

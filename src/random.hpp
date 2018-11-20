@@ -16,6 +16,9 @@ public:
     float get_float(float min, float max) {
         return m_float_dist(m_gen, decltype(m_float_dist)::param_type{ min, max });
     }
+
+    auto get(auto& dist) { return dist(m_gen); }
+
 private:
     std::default_random_engine            m_gen;
     std::uniform_int_distribution<int>    m_int_dist;

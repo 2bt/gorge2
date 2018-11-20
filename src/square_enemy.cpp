@@ -49,7 +49,7 @@ SquareEnemy::SquareEnemy(World& world, uint32_t seed, vec2 const& pos) : Enemy(w
     m_vel    = {m_random.get_float(-5, 5), 1};
     m_vel    = glm::normalize(m_vel) * 0.275f;
     m_polygon.resize(SQUARE_ENEMY_POLYGON.size());
-    transform(m_polygon, BOUNCE_POLYGON, m_pos);
+    transform_points(m_polygon, BOUNCE_POLYGON, m_pos);
 }
 
 void SquareEnemy::die() {
@@ -61,7 +61,7 @@ void SquareEnemy::sub_update() {
     float p = std::sin(m_tick * 0.1);
     m_pos += vec2(m_vel.y, -m_vel.x) * p;
 
-    transform(m_polygon, BOUNCE_POLYGON, m_pos);
+    transform_points(m_polygon, BOUNCE_POLYGON, m_pos);
     CollisionInfo info = m_world.get_wall().check_collision(m_polygon);
     if (info.distance > 0) {
         m_vel += info.normal * 0.015f;
@@ -71,11 +71,11 @@ void SquareEnemy::sub_update() {
         m_vel = glm::normalize(m_vel) * 0.275f;
     }
 
-    transform(m_polygon, SQUARE_ENEMY_POLYGON, m_pos);
+    transform_points(m_polygon, SQUARE_ENEMY_POLYGON, m_pos);
     info = m_world.get_wall().check_collision(m_polygon);
     if (info.distance > 0) {
         m_pos += info.normal * info.distance;
-        transform(m_polygon, SQUARE_ENEMY_POLYGON, m_pos);
+        transform_points(m_polygon, SQUARE_ENEMY_POLYGON, m_pos);
     }
 
     // shoot

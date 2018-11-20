@@ -8,6 +8,20 @@
 #include "spider_enemy.hpp"
 
 
+Populator::Populator(World& world) : m_world(world), m_spawn_groups({
+        { 30, false, [this](vec2 const& p, Footing  ){ m_world.spawn_enemy<SquareEnemy>(p); } },
+        { 20, false, [this](vec2 const& p, Footing  ){ m_world.spawn_enemy<RingEnemy>(p); } },
+        {  7, false, [this](vec2 const& p, Footing  ){ m_world.spawn_chain<TwisterEnemyChain>(p); } },
+        { 20, true,  [this](vec2 const& p, Footing f){ m_world.spawn_enemy<CannonEnemy>(p, f); } },
+        { 20, true,  [this](vec2 const& p, Footing f){ m_world.spawn_enemy<RocketEnemy>(p, f); } },
+        { 20, true,  [this](vec2 const& p, Footing f){ m_world.spawn_enemy<SpiderEnemy>(p, f); } },
+    })
+{
+    std::vector<int> weights;
+    for (SpawnGroup const& g : m_spawn_groups) weights.push_back(g.weight);
+    m_spawn_dist = std::discrete_distribution<int>(weights.begin(), weights.end());
+}
+
 void Populator::reset(uint32_t seed) {
     m_random.seed(seed);
     m_tick           = 0;
@@ -53,6 +67,7 @@ bool Populator::get_random_wall_spot(Spot& s) {
     m_wall_spots.erase(m_wall_spots.begin() + i);
     return true;
 }
+
 vec2 Populator::get_spot_pos(Spot s) const {
     return m_world.get_wall().get_tile_position(s.x, Y);
 }
@@ -60,30 +75,11 @@ vec2 Populator::get_spot_pos(Spot s) const {
 void Populator::update() {
     ++m_tick;
 
-    // spawn enemy
-    if (m_tick % 60 == 0) {
-
-        int i = m_random.get_int(0, 5);
-
+    if (m_tick % 70 == 0) {
+        SpawnGroup const& g = m_spawn_groups[m_random.get(m_spawn_dist)];
         Spot s;
-        if (i < 3) {
-            if (!get_random_spot(s)) return;
-            vec2 p = get_spot_pos(s);
-
-            if      (i == 0) m_world.spawn_enemy<SquareEnemy>(p);
-            else if (i == 1) m_world.spawn_enemy<RingEnemy>(p);
-            //else if (i == 2) m_world.spawn_enemy<TwisterEnemy>(p, F_NORTH);
-            else if (i == 2) m_world.spawn_chain<TwisterEnemyChain>(p);
-
-
-        }
-        else {
-            if (!get_random_wall_spot(s)) return;
-            vec2 p = get_spot_pos(s);
-
-            if      (i == 3) m_world.spawn_enemy<CannonEnemy>(p, s.footing);
-            else if (i == 4) m_world.spawn_enemy<RocketEnemy>(p, s.footing);
-            else if (i == 5) m_world.spawn_enemy<SpiderEnemy>(p, s.footing);
-        }
+        if (!g.needs_wall && !get_random_spot(s)) return;
+        if (g.needs_wall && !get_random_wall_spot(s)) return;
+        g.spawn_func(get_spot_pos(s), s.footing);
     }
 }

@@ -45,7 +45,7 @@ void Wall::generate() {
         constexpr float padding = 13;
 
         float r = m_radius * m_radius;
-        for (int y = 0; y < (int) m_gen_data.size(); ++y)
+        for (int y = 2; y < (int) m_gen_data.size(); ++y)
         for (int x = P; x < W - P; ++x) {
             if (length2(vec2(x, y) - m_cursor) < r) {
                 m_gen_data[y][x] = 0;

@@ -198,7 +198,7 @@ void Ball::update() {
     if (!m_alive) return;
     m_glide = std::min(m_glide + 0.02f, 0.3f);
     m_pos += (m_world.get_player().get_pos() + m_offset - m_pos) * m_glide;
-    transform(m_polygon, BALL_POLYGON, m_pos);
+    transform_points(m_polygon, BALL_POLYGON, m_pos);
 
     // collision with wall
     CollisionInfo info = m_world.get_wall().check_collision(m_polygon);
@@ -263,7 +263,7 @@ void Player::hit(CollisionInfo const& info) {
     // blast
     if (info.distance > 0) {
         m_pos += info.normal * info.distance;
-        transform(m_polygon, PLAYER_POLYGON, m_pos);
+        transform_points(m_polygon, PLAYER_POLYGON, m_pos);
         m_blast_vel = info.normal * 1.5f;
         m_blast_delay = 15;
         make_small_explosion(m_world, info.where, false);
@@ -300,7 +300,7 @@ void Player::update(fx::Input const& input) {
     m_pos = clamp(m_pos, { -124, -72 }, { 124, 71 });
 
     // collision with wall
-    transform(m_polygon, PLAYER_POLYGON, m_pos);
+    transform_points(m_polygon, PLAYER_POLYGON, m_pos);
     CollisionInfo info = m_world.get_wall().check_collision(m_polygon);
     if (info.distance > 0) hit(info);
 
@@ -346,7 +346,7 @@ void Player::update(fx::Input const& input) {
         m_field_active = true;
     }
     if (m_field_active) {
-        transform(m_field_polygon, PLAYER_FIELD_POLYGON, m_pos);
+        transform_points(m_field_polygon, PLAYER_FIELD_POLYGON, m_pos);
     }
 
     m_old_input_b = input.b;
@@ -397,7 +397,7 @@ bool Laser::update() {
     for (int i = 0; i < 4; ++i) {
         m_pos += m_vel;
         if (std::abs(m_pos.x) > 124 || std::abs(m_pos.y) > 80)  return false;
-        transform(m_polygon, m_is_small ? SMALL_LASER_POLYGON : LASER_POLYGON, m_pos, m_ang);
+        transform_points(m_polygon, m_is_small ? SMALL_LASER_POLYGON : LASER_POLYGON, m_pos, m_ang);
 
         // collision with wall
         CollisionInfo info = m_world.get_wall().check_collision(m_polygon);

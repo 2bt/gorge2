@@ -17,12 +17,12 @@ RocketEnemy::RocketEnemy(World& world, uint32_t seed, vec2 const& pos, Footing f
     m_ang        = get_angle(footing);
     m_normal     = { std::sin(m_ang), -std::cos(m_ang) };
     m_polygon.resize(ROCKET_ENEMY_POLYGON.size());
-    transform(m_polygon, ROCKET_ENEMY_POLYGON, m_pos, m_ang);
+    transform_points(m_polygon, ROCKET_ENEMY_POLYGON, m_pos, m_ang);
 }
 
 void RocketEnemy::sub_update() {
     m_pos.y += Wall::SPEED;
-    transform(m_polygon, ROCKET_ENEMY_POLYGON, m_pos, m_ang);
+    transform_points(m_polygon, ROCKET_ENEMY_POLYGON, m_pos, m_ang);
 
     Player const& player = m_world.get_player();
     if (m_active) {
@@ -31,7 +31,7 @@ void RocketEnemy::sub_update() {
         }
         m_vel += m_normal * 0.025f;
         m_pos += m_vel;
-        transform(m_polygon, ROCKET_ENEMY_POLYGON, m_pos, m_ang);
+        transform_points(m_polygon, ROCKET_ENEMY_POLYGON, m_pos, m_ang);
         CollisionInfo info = m_world.get_wall().check_collision(m_polygon);
         if (info.distance > 0) {
             m_score = 0;

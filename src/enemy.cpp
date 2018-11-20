@@ -116,7 +116,7 @@ bool Bullet::update() {
         }
 
         // collision with wall
-        transform(m_polygon, m_desc.polygon, m_pos, m_ang);
+        transform_points(m_polygon, m_desc.polygon, m_pos, m_ang);
         CollisionInfo info = m_world.get_wall().check_collision(m_polygon);
         if (info.distance > 0) {
             make_sparks(info.where);

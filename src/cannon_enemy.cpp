@@ -20,12 +20,12 @@ CannonEnemy::CannonEnemy(World& world, uint32_t seed, vec2 const& pos, Footing f
     m_cannon_ang = m_ang + m_random.get_float(-1.3, 1.3);
     m_delay      = m_random.get_int(100, 150);
     m_polygon.resize(CANNON_ENEMY_POLYGON.size());
-    transform(m_polygon, CANNON_ENEMY_POLYGON, m_pos, m_ang);
+    transform_points(m_polygon, CANNON_ENEMY_POLYGON, m_pos, m_ang);
 }
 
 void CannonEnemy::sub_update() {
     m_pos.y += Wall::SPEED;
-    transform(m_polygon, CANNON_ENEMY_POLYGON, m_pos, m_ang);
+    transform_points(m_polygon, CANNON_ENEMY_POLYGON, m_pos, m_ang);
 
     if (std::abs(m_pos.y) > 80) return;
 

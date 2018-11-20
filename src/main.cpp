@@ -59,14 +59,10 @@ public:
         float r = fx::screen_height() / (float) fx::screen_width();
         m_ren.scale({s * r, s});
 
-//        m_ren.translate({0, 35});
-//        m_ren.scale(0.25);
-
 //        m_ren.translate({0, 25});
 //        m_ren.scale(0.4);
 
         DB_REN.transform() = m_ren.transform();
-
 
         m_world.draw(m_ren);
 

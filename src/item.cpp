@@ -43,11 +43,11 @@ bool EnergyItem::update() {
     m_vel *= 0.98f;
     if (m_pos.y > 80) return false;
 
-    transform(m_polygon, ENERGY_ITEM_POLYGON, m_pos);
+    transform_points(m_polygon, ENERGY_ITEM_POLYGON, m_pos);
     CollisionInfo info = m_world.get_wall().check_collision(m_polygon);
     if (info.distance > 0) {
         m_pos += info.normal * info.distance;
-        transform(m_polygon, ENERGY_ITEM_POLYGON, m_pos);
+        transform_points(m_polygon, ENERGY_ITEM_POLYGON, m_pos);
 
         // reflect
         m_vel -= glm::dot(m_vel, info.normal) * info.normal * 2.0f;
@@ -88,7 +88,7 @@ bool BigItem::update() {
     m_pos += vec2(std::cos(m_tick * 0.1), std::sin(m_tick * 0.1)) * 0.25f;
     if (m_pos.y > 80) return false;
 
-    transform(m_bounce_polygon, BIG_ITEM_BOUNCE_POLYGON, m_pos);
+    transform_points(m_bounce_polygon, BIG_ITEM_BOUNCE_POLYGON, m_pos);
     CollisionInfo info = m_world.get_wall().check_collision(m_bounce_polygon);
     if (info.distance > 0) {
         m_pos += info.normal * 0.075f;
@@ -102,7 +102,7 @@ bool BigItem::update() {
         float len = glm::length(d);
         if (len < 15)  m_pos += d * (0.75f / len);
 
-        transform(m_polygon, BIG_ITEM_POLYGON, m_pos);
+        transform_points(m_polygon, BIG_ITEM_POLYGON, m_pos);
         CollisionInfo info = polygon_collision(m_polygon, player.get_polygon());
         if (info.distance > 0) {
             make_sparkles(m_world, m_pos);
