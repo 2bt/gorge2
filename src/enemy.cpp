@@ -43,10 +43,10 @@ void Enemy::hit(int damage) {
     m_shield -= damage;
     if (m_shield <= 0) {
         m_alive = false;
+        die();
         make_explosion(m_world, m_pos);
         make_energy_items(m_world, m_random, m_pos, m_energy);
         m_world.get_player().inc_score(m_score);
-        die();
     }
 }
 bool Enemy::can_see_player() const {

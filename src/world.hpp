@@ -24,6 +24,7 @@ public:
 
     Bump& get_bump() { return m_bump; }
     Wall const& get_wall() const { return m_wall; }
+    Wall& get_wall() { return m_wall; }
     Player& get_player() { return m_player; }
     Player const& get_player() const { return m_player; }
     ShockWave& get_shock_wave() { return m_shock_wave; }

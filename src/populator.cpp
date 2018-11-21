@@ -6,6 +6,7 @@
 #include "cannon_enemy.hpp"
 #include "rocket_enemy.hpp"
 #include "spider_enemy.hpp"
+#include "blockade_enemy.hpp"
 
 
 Populator::Populator(World& world) : m_world(world), m_spawn_groups({
@@ -28,6 +29,8 @@ void Populator::reset(uint32_t seed) {
     m_wall_row_count = 0;
     m_spots.clear();
     m_wall_spots.clear();
+
+    m_blockades = 0;
 }
 
 enum {
@@ -35,13 +38,46 @@ enum {
 };
 
 void Populator::next_wall_row() {
-    ++m_wall_row_count;
-
     m_spots.clear();
     m_wall_spots.clear();
 
     auto const& data = m_world.get_wall().get_data();
 
+    // blockade
+    ++m_wall_row_count;
+    if (m_wall_row_count >= 30) {
+        m_wall_row_count = 0;
+        ++m_blockades;
+    }
+    if (m_blockades > 0) {
+        // check whether line is suitable for blockade
+        int x;
+        for (x = 1; x < Wall::W; ++x) {
+            if (data[Y][x] != 0) continue;
+            if (data[Y][x - 1] > 1 || data[Y][x + 1] > 1) break;
+        }
+        if (x == Wall::W) {
+            --m_blockades;
+            // set up blockade
+            BlockadeEnemy* prev = nullptr;
+            for (x = 1; x < Wall::W; ++x) {
+                if (data[Y][x] == 0) {
+                    vec2 p = m_world.get_wall().get_tile_position(x, Y) - vec2(0, Wall::SPEED);
+                    BlockadeEnemy* b = m_world.spawn_enemy<BlockadeEnemy>(p);
+                    if (prev) b->link(prev);
+                    prev = b;
+                }
+                else {
+                    prev = nullptr;
+                }
+            }
+
+            // don't collect spots
+            return;
+        }
+    }
+
+    // collect spots
     for (int x = 1; x < Wall::W - 1; ++x) {
         if (data[Y][x] != 0) continue;
         m_spots.push_back({ x });

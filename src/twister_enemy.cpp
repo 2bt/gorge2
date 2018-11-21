@@ -35,19 +35,19 @@ TwisterEnemyChain::TwisterEnemyChain(World& world, uint32_t seed, vec2 const& po
 bool TwisterEnemyChain::update() {
     m_pos.y += Wall::SPEED;
     if (m_tick++ % 32 == 0) {
-        m_world.spawn_enemy<TwisterEnemy>(m_pos, F_NORTH, m_seed);
+        m_world.spawn_enemy<TwisterEnemy>(m_pos, m_seed);
         if (--m_count <= 0) return false;
     }
     return true;
 }
 
 
-TwisterEnemy::TwisterEnemy(World& world, uint32_t seed, vec2 const& pos, Footing footing, uint32_t path_seed) : Enemy(world, seed, pos) {
+TwisterEnemy::TwisterEnemy(World& world, uint32_t seed, vec2 const& pos, uint32_t path_seed) : Enemy(world, seed, pos) {
     m_sprite  = Sprite::TWISTER;
     m_shield  = 2;
     m_score   = 120;
-    m_energy  = 2;
-    m_dst_ang = get_angle(footing) - M_PI * 0.5;
+    m_energy  = 1;
+    m_dst_ang = get_angle(F_NORTH) - M_PI * 0.5;
     m_ang     = m_dst_ang;
     m_count   = m_path_random.get_int(10, 200);
     m_path_random.seed(path_seed ?: seed);

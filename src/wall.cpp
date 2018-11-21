@@ -187,7 +187,7 @@ void Wall::draw(SpriteRenderer& ren) {
 
         for (int x = 0; x < W; ++x) {
             int cell = row[x];
-            if (cell == 0) continue;
+            if (cell <= 0) continue;
 
             ren.push();
             ren.translate(get_tile_position(x, y));
@@ -234,6 +234,14 @@ void Wall::draw(SpriteRenderer& ren) {
                 ren.draw(frame(Sprite::WALLS, n));
             }
 
+//            ren.push_state();
+//            ren.set_color();
+//            ren.scale(0.4);
+//            char l[16];
+//            sprintf(l, "%d", cell);
+//            print(ren, l);
+//            ren.pop_state();
+
             ren.pop();
         }
 
@@ -244,16 +252,19 @@ void Wall::draw(SpriteRenderer& ren) {
 
 
 namespace {
-    std::array<std::vector<vec2>, 5> WALL_POLYGONS = {
+    const std::array<std::vector<vec2>, 6> WALL_POLYGONS = {
         std::vector<vec2>{ {-4, -4}, {-4, 4}, {4, 4}, {4, -4} },
         std::vector<vec2>{ {-4, -4}, {4, 4}, {4, -4} },
         std::vector<vec2>{ {-4, 4}, {4, 4}, {4, -4} },
         std::vector<vec2>{ {-4, -4}, {-4, 4}, {4, 4} },
         std::vector<vec2>{ {-4, -4}, {-4, 4}, {4, -4} },
+
+        // blockade
+        std::vector<vec2>{ {4, 3}, {4, -3}, {-4, -3}, {-4, 3} }
     };
 }
 
-CollisionInfo Wall::check_collision(vec2 const* polygon, int len) const {
+CollisionInfo Wall::check_collision(vec2 const* polygon, int len, bool skip_meta) const {
     CollisionInfo info = {};
 
     vec2 min = polygon[0];
@@ -280,8 +291,10 @@ CollisionInfo Wall::check_collision(vec2 const* polygon, int len) const {
             if (cell == 0) continue;
 
 
-            int index = cell - 1;
-            if (index < (int) WALL_POLYGONS.size()) {
+            int index = -1;
+            if (cell == -1 && !skip_meta) index = 5;
+            if (cell > 0 && cell < 5) index = cell - 1;
+            if (index >= 0) {
 
                 vec2 pos = get_tile_position(x, y);
                 auto const& poly = WALL_POLYGONS[index];
@@ -327,3 +340,14 @@ bool Wall::check_sight(vec2 const& a, vec2 const& b) const {
 	return false;
 }
 
+
+void Wall::mark_tile(vec2 pos) {
+    auto addr = get_tile_address(pos);
+    assert(m_data[addr.y][addr.x] == 0);
+    m_data[addr.y][addr.x] = -1;
+}
+void Wall::erase_tile_mark(vec2 pos) {
+    auto addr = get_tile_address(pos);
+    assert(m_data[addr.y][addr.x] == -1);
+    m_data[addr.y][addr.x] = 0;
+}

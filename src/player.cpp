@@ -201,7 +201,7 @@ void Ball::update() {
     transform_points(m_polygon, BALL_POLYGON, m_pos);
 
     // collision with wall
-    CollisionInfo info = m_world.get_wall().check_collision(m_polygon);
+    CollisionInfo info = m_world.get_wall().check_collision(m_polygon, true);
     if (info.distance > 0) hit(info);
 
     // collision with enemies
@@ -301,7 +301,7 @@ void Player::update(fx::Input const& input) {
 
     // collision with wall
     transform_points(m_polygon, PLAYER_POLYGON, m_pos);
-    CollisionInfo info = m_world.get_wall().check_collision(m_polygon);
+    CollisionInfo info = m_world.get_wall().check_collision(m_polygon, true);
     if (info.distance > 0) hit(info);
 
     // collision with enemies
@@ -400,7 +400,7 @@ bool Laser::update() {
         transform_points(m_polygon, m_is_small ? SMALL_LASER_POLYGON : LASER_POLYGON, m_pos, m_ang);
 
         // collision with wall
-        CollisionInfo info = m_world.get_wall().check_collision(m_polygon);
+        CollisionInfo info = m_world.get_wall().check_collision(m_polygon, true);
         if (info.distance > 0) {
             for (int i = 0; i < 10; ++i) {
                 m_world.spawn_particle<LaserParticle>(info.where);

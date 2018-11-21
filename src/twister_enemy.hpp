@@ -17,7 +17,7 @@ private:
 
 class TwisterEnemy : public Enemy {
 public:
-    TwisterEnemy(World& world, uint32_t seed, vec2 const& pos, Footing footing, uint32_t path_seed = 0);
+    TwisterEnemy(World& world, uint32_t seed, vec2 const& pos, uint32_t path_seed = 0);
     void sub_update() override;
 protected:
     Random m_path_random;

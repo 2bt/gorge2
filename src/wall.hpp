@@ -20,10 +20,10 @@ public:
     void update();
     void draw(SpriteRenderer& ren);
 
-    CollisionInfo check_collision(vec2 const* polygon, int len) const;
+    CollisionInfo check_collision(vec2 const* polygon, int len, bool skip_meta) const;
     template<class T>
-    CollisionInfo check_collision(T const& polygon) const {
-        return check_collision(polygon.data(), polygon.size());
+    CollisionInfo check_collision(T const& polygon, bool skip_meta = false) const {
+        return check_collision(polygon.data(), polygon.size(), skip_meta);
     }
 
     bool check_sight(vec2 const& a, vec2 const& b) const;
@@ -31,6 +31,10 @@ public:
     enum { W = 38, H = 30, G = 38 };
     Grid<H, W> const& get_data() const { return m_data; }
     vec2 get_tile_position(int x, int y) const;
+
+    // for blockade
+    void mark_tile(vec2 pos);
+    void erase_tile_mark(vec2 pos);
 
 private:
     void generate();
