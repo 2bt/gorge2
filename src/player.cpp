@@ -302,7 +302,15 @@ void Player::update(fx::Input const& input) {
     // collision with wall
     transform_points(m_polygon, PLAYER_POLYGON, m_pos);
     CollisionInfo info = m_world.get_wall().check_collision(m_polygon, true);
-    if (info.distance > 0) hit(info);
+    if (info.distance > 0) {
+        hit(info);
+        // instant death
+        if (m_pos.y > 71) {
+            m_invincible_delay = 0;
+            m_shield = 0;
+            hit();
+        }
+    }
 
     // collision with enemies
     for (auto& e : m_world.get_enemies()) {

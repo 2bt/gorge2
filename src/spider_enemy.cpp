@@ -84,7 +84,7 @@ void SpiderEnemy::sub_update() {
 
         // sight check
         if (m_delay == 1) {
-            if (!can_see_player()) m_delay = m_random.get_int(0, 100);
+            if (!can_see_player()) m_delay = m_random.get_int(5, 100);
         }
     }
     else {
