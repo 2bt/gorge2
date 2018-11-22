@@ -29,7 +29,7 @@ protected:
     Random            m_random;
     int               m_tick;
     int               m_wall_row_count;
-    int               m_blockades;
+    int               m_blockades_todo;
 
     std::vector<Spot> m_spots;
     std::vector<Spot> m_wall_spots;

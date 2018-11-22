@@ -27,10 +27,9 @@ void Populator::reset(uint32_t seed) {
     m_random.seed(seed);
     m_tick           = 0;
     m_wall_row_count = 0;
+    m_blockades_todo = 0;
     m_spots.clear();
     m_wall_spots.clear();
-
-    m_blockades = 0;
 }
 
 enum {
@@ -38,18 +37,18 @@ enum {
 };
 
 void Populator::next_wall_row() {
+    printf("%d\n", m_wall_row_count);
+
     m_spots.clear();
     m_wall_spots.clear();
 
     auto const& data = m_world.get_wall().get_data();
 
     // blockade
-    ++m_wall_row_count;
-    if (m_wall_row_count >= 30) {
-        m_wall_row_count = 0;
-        ++m_blockades;
+    if (++m_wall_row_count % 50 == 0) {
+        ++m_blockades_todo;
     }
-    if (m_blockades > 0) {
+    if (m_blockades_todo > 0) {
         // check whether line is suitable for blockade
         int x;
         for (x = 1; x < Wall::W; ++x) {
@@ -57,14 +56,13 @@ void Populator::next_wall_row() {
             if (data[Y][x - 1] > 1 || data[Y][x + 1] > 1) break;
         }
         if (x == Wall::W) {
-            --m_blockades;
+            --m_blockades_todo;
             // set up blockade
             BlockadeEnemy* prev = nullptr;
             for (x = 1; x < Wall::W; ++x) {
                 if (data[Y][x] == 0) {
                     vec2 p = m_world.get_wall().get_tile_position(x, Y) - vec2(0, Wall::SPEED);
-                    BlockadeEnemy* b = m_world.spawn_enemy<BlockadeEnemy>(p);
-                    if (prev) b->link(prev);
+                    BlockadeEnemy* b = m_world.spawn_enemy<BlockadeEnemy>(p, prev);
                     prev = b;
                 }
                 else {

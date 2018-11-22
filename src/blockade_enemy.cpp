@@ -9,7 +9,7 @@ namespace {
     };
 }
 
-BlockadeEnemy::BlockadeEnemy(World& world, uint32_t seed, vec2 const& pos) : Enemy(world, seed, pos) {
+BlockadeEnemy::BlockadeEnemy(World& world, uint32_t seed, vec2 const& pos, BlockadeEnemy* left_neighbor) : Enemy(world, seed, pos) {
     m_sprite = Sprite::BLOCKADE;
     m_shield = 20;
     m_score  = 2000;
@@ -17,6 +17,10 @@ BlockadeEnemy::BlockadeEnemy(World& world, uint32_t seed, vec2 const& pos) : Ene
     m_polygon.resize(BLOCKADE_ENEMY_POLYGON.size());
     transform_points(m_polygon, BLOCKADE_ENEMY_POLYGON, m_pos);
     m_world.get_wall().mark_tile(m_pos);
+    if (left_neighbor) {
+        m_neighbors[0] = left_neighbor;
+        left_neighbor->m_neighbors[1] = this;
+    }
 }
 
 void BlockadeEnemy::die() {

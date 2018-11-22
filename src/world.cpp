@@ -43,6 +43,7 @@ void World::resized() {
 }
 
 void World::reset(uint32_t seed) {
+    printf("seed %u\n", seed);
     m_tick = 0;
 
     m_random.seed(seed);

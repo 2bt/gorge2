@@ -80,7 +80,7 @@ void SpiderEnemy::sub_update() {
         // turn
         float dst_ang = std::atan2(m_normal.x, -m_normal.y);
         float ad = std::fmod(dst_ang - m_sprite_ang + 3 * M_PI, 2 * M_PI) - M_PI;
-        m_sprite_ang += clamp(ad, -0.05f, 0.05f);
+        m_sprite_ang += clamp(ad, -0.06f, 0.06f);
 
         // sight check
         if (m_delay == 1) {

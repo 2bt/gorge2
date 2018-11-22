@@ -45,7 +45,7 @@ void Wall::generate() {
         constexpr float padding = 13;
 
         float r = m_radius * m_radius;
-        for (int y = 2; y < (int) m_gen_data.size(); ++y)
+        for (int y = 3; y < (int) m_gen_data.size(); ++y)
         for (int x = P; x < W - P; ++x) {
             if (length2(vec2(x, y) - m_cursor) < r) {
                 m_gen_data[y][x] = 0;
@@ -293,7 +293,7 @@ CollisionInfo Wall::check_collision(vec2 const* polygon, int len, bool skip_meta
 
             int index = -1;
             if (cell == -1 && !skip_meta) index = 5;
-            if (cell > 0 && cell < 5) index = cell - 1;
+            if (cell > 0 && cell < 6) index = cell - 1;
             if (index >= 0) {
 
                 vec2 pos = get_tile_position(x, y);
