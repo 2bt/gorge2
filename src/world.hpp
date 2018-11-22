@@ -50,7 +50,6 @@ public:
     T* spawn_chain(Args&&... args) {
         auto unique = std::make_unique<T>(
             *this,
-            m_random.get_int(0, 0x7fffffff),
             std::forward<Args>(args)...);
         auto raw = unique.get();
         spawn_particle(std::move(unique));

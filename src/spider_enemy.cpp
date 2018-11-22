@@ -2,14 +2,14 @@
 
 namespace {
     constexpr std::array<vec2, 8> SPIDER_ENEMY_POLYGON = {
-        vec2{1.25, 4},
-        vec2{4, 1.25},
-        vec2{4, -1.25},
-        vec2{1.25, -4},
-        vec2{-1.25, -4},
-        vec2{-4, -1.25},
-        vec2{-4, 1.25},
-        vec2{-1.25, 4},
+        vec2{1, 4},
+        vec2{4, 1},
+        vec2{4, -1},
+        vec2{1, -4},
+        vec2{-1, -4},
+        vec2{-4, -1},
+        vec2{-4, 1},
+        vec2{-1, 4},
     };
 
     const Bullet::Desc SPIDER_BULLET_DESC = {

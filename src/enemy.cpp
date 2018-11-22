@@ -67,8 +67,8 @@ bool Enemy::update() {
         m_hit_by_shock_wave = true;
         hit(8);
     }
+    if (m_alive) sub_update();
 
-    sub_update();
     return m_alive;
 }
 void Enemy::sub_draw(SpriteRenderer& ren) const {
