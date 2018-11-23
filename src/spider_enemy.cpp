@@ -36,7 +36,7 @@ SpiderEnemy::SpiderEnemy(World& world, uint32_t seed, vec2 const& pos, Footing f
     m_normal     = { std::sin(m_sprite_ang), -std::cos(m_sprite_ang) };
     if      (footing == F_WEST) m_dir = 1;
     else if (footing == F_EAST) m_dir = -1;
-    else                        m_dir = m_random.get_int(0, 1) ? -1 : 1;
+    else                        m_dir = m_random.get_int(0, 1) ?: -1;
     m_polygon.resize(SPIDER_ENEMY_POLYGON.size());
     transform_points(m_polygon, SPIDER_ENEMY_POLYGON, m_pos);
 }
@@ -62,7 +62,7 @@ void SpiderEnemy::sub_update() {
     else {
         m_pos = old_pos;
         m_floating = true;
-        m_dir = m_random.get_int(0, 1) ? -1 : 1;
+        m_dir = m_random.get_int(0, 1) ?: -1;
     }
 
     --m_delay;
@@ -94,7 +94,7 @@ void SpiderEnemy::sub_update() {
         }
         if (m_delay < -28 * 3) {
             m_delay = m_random.get_int(200, 300);
-            m_dir   = m_random.get_int(0, 1) ? -1 : 1;
+            m_dir   = m_random.get_int(0, 1) ?: -1;
             m_shooting = false;
         }
 
