@@ -106,37 +106,38 @@ void Wall::generate() {
     auto& row = m_data.front();
     for (int x = 0; x < W; ++x) {
 
-        int n[] = {
-            m_gen_data[0][x],
-            x > 0 ? m_gen_data[1][x - 1] : 1,
-            m_gen_data[2][x],
-            x < W - 1 ? m_gen_data[1][x + 1] : 1,
-        };
+        int s = 4;
+        if (x > 0 && x < W - 1) {
+            int n[] = {
+                m_gen_data[0][x],
+                m_gen_data[1][x - 1],
+                m_gen_data[2][x],
+                m_gen_data[1][x + 1],
+            };
+            s = n[0] + n[1] + n[2] + n[3];
 
-        int s = n[0] + n[1] + n[2] + n[3];
-        row[x] = m_gen_data[1][x];
-        if (row[x] == 0) {
-
-            // fill small holes
-            if (s >= 3) row[x] = 1;
-            else if (s == 2) {
-                // insert diagonals
-                for (int i = 0; i < 4; ++i) {
-                    if (n[i] + n[(i + 1) % 4] == 0) {
-                        row[x] = i + 2;
-                        break;
+            row[x] = m_gen_data[1][x];
+            if (row[x] == 0) {
+                // fill small holes
+                if (s >= 3) row[x] = 1;
+                else if (s == 2) {
+                    // insert diagonals
+                    for (int i = 0; i < 4; ++i) {
+                        if (n[i] + n[(i + 1) % 4] == 0) {
+                            row[x] = i + 2;
+                            break;
+                        }
                     }
                 }
             }
+            else if (s == 0) {
+                int t = m_gen_data[0][x - 1]
+                      + m_gen_data[0][x + 1]
+                      + m_gen_data[2][x - 1]
+                      + m_gen_data[2][x + 1];
+                if (t == 0) row[x] = 0;
+            }
         }
-        else if (s == 0) {
-            int t = (x > 0     ? m_gen_data[1][x - 1] : 1)
-                  + (x < W - 1 ? m_gen_data[1][x + 1] : 1)
-                  + (x > 0     ? m_gen_data[3][x - 1] : 1)
-                  + (x < W - 1 ? m_gen_data[3][x + 1] : 1);
-            if (t == 0) row[x] = 0;
-        }
-
 
         // speckles
         if (row[x] == 1 && s == 4) row[x] = m_random.get_int(57, 80);
