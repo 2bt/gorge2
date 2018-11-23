@@ -87,16 +87,20 @@ void TwisterEnemy::sub_update() {
                 m_path->elements[m_index].ticks = m_count;
                 m_count = 0;
 
+                int ticks = m_random.get_int(10, 200);
                 if (l.distance == 0 && r.distance == 0) {
-                    if (std::abs(m_pos.y) > 70) m_dst_ang = M_PI * 0.5; // turn down
-                    else m_dst_ang += (m_random.get_int(0, 1) ? -1 : 1) * M_PI * 0.5;
+                    m_dst_ang += (m_random.get_int(0, 1) ?: -1) * M_PI * 0.5;
+                    if (std::abs(m_pos.y) > 70) {
+                        m_dst_ang = M_PI * 0.5; // turn down
+                        if (m_pos.y > 70) ticks = 999;
+                    }
                 }
-                else if (l.distance < r.distance) m_dst_ang -= M_PI * 0.5;
-                else                              m_dst_ang += M_PI * 0.5;
-                m_path->elements.push_back({
-                    m_dst_ang,
-                    m_random.get_int(10, 200),
-                });
+                else {
+                    m_dst_ang += l.distance > r.distance ? M_PI * 0.5 : M_PI * -0.5;
+                }
+                m_dst_ang += m_random.get_float(-0.1, 0.1);
+
+                m_path->elements.push_back({m_dst_ang, ticks});
                 ++m_index;
             }
         }
