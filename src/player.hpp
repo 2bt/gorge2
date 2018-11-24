@@ -28,10 +28,8 @@ private:
     bool              m_alive;
     float             m_radius;
     float             m_level;
-    gfx::Shader*      m_shader;
-    gfx::Framebuffer* m_framebuffer;
-    gfx::Texture2D*   m_canvas;
-    gfx::Texture2D*   m_table;
+    int               m_tick;
+    gfx::Texture2D*   m_atlas;
 };
 
 

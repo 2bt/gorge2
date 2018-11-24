@@ -75,6 +75,7 @@ void SpriteRenderer::pop_state() {
     assert(m_state_index > 0);
     set_color(m_states[m_state_index - 1].color);
     set_blendmode(m_states[m_state_index - 1].blendmode);
+    set_viewport(m_states[m_state_index - 1].viewport);
     set_texture(m_states[m_state_index - 1].tex);
     set_shader(m_states[m_state_index - 1].shader);
     set_framebuffer(m_states[m_state_index - 1].framebuffer);
@@ -144,6 +145,14 @@ void SpriteRenderer::draw(Rect const& quad, vec2 const& pos, float ang) {
     draw(quad);
     pop();
 }
+
+void SpriteRenderer::set_viewport(gfx::Rect const& r) {
+    if (state().viewport == r) return;
+    flush();
+    state().viewport = r;
+    m_rs.viewport    = r;
+}
+
 
 void SpriteRenderer::set_blendmode(BlendMode b) {
     if (state().blendmode == b) return;

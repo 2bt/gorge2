@@ -74,27 +74,31 @@ namespace {
 
 
 void ShockWave::init() {
-    m_shader = gfx::Shader::create(R"(
+    m_atlas = gfx::Texture2D::create(gfx::TextureFormat::RGBA, 640, 640);
+
+    gfx::Shader* shader = gfx::Shader::create(R"(
         #version 100
         attribute vec2 in_pos;
         attribute vec2 in_tex_coord;
         attribute vec4 in_color;
+        varying vec2 ex_tex_coord;
         void main() {
-            gl_Position = vec4(in_pos.x, -in_pos.y, 0.0, 1.0);
+            gl_Position = vec4(in_pos.x, in_pos.y, 0.0, 1.0);
+            ex_tex_coord = in_tex_coord;
         })", R"(
         #version 100
         precision mediump float;
         uniform sampler2D table;
         uniform float r1;
         uniform float r2;
+        varying vec2 ex_tex_coord;
         void main() {
-            float d = distance(gl_FragCoord.xy, vec2(40.0, 40.0));
+            float d = distance(ex_tex_coord.xy, vec2(40.0, 40.0));
             if (d > r1) gl_FragColor = vec4(0.0);
             else if (d < r2) gl_FragColor = texture2D(table, vec2((r2 - d) * 0.1 , 0.0));
             else if (d < r1 - 1.0) gl_FragColor = vec4(0.0, 1.0, 1.0, 0.8);
             else gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
         })");
-    m_canvas = gfx::Texture2D::create(gfx::TextureFormat::RGBA, 80, 80);
     static const std::array<Color, 7> buf = {
         Color(0, 0, 0, 0),
         Color(0, 255, 255, 160),
@@ -104,16 +108,37 @@ void ShockWave::init() {
         Color(0, 255, 255, 100),
         Color(0, 0, 0, 0),
     };
-    m_table = gfx::Texture2D::create(gfx::TextureFormat::RGBA, buf.size(), 1, (void const*) buf.data());
-    m_shader->set_uniform("table", m_table);
-    m_framebuffer = gfx::Framebuffer::create();
-    m_framebuffer->attach_color(m_canvas);
+    gfx::Texture2D* table = gfx::Texture2D::create(gfx::TextureFormat::RGBA, buf.size(), 1, (void const*) buf.data());
+    shader->set_uniform("table", table);
+    gfx::Framebuffer* framebuffer = gfx::Framebuffer::create();
+    framebuffer->attach_color(m_atlas);
+
+    SpriteRenderer ren;
+    ren.init();
+    ren.set_framebuffer(framebuffer);
+    ren.set_shader(shader);
+    ren.origin();
+    ren.scale(1 / 40.0);
+
+    for (int i = 0; i < 56; ++i) {
+        float level = (i + 1) * 0.018;
+        float r1 = (1 - std::pow(2, (level * -5))) * 40;
+        float r2 = (1 - std::pow(2, (level * -2.25))) * 60;
+        shader->set_uniform("r1", r1);
+        shader->set_uniform("r2", r2);
+        ren.set_viewport({i % 8 * 80, i / 8 * 80, 80, 80});
+        ren.set_color();
+        ren.draw({{}, {80, 80}});
+    }
+    ren.flush();
+
+    ren.free();
+    delete shader;
+    delete framebuffer;
+    delete table;
 }
 void ShockWave::free() {
-    delete m_shader;
-    delete m_framebuffer;
-    delete m_canvas;
-    delete m_table;
+    delete m_atlas;
 }
 void ShockWave::reset() {
     m_alive = false;
@@ -121,6 +146,7 @@ void ShockWave::reset() {
 void ShockWave::activate(vec2 const& pos) {
     m_alive  = true;
     m_pos    = pos;
+    m_tick   = 0;
     m_level  = 0;
     m_radius = 0;
     update();
@@ -135,30 +161,18 @@ bool ShockWave::overlap(vec2 const* poly, int len) const {
 void ShockWave::update() {
     if (!m_alive) return;
     m_pos.y += Wall::SPEED;
-    m_level += 0.018;
-    if (m_level > 1) m_alive = false;
-    m_radius = (1 - std::pow(2, (m_level * -5))) * 40;
-    float r2 = (1 - std::pow(2, (m_level * -2.25))) * 60;
-    m_shader->set_uniform("r1", m_radius);
-    m_shader->set_uniform("r2", r2);
+    ++m_tick;
+    if (m_tick > 56) m_alive = false;
+    float level = m_tick * 0.018;
+    m_radius = (1 - std::pow(2, (level * -5))) * 40;
 }
 void ShockWave::draw(SpriteRenderer& ren) const {
     if (!m_alive) return;
 
-    ren.push();
     ren.push_state();
-    ren.origin();
-    ren.set_shader(m_shader);
-    ren.set_framebuffer(m_framebuffer);
-    ren.clear({});
-    ren.draw({{}, {2, 2}});
-    ren.pop();
-    ren.pop_state();
-
-    ren.push_state();
-    ren.set_texture(m_canvas);
+    ren.set_texture(m_atlas);
     ren.set_color();
-    ren.draw(m_pos);
+    ren.draw({{m_tick % 8 * 80, m_tick / 8 * 80}, {80, 80}}, m_pos);
     ren.pop_state();
 }
 

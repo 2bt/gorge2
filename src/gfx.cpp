@@ -688,7 +688,7 @@ void draw(const RenderState& rs, Shader* shader, VertexArray* va, Framebuffer* f
             vp.h = fx::screen_height();
         }
     }
-    if (memcmp(&s_render_state.viewport, &vp, sizeof(Rect)) != 0) {
+    if (s_render_state.viewport != vp) {
         s_render_state.viewport = vp;
         glViewport(s_render_state.viewport.x,
                    s_render_state.viewport.y,

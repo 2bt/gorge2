@@ -13,5 +13,5 @@ protected:
     vec2  m_vel = {};
     vec2  m_dst_vel;
     float m_phase;
-    bool  m_shooting = true;
+    bool  m_shooting = false;
 };

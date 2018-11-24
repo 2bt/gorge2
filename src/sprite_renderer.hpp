@@ -30,6 +30,7 @@ public:
     void set_color(glm::u8vec3 const& c) { set_color(Color(c, 255)); }
     void set_color(Color const& c);
     void set_blendmode(BlendMode b);
+    void set_viewport(gfx::Rect const& r);
     void set_texture(gfx::Texture2D* tex = nullptr);
     void set_shader(gfx::Shader* shader = nullptr);
     void set_framebuffer(gfx::Framebuffer* fb = nullptr);
@@ -48,6 +49,7 @@ private:
     struct State {
         Color             color       = { 255, 255, 255, 255 };
         BlendMode         blendmode   = BM_ALPHA;
+        gfx::Rect         viewport    = {0, 0, 0, 0};
         gfx::Texture2D*   tex         = nullptr;
         gfx::Shader*      shader      = nullptr;
         gfx::Framebuffer* framebuffer = nullptr;

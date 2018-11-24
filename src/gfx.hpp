@@ -28,7 +28,15 @@ enum class BlendFunc {
 enum class BlendEquation { Add, Subtract, ReverseSubtract };
 
 
-struct Rect { int x, y, w, h; };
+struct Rect {
+    int x, y, w, h;
+    friend bool operator==(Rect const& a, Rect const& b) {
+        return a.x == b.x && a.y == b.y && a.w == b.w && a.h == b.h;
+    }
+    friend bool operator!=(Rect const& a, Rect const& b) {
+        return !(a == b);
+    }
+};
 
 
 struct RenderState {
