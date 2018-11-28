@@ -1,5 +1,6 @@
 #include "fx.hpp"
 #include "gfx.hpp"
+#include "resource.hpp"
 #include "sprite.hpp"
 #include "debug_renderer.hpp"
 #include "world.hpp"
@@ -11,13 +12,13 @@ DebugRenderer DB_REN;
 class Game : public fx::App {
 public:
 
-
     bool init() override {
+        resource::init();
+
         DB_REN.init();
 
-        m_atlas_tex = gfx::Texture2D::create("media/atlas.png");
         m_ren.init();
-        m_ren.set_texture(m_atlas_tex);
+        m_ren.set_texture(resource::texture(resource::TID_SPRITES));
 
         m_world.init();
 
@@ -27,9 +28,9 @@ public:
     }
 
     void free() override {
+        resource::free();
         m_world.free();
 
-        delete m_atlas_tex;
         m_ren.free();
 
         DB_REN.free();
@@ -79,14 +80,12 @@ public:
 
 private:
     SpriteRenderer  m_ren;
-    gfx::Texture2D* m_atlas_tex;
 
     World           m_world;
 };
 
 
 int main(int argc, char** argv) {
-
 
     Game game;
     return fx::run(game);

@@ -1,3 +1,4 @@
+#include "resource.hpp"
 #include "world.hpp"
 #include "fx.hpp"
 
@@ -5,37 +6,11 @@
 void World::init() {
     m_bump.free();
     m_background.init();
-    m_shock_wave.init();
-    m_flash_shader = gfx::Shader::create(R"(
-        #version 100
-        attribute vec2 in_pos;
-        attribute vec2 in_tex_coord;
-        attribute vec4 in_color;
-        uniform vec2 tex_scale;
-        varying vec2 ex_tex_coord;
-        varying vec4 ex_color;
-        void main() {
-            gl_Position = vec4(in_pos.x, -in_pos.y, 0.0, 1.0);
-            ex_color = in_color;
-            ex_tex_coord = in_tex_coord * tex_scale;
-        })", R"(
-        #version 100
-        precision mediump float;
-        uniform sampler2D tex;
-        varying vec2 ex_tex_coord;
-        varying vec4 ex_color;
-        void main() {
-            vec4 tc = texture2D(tex, ex_tex_coord);
-            tc = vec4(tc.rgb * ex_color.rgb, tc.a);
-            gl_FragColor = tc + vec4(vec3(1.0) - tc.rgb, 0.0) * (1.0 - ex_color.a);
-        })");
 }
 
 void World::free() {
     m_bump.free();
     m_background.free();
-    m_shock_wave.free();
-    delete m_flash_shader;
 }
 
 void World::resized() {
@@ -44,10 +19,9 @@ void World::resized() {
 
 void World::reset(uint32_t seed) {
     printf("seed %u\n", seed);
+
     m_tick = 0;
-
     m_random.seed(seed);
-
     m_bump.reset();
     m_background.reset(m_random.get_int(0, 0x7fffffff));
     m_wall.reset(m_random.get_int(0, 0x7fffffff));
@@ -118,7 +92,7 @@ void World::draw(SpriteRenderer& ren) {
         m_shock_wave.draw(ren);
 
         // use special shader for enemies
-        ren.set_shader(m_flash_shader);
+        ren.set_shader(resource::shader(resource::SID_FLASH));
         for (auto& e : m_enemies) e->draw(ren);
         ren.set_shader();
 

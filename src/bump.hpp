@@ -23,10 +23,8 @@ private:
         float l;
     };
     std::vector<Wave> m_waves;
-    gfx::Texture2D*   m_bump_tex;
     gfx::Texture2D*   m_bump_canvas;
     gfx::Texture2D*   m_main_canvas;
     gfx::Framebuffer* m_bump_framebuffer;
     gfx::Framebuffer* m_main_framebuffer;
-    gfx::Shader*      m_shader;
 };

@@ -10,9 +10,6 @@ class World;
 
 class ShockWave {
 public:
-    void init();
-    void free();
-
     void reset();
     void activate(vec2 const& pos);
     void update();
@@ -29,7 +26,6 @@ private:
     float             m_radius;
     float             m_level;
     int               m_tick;
-    gfx::Texture2D*   m_atlas;
 };
 
 

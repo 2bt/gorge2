@@ -1,6 +1,7 @@
 #include "player.hpp"
 #include "world.hpp"
 #include "debug_renderer.hpp"
+#include "resource.hpp"
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/norm.hpp>
 
@@ -73,73 +74,6 @@ namespace {
 }
 
 
-void ShockWave::init() {
-    m_atlas = gfx::Texture2D::create(gfx::TextureFormat::RGBA, 640, 640);
-
-    gfx::Shader* shader = gfx::Shader::create(R"(
-        #version 100
-        attribute vec2 in_pos;
-        attribute vec2 in_tex_coord;
-        attribute vec4 in_color;
-        varying vec2 ex_tex_coord;
-        void main() {
-            gl_Position = vec4(in_pos.x, in_pos.y, 0.0, 1.0);
-            ex_tex_coord = in_tex_coord;
-        })", R"(
-        #version 100
-        precision mediump float;
-        uniform sampler2D table;
-        uniform float r1;
-        uniform float r2;
-        varying vec2 ex_tex_coord;
-        void main() {
-            float d = distance(ex_tex_coord.xy, vec2(40.0, 40.0));
-            if (d > r1) gl_FragColor = vec4(0.0);
-            else if (d < r2) gl_FragColor = texture2D(table, vec2((r2 - d) * 0.1 , 0.0));
-            else if (d < r1 - 1.0) gl_FragColor = vec4(0.0, 1.0, 1.0, 0.8);
-            else gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-        })");
-    static const std::array<Color, 7> buf = {
-        Color(0, 0, 0, 0),
-        Color(0, 255, 255, 160),
-        Color(0, 255, 255, 130),
-        Color(0, 0, 0, 0),
-        Color(0, 0, 0, 0),
-        Color(0, 255, 255, 100),
-        Color(0, 0, 0, 0),
-    };
-    gfx::Texture2D* table = gfx::Texture2D::create(gfx::TextureFormat::RGBA, buf.size(), 1, (void const*) buf.data());
-    shader->set_uniform("table", table);
-    gfx::Framebuffer* framebuffer = gfx::Framebuffer::create();
-    framebuffer->attach_color(m_atlas);
-
-    SpriteRenderer ren;
-    ren.init();
-    ren.set_framebuffer(framebuffer);
-    ren.set_shader(shader);
-    ren.origin();
-    ren.scale(1 / 40.0);
-
-    for (int i = 0; i < 56; ++i) {
-        float level = (i + 1) * 0.018;
-        float r1 = (1 - std::pow(2, (level * -5))) * 40;
-        float r2 = (1 - std::pow(2, (level * -2.25))) * 60;
-        shader->set_uniform("r1", r1);
-        shader->set_uniform("r2", r2);
-        ren.set_viewport({i % 8 * 80, i / 8 * 80, 80, 80});
-        ren.set_color();
-        ren.draw({{}, {80, 80}});
-    }
-    ren.flush();
-
-    ren.free();
-    delete shader;
-    delete framebuffer;
-    delete table;
-}
-void ShockWave::free() {
-    delete m_atlas;
-}
 void ShockWave::reset() {
     m_alive = false;
 }
@@ -170,7 +104,7 @@ void ShockWave::draw(SpriteRenderer& ren) const {
     if (!m_alive) return;
 
     ren.push_state();
-    ren.set_texture(m_atlas);
+    ren.set_texture(resource::texture(resource::TID_SHOCKWAVE));
     ren.set_color();
     ren.draw({{m_tick % 8 * 80, m_tick / 8 * 80}, {80, 80}}, m_pos);
     ren.pop_state();
