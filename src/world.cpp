@@ -20,7 +20,8 @@ void World::resized() {
 void World::reset(uint32_t seed) {
     printf("seed %u\n", seed);
 
-    m_tick = 0;
+    m_tick  = 0;
+    m_shake = 0;
     m_random.seed(seed);
     m_bump.reset();
     m_background.reset(m_random.get_int(0, 0x7fffffff));
@@ -55,15 +56,17 @@ void World::spawn_item(std::unique_ptr<Item> i) {
 
 template<class T>
 void update_all(std::vector<std::unique_ptr<T>>& vs) {
-    for (auto it = vs.begin(); it != vs.end();) {
-         if ((*it)->update()) ++it;
-         else it = vs.erase(it);
+    // don't use iterators because vs might grow during update
+    for (int i = 0; i < (int) vs.size();) {
+        if (vs[i]->update()) ++i;
+        else vs.erase(vs.begin() + i);
     }
 }
 
 
 void World::update() {
     ++m_tick;
+    m_shake *= 0.95;
 
     m_populator.update();
     m_bump.update();
@@ -80,6 +83,8 @@ void World::update() {
 
 
 void World::draw(SpriteRenderer& ren) {
+    ren.push();
+    ren.translate(vec2(rnd.get_float(-m_shake, m_shake), rnd.get_float(-m_shake, m_shake)));
 
     m_bump.draw_begin(ren);
     {
@@ -106,6 +111,7 @@ void World::draw(SpriteRenderer& ren) {
         if (p->get_layer() == Particle::FRONT) p->draw(ren);
     }
 
+    ren.pop();
 
     // HUD
     float w = fx::screen_width() / (float) fx::screen_height() * 75;

@@ -10,13 +10,12 @@ std::array<gfx::Texture2D*, TID_COUNT> s_textures;
 std::array<gfx::Shader*, SID_COUNT>    s_shaders;
 
 gfx::Texture2D* render_shockwave_texture() {
-    gfx::Texture2D* wave = gfx::Texture2D::create(gfx::TextureFormat::RGBA, 640, 640);
+    gfx::Texture2D* result = gfx::Texture2D::create(gfx::TextureFormat::RGBA, 640, 640);
 
     gfx::Shader* shader = gfx::Shader::create(R"(
         #version 100
         attribute vec2 in_pos;
         attribute vec2 in_tex_coord;
-        attribute vec4 in_color;
         varying vec2 ex_tex_coord;
         void main() {
             gl_Position = vec4(in_pos.x, in_pos.y, 0.0, 1.0);
@@ -29,11 +28,11 @@ gfx::Texture2D* render_shockwave_texture() {
         uniform float r2;
         varying vec2 ex_tex_coord;
         void main() {
-            float d = distance(ex_tex_coord.xy, vec2(40.0, 40.0));
+            float d = distance(ex_tex_coord.xy, vec2(40.0));
             if (d > r1) gl_FragColor = vec4(0.0);
             else if (d < r2) gl_FragColor = texture2D(table, vec2((r2 - d) * 0.1 , 0.0));
             else if (d < r1 - 1.0) gl_FragColor = vec4(0.0, 1.0, 1.0, 0.8);
-            else gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+            else gl_FragColor = vec4(1.0);
         })");
     static const std::array<Color, 7> buf = {
         Color(0, 0, 0, 0),
@@ -47,7 +46,7 @@ gfx::Texture2D* render_shockwave_texture() {
     gfx::Texture2D* table = gfx::Texture2D::create(gfx::TextureFormat::RGBA, buf.size(), 1, (void const*) buf.data());
     shader->set_uniform("table", table);
     gfx::Framebuffer* framebuffer = gfx::Framebuffer::create();
-    framebuffer->attach_color(wave);
+    framebuffer->attach_color(result);
 
     SpriteRenderer ren;
     ren.init();
@@ -73,7 +72,57 @@ gfx::Texture2D* render_shockwave_texture() {
     delete framebuffer;
     delete table;
 
-    return wave;
+    return result;
+}
+
+gfx::Texture2D* render_praxis_texture() {
+    gfx::Texture2D* result = gfx::Texture2D::create(gfx::TextureFormat::RGBA, 480, 480);
+
+    gfx::Shader* shader = gfx::Shader::create(R"(
+        #version 100
+        attribute vec2 in_pos;
+        attribute vec2 in_tex_coord;
+        varying vec2 ex_tex_coord;
+        void main() {
+            gl_Position = vec4(in_pos.x, in_pos.y, 0.0, 1.0);
+            ex_tex_coord = in_tex_coord;
+        })", R"(
+        #version 100
+        precision mediump float;
+        uniform float r;
+        uniform float alpha;
+        varying vec2 ex_tex_coord;
+        void main() {
+            float d = r - distance(ex_tex_coord.xy, vec2(40.0));
+            if (d >= 0.0 && d < 5.0 && !(d > 2.0 && d < 4.0)) gl_FragColor = vec4(0.63, 0.63, 0.63, alpha);
+            else gl_FragColor = vec4(0.0);
+        })");
+    gfx::Framebuffer* framebuffer = gfx::Framebuffer::create();
+    framebuffer->attach_color(result);
+
+    SpriteRenderer ren;
+    ren.init();
+    ren.set_framebuffer(framebuffer);
+    ren.set_shader(shader);
+    ren.origin();
+    ren.scale(1 / 40.0);
+
+    for (int i = 0; i < 30; ++i) {
+        float r     = (1 - std::pow(2, -3 * i / 30.0)) * 40;
+        float alpha = (std::pow(1 - i / 30.0, 0.3) * 300 - 100) / 255;
+        shader->set_uniform("r", r);
+        shader->set_uniform("alpha", alpha);
+        ren.set_viewport({i % 6 * 80, i / 6 * 80, 80, 80});
+        ren.set_color();
+        ren.draw({{}, {80, 80}});
+    }
+    ren.flush();
+
+    ren.free();
+    delete shader;
+    delete framebuffer;
+
+    return result;
 }
 
 
@@ -134,6 +183,7 @@ void init() {
     s_textures[TID_SPRITES]   = gfx::Texture2D::create("media/atlas.png");
     s_textures[TID_BUMP]      = gfx::Texture2D::create("media/bump.png", gfx::FilterMode::Linear);
     s_textures[TID_SHOCKWAVE] = render_shockwave_texture();
+    s_textures[TID_PRAXIS]    = render_praxis_texture();
 
 }
 

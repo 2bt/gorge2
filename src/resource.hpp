@@ -17,6 +17,7 @@ namespace resource {
         TID_SPRITES,
         TID_BUMP,
         TID_SHOCKWAVE,
+        TID_PRAXIS,
         TID_COUNT
     };
 

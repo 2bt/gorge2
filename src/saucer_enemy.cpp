@@ -1,4 +1,5 @@
 #include "saucer_enemy.hpp"
+#include "resource.hpp"
 
 namespace {
     constexpr std::array<vec2, 8> SAUCER_ENEMY_POLYGON = {
@@ -36,6 +37,56 @@ namespace {
         Color(153, 153, 72, 200),
     };
 
+    class PraxisParticle : public Particle {
+    public:
+        PraxisParticle(vec2 const& pos) {
+            m_layer = BACK;
+            m_pos   = pos;
+            m_ttl   = 30;
+        }
+        bool update() override {
+            m_pos.y += Wall::SPEED;
+            return --m_ttl >= 0;
+        }
+        void draw(SpriteRenderer& ren) const override {
+            ren.push_state();
+            ren.set_texture(resource::texture(resource::TID_PRAXIS));
+            ren.set_color();
+            int tick = 29 - m_ttl;
+            ren.draw({{tick % 6 * 80, tick / 6 * 80}, {80, 80}}, m_pos);
+            ren.pop_state();
+        }
+    };
+    class SaucerParticle : public Particle {
+    public:
+        SaucerParticle(World& world, vec2 const& pos) : m_world(world) {
+            m_layer    = BACK;
+            m_pos      = pos;
+            m_ttl      = 40;
+        }
+        bool update() override {
+            m_pos.y += Wall::SPEED;
+            --m_ttl;
+            if (m_ttl % 10 == 0) {
+                make_explosion(m_world, m_pos + vec2(rnd.get_float(-10, 10), rnd.get_float(-7, 6)));
+            }
+            if (m_ttl == 0) {
+                m_world.shake();
+                make_explosion(m_world, m_pos);
+                make_explosion(m_world, m_pos + vec2(rnd.get_float(-10, 0), rnd.get_float(-7, 0)));
+                make_explosion(m_world, m_pos + vec2(rnd.get_float(0, 10), rnd.get_float(-7, 0)));
+                make_explosion(m_world, m_pos + vec2(rnd.get_float(-10, 0), rnd.get_float(0, 6)));
+                make_explosion(m_world, m_pos + vec2(rnd.get_float(0, 10), rnd.get_float(0, 6)));
+                m_world.spawn_particle<PraxisParticle>(m_pos);
+            }
+            return m_ttl >= 0;
+        }
+        void draw(SpriteRenderer& ren) const override {
+            ren.draw(frame(Sprite::SAUCER), m_pos);
+        }
+    private:
+        World& m_world;
+    };
 }
 
 SaucerEnemy::SaucerEnemy(World& world, uint32_t seed, vec2 const& pos) : Enemy(world, seed, pos) {
@@ -45,7 +96,7 @@ SaucerEnemy::SaucerEnemy(World& world, uint32_t seed, vec2 const& pos) : Enemy(w
     m_energy = 10;
 
     m_dst_vel = {m_random.get_int(0, 1) ?: -1, -1};
-    m_phase = m_random.get_float(0, M_PI * 2);
+    m_phase   = m_random.get_float(0, M_PI * 2);
 
     m_polygon.resize(SAUCER_ENEMY_POLYGON.size());
     transform_points(m_polygon, SAUCER_ENEMY_POLYGON, m_pos);
@@ -53,6 +104,7 @@ SaucerEnemy::SaucerEnemy(World& world, uint32_t seed, vec2 const& pos) : Enemy(w
 
 void SaucerEnemy::die() {
 //    m_world.spawn_item<BallItem>(m_pos);
+    m_world.spawn_particle<SaucerParticle>(m_world, m_pos);
 }
 
 void SaucerEnemy::sub_update() {

@@ -21,6 +21,7 @@ public:
     void update();
     void draw(SpriteRenderer& ren);
 
+    void shake() { m_shake += 2.5; }
 
     Bump& get_bump() { return m_bump; }
     Wall const& get_wall() const { return m_wall; }
@@ -40,17 +41,6 @@ public:
     template<class T, typename... Args>
     T* spawn_particle(Args&&... args) {
         auto unique = std::make_unique<T>(std::forward<Args>(args)...);
-        auto raw = unique.get();
-        spawn_particle(std::move(unique));
-        return raw;
-    }
-
-    // XXX: bad design
-    template<class T, typename... Args>
-    T* spawn_chain(Args&&... args) {
-        auto unique = std::make_unique<T>(
-            *this,
-            std::forward<Args>(args)...);
         auto raw = unique.get();
         spawn_particle(std::move(unique));
         return raw;
@@ -83,6 +73,7 @@ private:
     Wall                                   m_wall{m_populator};
     Populator                              m_populator{*this};
     int                                    m_tick;
+    float                                  m_shake;
 
     ShockWave                              m_shock_wave;
     Player                                 m_player{*this};
