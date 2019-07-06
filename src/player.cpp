@@ -8,13 +8,13 @@
 
 namespace {
 
-    constexpr std::array<vec2, 4> BALL_POLYGON = {
+    std::array<vec2, 4> BALL_POLYGON = {
         vec2{ 2.5, 2.5},
         vec2{2.5, -2.5},
         vec2{-2.5, -2.5},
         vec2{ -2.5, 2.5},
     };
-    constexpr std::array<vec2, 8> BALL_FIELD_POLYGON = {
+    std::array<vec2, 8> BALL_FIELD_POLYGON = {
         vec2{2, 4},
         vec2{4, 2},
         vec2{4, -2},
@@ -25,7 +25,7 @@ namespace {
         vec2{-2, 4}
     };
 
-    constexpr std::array<vec2, 6> PLAYER_POLYGON = {
+    std::array<vec2, 6> PLAYER_POLYGON = {
         vec2{4, 4},
         vec2{4, 0},
         vec2{1, -3},
@@ -33,7 +33,7 @@ namespace {
         vec2{-4, 0},
         vec2{-4, 4},
     };
-    constexpr std::array<vec2, 8> PLAYER_FIELD_POLYGON = {
+    std::array<vec2, 8> PLAYER_FIELD_POLYGON = {
         vec2{4, 6},
         vec2{6, 4},
         vec2{6, 0},
@@ -43,13 +43,13 @@ namespace {
         vec2{-6, 4},
         vec2{-4, 6},
     };
-    constexpr std::array<vec2, 4> LASER_POLYGON = {
+    std::array<vec2, 4> LASER_POLYGON = {
         vec2{-0.5, 2.5},
         vec2{0.5, 2.5},
         vec2{0.5, -2.5},
         vec2{-0.5, -2.5},
     };
-    constexpr std::array<vec2, 4> SMALL_LASER_POLYGON = {
+    std::array<vec2, 4> SMALL_LASER_POLYGON = {
         vec2{-0.5, 1.25},
         vec2{0.5, 1.25},
         vec2{0.5, -1.25},

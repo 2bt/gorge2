@@ -1,7 +1,7 @@
 #include "ring_enemy.hpp"
 
 namespace {
-    constexpr std::array<vec2, 8> RING_ENEMY_POLYGON = {
+    std::array<vec2, 8> RING_ENEMY_POLYGON = {
         vec2{2, 4},
         vec2{3, 2},
         vec2{3, -2},

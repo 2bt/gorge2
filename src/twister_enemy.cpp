@@ -1,7 +1,7 @@
 #include "twister_enemy.hpp"
 
 namespace {
-    constexpr std::array<vec2, 6> TWISTER_ENEMY_POLYGON = {
+    std::array<vec2, 6> TWISTER_ENEMY_POLYGON = {
         vec2{4, 1},
         vec2{4, -1},
         vec2{-2, -4.5},
@@ -9,7 +9,7 @@ namespace {
         vec2{-4, 2},
         vec2{-2, 4.5},
     };
-    constexpr std::array<vec2, 6> TURN_LEFT_POLYGON = {
+    std::array<vec2, 6> TURN_LEFT_POLYGON = {
         vec2{10, 3.5},
         vec2{15, -1.5},
         vec2{15, -12},
@@ -17,7 +17,7 @@ namespace {
         vec2{-4, -17},
         vec2{-4, 3.5},
     };
-    constexpr std::array<vec2, 6> TURN_RIGHT_POLYGON = {
+    std::array<vec2, 6> TURN_RIGHT_POLYGON = {
         vec2{10, 17},
         vec2{15, 12},
         vec2{15, 1.5},

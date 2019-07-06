@@ -1,7 +1,7 @@
 #include "spider_enemy.hpp"
 
 namespace {
-    constexpr std::array<vec2, 8> SPIDER_ENEMY_POLYGON = {
+    std::array<vec2, 8> SPIDER_ENEMY_POLYGON = {
         vec2{1, 4},
         vec2{4, 1},
         vec2{4, -1},

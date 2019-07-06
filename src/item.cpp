@@ -3,14 +3,14 @@
 
 namespace {
 
-    constexpr std::array<vec2, 4> BIG_ITEM_POLYGON = {
+    std::array<vec2, 4> BIG_ITEM_POLYGON = {
         vec2{3, 3},
         vec2{3, -3},
         vec2{-3, -3},
         vec2{-3, 3},
     };
 
-    constexpr std::array<vec2, 8> BIG_ITEM_BOUNCE_POLYGON = {
+    std::array<vec2, 8> BIG_ITEM_BOUNCE_POLYGON = {
         vec2{6, 12},
         vec2{12, 6},
         vec2{12, -6},
@@ -21,7 +21,7 @@ namespace {
         vec2{-6, 12},
     };
 
-    constexpr std::array<vec2, 4> ENERGY_ITEM_POLYGON = {
+    std::array<vec2, 4> ENERGY_ITEM_POLYGON = {
         vec2{1, 1},
         vec2{1, -1},
         vec2{-1, -1},

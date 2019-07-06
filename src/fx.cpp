@@ -12,7 +12,7 @@ namespace {
 SDL_Window*   s_window;
 bool          s_running       = true;
 int           s_screen_width  = 800;
-int           m_screen_height = 600;
+int           s_screen_height = 600;
 SDL_GLContext s_gl_context;
 
 Input         s_input;
@@ -31,7 +31,7 @@ void free() {
 
 int run(App& app) {
     s_screen_width  = 320 + 32;
-    m_screen_height = 200 + 32,
+    s_screen_height = 200 + 32,
 
 
     SDL_Init(SDL_INIT_VIDEO);
@@ -45,7 +45,7 @@ int run(App& app) {
             "app",
             SDL_WINDOWPOS_UNDEFINED,
             SDL_WINDOWPOS_UNDEFINED,
-            s_screen_width, m_screen_height,
+            s_screen_width, s_screen_height,
             SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
     s_gl_context = SDL_GL_CreateContext(s_window);
@@ -87,7 +87,7 @@ int run(App& app) {
             case SDL_WINDOWEVENT:
                 if (e.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
                     s_screen_width  = e.window.data1;
-                    m_screen_height = e.window.data2;
+                    s_screen_height = e.window.data2;
                     app.resized();
                 }
                 break;
@@ -117,7 +117,7 @@ int run(App& app) {
 }
 
 int screen_width()  { return s_screen_width; }
-int screen_height() { return m_screen_height; }
+int screen_height() { return s_screen_height; }
 Input const& input() { return s_input; }
 
 

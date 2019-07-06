@@ -1,7 +1,7 @@
 #include "blockade_enemy.hpp"
 
 namespace {
-    constexpr std::array<vec2, 4> BLOCKADE_ENEMY_POLYGON = {
+    std::array<vec2, 4> BLOCKADE_ENEMY_POLYGON = {
 		vec2{4, 3},
 		vec2{4, -3},
 		vec2{-4, -3},

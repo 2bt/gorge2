@@ -2,7 +2,7 @@
 #include "resource.hpp"
 
 namespace {
-    constexpr std::array<vec2, 8> SAUCER_ENEMY_POLYGON = {
+    std::array<vec2, 8> SAUCER_ENEMY_POLYGON = {
         vec2{-4, 6},
         vec2{4, 6},
         vec2{10, 2},
@@ -13,7 +13,7 @@ namespace {
         vec2{-10, 2},
     };
 
-    constexpr std::array<vec2, 8> BOUNCE_POLYGON = {
+    std::array<vec2, 8> BOUNCE_POLYGON = {
         vec2{6, 12},
         vec2{12, 6},
         vec2{12, -6},

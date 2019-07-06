@@ -1,7 +1,7 @@
 #include "rocket_enemy.hpp"
 
 namespace {
-    constexpr std::array<vec2, 4> ROCKET_ENEMY_POLYGON = {
+    std::array<vec2, 4> ROCKET_ENEMY_POLYGON = {
         vec2{4, 4},
         vec2{1, -5},
         vec2{-1, -5},

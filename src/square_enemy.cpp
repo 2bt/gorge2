@@ -1,7 +1,7 @@
 #include "square_enemy.hpp"
 
 namespace {
-    constexpr std::array<vec2, 8> SQUARE_ENEMY_POLYGON = {
+    std::array<vec2, 8> SQUARE_ENEMY_POLYGON = {
         vec2{2, 4},
         vec2{4, 2},
         vec2{4, -2},
@@ -12,7 +12,7 @@ namespace {
         vec2{-2, 4}
     };
 
-    constexpr std::array<vec2, 8> BOUNCE_POLYGON = {
+    std::array<vec2, 8> BOUNCE_POLYGON = {
         vec2{4, 8},
         vec2{8, 4},
         vec2{8, -4},
