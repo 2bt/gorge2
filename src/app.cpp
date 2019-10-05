@@ -1,5 +1,5 @@
-#include "foo.hpp"
 #include "app.hpp"
+#include "log.hpp"
 #include "gfx.hpp"
 #include "resource.hpp"
 #include "sprite.hpp"
@@ -61,6 +61,7 @@ void resize(int width, int height) {
 }
 
 void touch(int x, int y, bool pressed) {
+    LOGI("touch %d %d %d", x, y, pressed);
 }
 
 
@@ -68,10 +69,6 @@ void key(int key, int unicode) {
 }
 
 void update() {
-//    const Uint8* ks = SDL_GetKeyboardState(nullptr);
-//    if (ks[SDL_SCANCODE_TAB]) {
-//        for (int i = 0; i < 7; ++i) m_world.update();
-//    }
     m_world.update();
 }
 

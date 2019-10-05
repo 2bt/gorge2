@@ -150,6 +150,11 @@ int main(int argc, char** argv) {
             }
         }
 
+        const Uint8* ks = SDL_GetKeyboardState(nullptr);
+        if (ks[SDL_SCANCODE_TAB]) {
+            for (int i = 0; i < 7; ++i) app::update();
+        }
+
         app::update();
         app::draw();
         SDL_GL_SwapWindow(s_window);

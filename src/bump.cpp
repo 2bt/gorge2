@@ -1,7 +1,7 @@
-#include "foo.hpp"
 #include "bump.hpp"
 #include "wall.hpp"
 #include "resource.hpp"
+#include "log.hpp"
 
 
 void Bump::init() {

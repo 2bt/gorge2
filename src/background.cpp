@@ -1,5 +1,5 @@
 #include "background.hpp"
-#include "foo.hpp"
+#include "log.hpp"
 
 
 void Background::reset_star(Star& s) {

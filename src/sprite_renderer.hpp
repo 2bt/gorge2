@@ -1,6 +1,5 @@
 #pragma once
 #include "gfx.hpp"
-#include "foo.hpp"
 #include <array>
 
 

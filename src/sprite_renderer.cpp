@@ -1,4 +1,5 @@
 #include "sprite_renderer.hpp"
+#include "log.hpp"
 #include <cassert>
 
 

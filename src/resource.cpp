@@ -1,7 +1,8 @@
 #include <array>
-#include "foo.hpp"
+#include "log.hpp"
 #include "resource.hpp"
 #include "util.hpp"
+#include "foo.hpp"
 
 namespace resource {
 namespace {

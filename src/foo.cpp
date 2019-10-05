@@ -1,5 +1,5 @@
 #include "foo.hpp"
-#include "gfx.hpp"
+#include "log.hpp"
 #include <string>
 #define STB_IMAGE_IMPLEMENTATION
 #define STBI_NO_FAILURE_STRINGS
