@@ -4,9 +4,6 @@
 #include <string>
 
 
-struct SDL_Surface;
-
-
 namespace gfx {
 
 
@@ -95,7 +92,7 @@ struct IndexBuffer {
 enum class PrimitiveType { Points, LineStrip, LineLoop, Lines, TriangleStrip, TriangleFan, Triangles };
 
 
-enum class ComponentType { Int8, Uint8, Int16, Uint16, Int32, Uint32, Float, HalfFloat };
+enum class ComponentType { Int8, Uint8, Int16, Uint16, Int32, Uint32, Float };
 
 
 struct VertexArray {
@@ -113,7 +110,7 @@ struct VertexArray {
 
     virtual void set_index_buffer(IndexBuffer* ib) = 0;
 
-    virtual PrimitiveType get_primitive_type() const = 0;
+    virtual PrimitiveType primitive_type() const = 0;
 };
 
 
@@ -121,29 +118,17 @@ enum class WrapMode { Clamp, Repeat, MirrowedRepeat };
 
 enum class FilterMode { Nearest, Linear, Trilinear };
 
-enum class TextureFormat { Red, RGB, RGBA, Depth, Stencil, DepthStencil };
+enum class TextureFormat { Alpha, RGB, RGBA, Depth };
 
 struct Texture2D {
-    static Texture2D* create(SDL_Surface* s, FilterMode filter = FilterMode::Nearest, WrapMode wrap = WrapMode::Clamp);
-    static Texture2D* create(const char* filename, FilterMode filter = FilterMode::Nearest,
-                             WrapMode wrap = WrapMode::Clamp);
     static Texture2D* create(TextureFormat format, int w, int h, void const* data = nullptr,
                              FilterMode filter = FilterMode::Nearest, WrapMode wrap = WrapMode::Clamp);
 
     virtual ~Texture2D() {}
-    virtual int get_width() const = 0;
-    virtual int get_height() const = 0;
+    virtual int width() const = 0;
+    virtual int height() const = 0;
 };
 
-
-
-struct Framebuffer {
-    static Framebuffer* create();
-    virtual ~Framebuffer() {}
-    virtual void attach_color(Texture2D* t) = 0;
-    virtual void attach_depth(Texture2D* t) = 0;
-    virtual bool is_complete() const = 0;
-};
 
 
 struct Shader {
@@ -151,6 +136,7 @@ struct Shader {
     virtual ~Shader() {}
     virtual bool has_uniform(std::string const& name) = 0;
     virtual void set_uniform(std::string const& name, Texture2D* v) = 0;
+    virtual void set_uniform(std::string const& name, bool v) = 0;
     virtual void set_uniform(std::string const& name, int v) = 0;
     virtual void set_uniform(std::string const& name, float v) = 0;
     virtual void set_uniform(std::string const& name, glm::vec2 const& v) = 0;
@@ -161,11 +147,28 @@ struct Shader {
 };
 
 
+struct RenderTarget {
+    virtual void clear(const glm::vec4& color) = 0;
+    virtual void draw(const RenderState& rs, Shader* shader, VertexArray* va) = 0;
+    virtual int width() const = 0;
+    virtual int height() const = 0;
+};
 
-bool init();
-void free();
-void clear(const glm::vec4& color, Framebuffer* fb = nullptr);
-void draw(const RenderState& rs, Shader* shader, VertexArray* va, Framebuffer* fb = nullptr);
+struct Screen : virtual RenderTarget {
+    virtual void resize(int width, int height) = 0;
+};
 
+struct Framebuffer : virtual RenderTarget {
+    static Framebuffer* create();
+    virtual ~Framebuffer() {}
+    virtual void attach_color(Texture2D* t) = 0;
+    virtual void attach_depth(Texture2D* t) = 0;
+    virtual bool is_complete() const = 0;
+};
+
+
+void    init();
+Screen* screen();
+int check_error(char const* op);
 
 } // namespace

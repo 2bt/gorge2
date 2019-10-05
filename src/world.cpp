@@ -1,10 +1,9 @@
 #include "resource.hpp"
 #include "world.hpp"
-#include "fx.hpp"
 
 
 void World::init() {
-    m_bump.free();
+    m_bump.init();
     m_background.init();
 }
 
@@ -34,7 +33,7 @@ void World::reset(uint32_t seed) {
     m_lasers.clear();
     m_bullets.clear();
     m_particles.clear();
-
+    m_items.clear();
 }
 
 void World::spawn_laser(std::unique_ptr<Laser> l) {
@@ -73,7 +72,7 @@ void World::update() {
     m_background.update();
     m_wall.update();
     m_shock_wave.update();
-    m_player.update(fx::input());
+    m_player.update({});
     update_all(m_enemies);
     update_all(m_lasers);
     update_all(m_bullets);
@@ -114,7 +113,7 @@ void World::draw(SpriteRenderer& ren) {
     ren.pop();
 
     // HUD
-    float w = fx::screen_width() / (float) fx::screen_height() * 75;
+    float w = gfx::screen()->width() / (float) gfx::screen()->height() * 75;
     // hearts
     ren.set_color();
     for (int i = 0; i < Player::MAX_SHIELD; ++i) {

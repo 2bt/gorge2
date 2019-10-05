@@ -29,6 +29,7 @@ void SpriteRenderer::init() {
     uint32_t buf = ~0;
     m_default_tex = gfx::Texture2D::create(gfx::TextureFormat::RGBA, 1, 1, &buf);
     set_texture();
+    set_framebuffer(gfx::screen());
 
     m_rs.cull_face_enabled    = false;
     m_rs.blend_enabled        = true;
@@ -48,10 +49,12 @@ void SpriteRenderer::init() {
 }
 
 void SpriteRenderer::free() {
+    LOGI("SpriteRenderer::free()");
     delete m_va;
     delete m_vb;
     delete m_default_shader;
     delete m_default_tex;
+    LOGI("SpriteRenderer::free() done");
 }
 
 void SpriteRenderer::push() {
@@ -109,11 +112,16 @@ void SpriteRenderer::set_color(Color const& c) {
 }
 
 void SpriteRenderer::clear(Color const& color) {
-    gfx::clear(color, state().framebuffer);
+    state().framebuffer->clear({
+        color.r * (1 / 255.0f),
+        color.g * (1 / 255.0f),
+        color.g * (1 / 255.0f),
+        color.b * (1 / 255.0f),
+    });
 }
 
 void SpriteRenderer::draw(vec2 const& pos) {
-    draw({{}, {state().tex->get_width(), state().tex->get_height()}}, pos);
+    draw({{}, {state().tex->width(), state().tex->height()}}, pos);
 }
 
 void SpriteRenderer::draw(Rect const& quad, vec2 const& pos) {
@@ -183,7 +191,7 @@ void SpriteRenderer::set_texture(gfx::Texture2D* tex) {
     state().tex = tex;
 }
 
-void SpriteRenderer::set_framebuffer(gfx::Framebuffer* fb) {
+void SpriteRenderer::set_framebuffer(gfx::RenderTarget* fb) {
     if (state().framebuffer == fb) return;
     flush();
     state().framebuffer = fb;
@@ -198,12 +206,12 @@ void SpriteRenderer::flush() {
     }
 
     if (state().shader->has_uniform("tex_scale")) {
-        state().shader->set_uniform("tex_scale", vec2(1.0 / t->get_width(), 1.0 / t->get_height()));
+        state().shader->set_uniform("tex_scale", vec2(1.0 / t->width(), 1.0 / t->height()));
     }
 
     m_vb->init_data(m_verts);
     m_va->set_count(m_verts.size());
     m_verts.clear();
-    gfx::draw(m_rs, state().shader, m_va, state().framebuffer);
+    state().framebuffer->draw(m_rs, state().shader, m_va);
 }
 

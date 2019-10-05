@@ -1,1 +1,7 @@
-build/
+*.iml
+.gradle
+.idea
+build
+release
+/android/local.properties
+.externalNativeBuild

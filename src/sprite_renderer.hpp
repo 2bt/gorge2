@@ -1,5 +1,6 @@
 #pragma once
 #include "gfx.hpp"
+#include "foo.hpp"
 #include <array>
 
 
@@ -33,7 +34,7 @@ public:
     void set_viewport(gfx::Rect const& r);
     void set_texture(gfx::Texture2D* tex = nullptr);
     void set_shader(gfx::Shader* shader = nullptr);
-    void set_framebuffer(gfx::Framebuffer* fb = nullptr);
+    void set_framebuffer(gfx::RenderTarget* fb);
 
     void clear(Color const& color);
     void draw(Rect const& quad, vec2 const& pos = {});
@@ -47,12 +48,12 @@ public:
 private:
 
     struct State {
-        Color             color       = { 255, 255, 255, 255 };
-        BlendMode         blendmode   = BM_ALPHA;
-        gfx::Rect         viewport    = {0, 0, 0, 0};
-        gfx::Texture2D*   tex         = nullptr;
-        gfx::Shader*      shader      = nullptr;
-        gfx::Framebuffer* framebuffer = nullptr;
+        Color              color       = { 255, 255, 255, 255 };
+        BlendMode          blendmode   = BM_ALPHA;
+        gfx::Rect          viewport    = {0, 0, 0, 0};
+        gfx::Texture2D*    tex         = nullptr;
+        gfx::Shader*       shader      = nullptr;
+        gfx::RenderTarget* framebuffer = nullptr;
     };
 
 

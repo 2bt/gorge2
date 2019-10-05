@@ -1,4 +1,5 @@
 #include <array>
+#include "foo.hpp"
 #include "resource.hpp"
 #include "util.hpp"
 
@@ -76,6 +77,7 @@ gfx::Texture2D* render_shockwave_texture() {
 }
 
 gfx::Texture2D* render_praxis_texture() {
+    LOGI("render_praxis_texture()");
     gfx::Texture2D* result = gfx::Texture2D::create(gfx::TextureFormat::RGBA, 480, 480);
 
     gfx::Shader* shader = gfx::Shader::create(R"(
@@ -122,6 +124,7 @@ gfx::Texture2D* render_praxis_texture() {
     delete shader;
     delete framebuffer;
 
+    LOGI("render_praxis_texture() done");
     return result;
 }
 
@@ -130,6 +133,8 @@ gfx::Texture2D* render_praxis_texture() {
 
 
 void init() {
+    LOGI("resource::init()");
+
     s_shaders[SID_FLASH] = gfx::Shader::create(R"(
         #version 100
         attribute vec2 in_pos;
@@ -180,17 +185,20 @@ void init() {
             gl_FragColor = texture2D(tex, ex_tex_coord + o);
         })");
 
-    s_textures[TID_SPRITES]   = gfx::Texture2D::create("media/atlas.png");
-    s_textures[TID_BUMP]      = gfx::Texture2D::create("media/bump.png", gfx::FilterMode::Linear);
+    s_textures[TID_SPRITES]   = android::load_texture("atlas.png");
+    s_textures[TID_BUMP]      = android::load_texture("bump.png", gfx::FilterMode::Linear);
     s_textures[TID_SHOCKWAVE] = render_shockwave_texture();
     s_textures[TID_PRAXIS]    = render_praxis_texture();
 
+    LOGI("resource::init() done");
 }
 
 
 void free() {
+    LOGI("resource::free()");
     for (auto s : s_shaders)  delete s;
     for (auto t : s_textures) delete t;
+    LOGI("resource::free() done");
 }
 
 

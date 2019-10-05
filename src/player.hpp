@@ -1,7 +1,6 @@
 #pragma once
 #include "sprite.hpp"
 #include "util.hpp"
-#include "fx.hpp"
 #include <array>
 
 
@@ -58,6 +57,11 @@ private:
 };
 
 
+struct Input {
+    int x, y;
+    bool a, b;
+};
+
 class Player {
 public:
     Player(World& world)
@@ -66,7 +70,7 @@ public:
     {}
 
     void reset();
-    void update(fx::Input const& input);
+    void update(Input const& input);
     void draw(SpriteRenderer& ren) const;
 
     bool is_alive() const { return m_alive; }

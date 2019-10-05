@@ -1,12 +1,13 @@
+#include "foo.hpp"
 #include "bump.hpp"
-#include "fx.hpp"
 #include "wall.hpp"
 #include "resource.hpp"
 
 
 void Bump::init() {
-    m_bump_canvas = gfx::Texture2D::create(gfx::TextureFormat::Red, fx::screen_width(), fx::screen_height());
-    m_main_canvas = gfx::Texture2D::create(gfx::TextureFormat::RGB, fx::screen_width(), fx::screen_height());
+//    m_bump_canvas = gfx::Texture2D::create(gfx::TextureFormat::Alpha, gfx::screen()->width(), gfx::screen()->height());
+    m_bump_canvas = gfx::Texture2D::create(gfx::TextureFormat::RGB, gfx::screen()->width(), gfx::screen()->height());
+    m_main_canvas = gfx::Texture2D::create(gfx::TextureFormat::RGB, gfx::screen()->width(), gfx::screen()->height());
 
     m_bump_framebuffer = gfx::Framebuffer::create();
     m_bump_framebuffer->attach_color(m_bump_canvas);
@@ -78,8 +79,7 @@ void Bump::draw_end(SpriteRenderer& ren) {
     ren.push_state();
     ren.push();
     ren.origin();
-    ren.scale({2.0 / fx::screen_width(), -2.0 / fx::screen_height()});
-
+    ren.scale({2.0 / gfx::screen()->width(), -2.0 / gfx::screen()->height()});
     // DEBUG
 //    ren.set_texture(m_main_canvas);
 //    ren.reset_color();

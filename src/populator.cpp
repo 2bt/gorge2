@@ -14,7 +14,7 @@ Populator::Populator(World& world) : m_world(world), m_spawn_groups({
         { 30, false, [this](vec2 const& p, Footing  ){ m_world.spawn_enemy<SquareEnemy>(p); } },
         { 20, false, [this](vec2 const& p, Footing  ){ m_world.spawn_enemy<RingEnemy>(p); } },
         {  7, false, [this](vec2 const& p, Footing  ){ m_world.spawn_particle<TwisterEnemyChain>(m_world, p); } },
-        {  1, false,  [this](vec2 const& p, Footing  ){ m_world.spawn_enemy<SaucerEnemy>(p); } },
+        {  1, false, [this](vec2 const& p, Footing  ){ m_world.spawn_enemy<SaucerEnemy>(p); } },
         { 20, true,  [this](vec2 const& p, Footing f){ m_world.spawn_enemy<CannonEnemy>(p, f); } },
         { 20, true,  [this](vec2 const& p, Footing f){ m_world.spawn_enemy<RocketEnemy>(p, f); } },
         { 20, true,  [this](vec2 const& p, Footing f){ m_world.spawn_enemy<SpiderEnemy>(p, f); } },
@@ -39,8 +39,6 @@ enum {
 };
 
 void Populator::next_wall_row() {
-    printf("%d\n", m_wall_row_count);
-
     m_spots.clear();
     m_wall_spots.clear();
 

@@ -228,7 +228,7 @@ void Player::hit(CollisionInfo const& info) {
     }
 }
 
-void Player::update(fx::Input const& input) {
+void Player::update(Input const& input) {
     if (!m_alive) return;
 
     ++m_tick;

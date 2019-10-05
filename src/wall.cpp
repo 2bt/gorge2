@@ -47,7 +47,7 @@ void Wall::generate() {
         float r = m_radius * m_radius;
         for (int y = 3; y < (int) m_gen_data.size(); ++y)
         for (int x = P; x < W - P; ++x) {
-            if (length2(vec2(x, y) - m_cursor) < r) {
+            if (glm::length2(vec2(x, y) - m_cursor) < r) {
                 m_gen_data[y][x] = 0;
             }
         }
@@ -80,7 +80,7 @@ void Wall::generate() {
         for (int y = 0; y < (int) m_gen_data.size(); ++y)
         for (int x = P - 1; x < W - P + 1; ++x) {
             vec2 p = { x, y };
-            if (m_gen_data[y][x] == 1 && length2(p - c) < r2) {
+            if (m_gen_data[y][x] == 1 && glm::length2(p - c) < r2) {
                 occupied = true;
                 break;
             }
@@ -93,7 +93,7 @@ void Wall::generate() {
             for (int y = 0; y < (int) m_gen_data.size(); ++y)
             for (int x = P; x < W - P; ++x) {
                 vec2 p = { x, y };
-                if (length2(p - c) < r) {
+                if (glm::length2(p - c) < r) {
                     m_gen_data[y][x] = 1;
                 }
             }
