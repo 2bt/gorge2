@@ -21,57 +21,38 @@ class MainView extends GLSurfaceView {
         setRenderer(mRenderer);
     }
 
-    int     mTouchId;
-    boolean mTouchPressed;
+
+    void touch(final int id, final int action, float x, float y) {
+        final int ix = (int) x;
+        final int iy = (int) y;
+        queueEvent(new Runnable() {
+            public void run() {
+                Lib.touch(id, action, ix, iy);
+            }
+        });
+    }
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
         int index  = e.getActionIndex();
         int id     = e.getPointerId(index);
-        int action = -1;
 
         switch (e.getActionMasked()) {
         case MotionEvent.ACTION_DOWN:
         case MotionEvent.ACTION_POINTER_DOWN:
-            mTouchId = id;
-            if (mTouchPressed) action = MotionEvent.ACTION_MOVE;
-            else {
-                action = MotionEvent.ACTION_DOWN;
-                mTouchPressed = true;
-            }
-            break;
+            touch(id, MotionEvent.ACTION_DOWN, e.getX(), e.getY());
+            return true;
         case MotionEvent.ACTION_UP:
         case MotionEvent.ACTION_POINTER_UP:
-            if (mTouchPressed && id == mTouchId) {
-                action = MotionEvent.ACTION_UP;
-                mTouchPressed = false;
-            }
-            break;
+            touch(id, MotionEvent.ACTION_UP, e.getX(), e.getY());
+            return true;
         case MotionEvent.ACTION_MOVE:
-            if (!mTouchPressed) break;
             int count = e.getPointerCount();
-            for (int p = 0; p < count; ++p) {
-                if (e.getPointerId(p) == mTouchId) {
-                    index = p;
-                    action = MotionEvent.ACTION_MOVE;
-                    break;
-                }
+            for (int i = 0; i < count; ++i) {
+                touch(e.getPointerId(i), MotionEvent.ACTION_MOVE, e.getX(), e.getY());
             }
-            break;
-        }
-
-        if (action >= 0) {
-            final int a = action;
-            final int x = (int) e.getX(index);
-            final int y = (int) e.getY(index);
-            queueEvent(new Runnable() {
-                public void run() {
-                    Lib.touch(x, y, a);
-                }
-            });
             return true;
         }
-
         return false;
     }
 

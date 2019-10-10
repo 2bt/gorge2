@@ -60,8 +60,8 @@ void resize(int width, int height) {
     m_world.resized();
 }
 
-void touch(int x, int y, bool pressed) {
-    LOGI("touch %d %d %d", x, y, pressed);
+void touch(int id, int action, int x, int y) {
+    LOGI("touch %d %d %d %d", id, action, x, y);
 }
 
 

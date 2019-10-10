@@ -82,17 +82,16 @@ public class MainActivity extends Activity {
     @Override protected void onResume() {
         super.onResume();
         mView.onResume();
-        Lib.startAudio();
-        Log.i(TAG, "onResume");
+        mView.queueEvent(new Runnable() { public void run() {
+            Lib.onResume();
+        }});
     }
     @Override protected void onPause() {
         super.onPause();
         mView.onPause();
-        Lib.stopAudio();
         mView.queueEvent(new Runnable() { public void run() {
-            Lib.saveSettings();
+            Lib.onPause();
         }});
-        Log.i(TAG, "onPause");
     }
 
     static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 42;

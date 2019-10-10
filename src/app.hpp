@@ -11,6 +11,6 @@ namespace app {
     void resize(int width, int height);
     void update();
     void draw();
-    void touch(int x, int y, bool pressed);
+    void touch(int id, int action, int x, int y);
     void key(int key, int unicode);
 }

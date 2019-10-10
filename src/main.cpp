@@ -1,4 +1,5 @@
 #include "app.hpp"
+#include "log.hpp"
 
 #ifdef ANDROID
 
@@ -19,9 +20,6 @@ extern "C" {
     JNIEXPORT void JNICALL Java_com_twobit_gorge_Lib_free(JNIEnv * env, jobject obj) {
         app::free();
     }
-    JNIEXPORT void JNICALL Java_com_twobit_gorge_Lib_saveSettings(JNIEnv * env, jobject obj) {
-        //save_settings();
-    }
     JNIEXPORT void JNICALL Java_com_twobit_gorge_Lib_resize(JNIEnv * env, jobject obj, jint width, jint height) {
         app::resize(width, height);
     }
@@ -29,29 +27,22 @@ extern "C" {
         app::update();
         app::draw();
     }
-    JNIEXPORT void JNICALL Java_com_twobit_gorge_Lib_touch(JNIEnv * env, jobject obj, jint x, jint y, jint action) {
-        app::touch(x, y, action == 0 || action == 2);
+    JNIEXPORT void JNICALL Java_com_twobit_gorge_Lib_touch(JNIEnv * env, jobject obj, jint id, jint action, jint x, jint y) {
+        app::touch(id, action, x, y);
     }
     JNIEXPORT void JNICALL Java_com_twobit_gorge_Lib_key(JNIEnv * env, jobject obj, jint key, jint unicode) {
         app::key(key, unicode);
     }
-    JNIEXPORT void JNICALL Java_com_twobit_gorge_Lib_startAudio(JNIEnv * env, jobject obj) {
-        //android::start_audio();
+    JNIEXPORT void JNICALL Java_com_twobit_gorge_Lib_onPause(JNIEnv * env, jobject obj) {
+        LOGI("onPause");
     }
-    JNIEXPORT void JNICALL Java_com_twobit_gorge_Lib_stopAudio(JNIEnv * env, jobject obj) {
-        //android::stop_audio();
+    JNIEXPORT void JNICALL Java_com_twobit_gorge_Lib_onResume(JNIEnv * env, jobject obj) {
+        LOGI("onResume");
     }
 }
 
 #else
 
-/*
-    const Uint8* ks = SDL_GetKeyboardState(nullptr);
-    s_input.x = !!ks[SDL_SCANCODE_RIGHT] - !!ks[SDL_SCANCODE_LEFT];
-    s_input.y = !!ks[SDL_SCANCODE_DOWN] - !!ks[SDL_SCANCODE_UP];
-    s_input.a = !!ks[SDL_SCANCODE_X];
-    s_input.b = !!ks[SDL_SCANCODE_Y] | !!ks[SDL_SCANCODE_Z];
-*/
 
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
@@ -135,20 +126,26 @@ int main(int argc, char** argv) {
 
             case SDL_MOUSEBUTTONDOWN:
                 if (e.button.button != SDL_BUTTON_LEFT) break;
-                app::touch(e.motion.x, e.motion.y, true);
+                app::touch(0, 1, e.motion.x, e.motion.y);
                 break;
             case SDL_MOUSEBUTTONUP:
                 if (e.button.button != SDL_BUTTON_LEFT) break;
-                app::touch(e.motion.x, e.motion.y, false);
+                app::touch(0, 0, e.motion.x, e.motion.y);
                 break;
             case SDL_MOUSEMOTION:
                 if (!(e.motion.state & SDL_BUTTON_LMASK)) break;
-                app::touch(e.motion.x, e.motion.y, true);
+                app::touch(0, 2, e.motion.x, e.motion.y);
                 break;
 
             default: break;
             }
         }
+
+        const Uint8* ks = SDL_GetKeyboardState(nullptr);
+        int  input_x = !!ks[SDL_SCANCODE_RIGHT] - !!ks[SDL_SCANCODE_LEFT];
+        int  input_y = !!ks[SDL_SCANCODE_DOWN] - !!ks[SDL_SCANCODE_UP];
+        bool input_a = !!ks[SDL_SCANCODE_X];
+        bool input_b = !!ks[SDL_SCANCODE_Y] | !!ks[SDL_SCANCODE_Z];
 
         const Uint8* ks = SDL_GetKeyboardState(nullptr);
         if (ks[SDL_SCANCODE_TAB]) {
