@@ -10,7 +10,7 @@ public class Lib {
     public static native void free();
     public static native void resize(int width, int height);
     public static native void draw();
-    public static native void touch(int id, int action, int x, int y);
+    public static native void touch(int id, boolean pressed, int x, int y);
     public static native void key(int key, int unicode);
     public static native void onPause();
     public static native void onResume();

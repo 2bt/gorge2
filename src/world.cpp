@@ -62,8 +62,12 @@ void update_all(std::vector<std::unique_ptr<T>>& vs) {
     }
 }
 
+extern Player::Input g_keyboard_input;
 
 void World::update() {
+
+    Player::Input input = g_keyboard_input;
+
     ++m_tick;
     m_shake *= 0.95;
 
@@ -72,7 +76,9 @@ void World::update() {
     m_background.update();
     m_wall.update();
     m_shock_wave.update();
-    m_player.update({});
+
+    m_player.update(input);
+
     update_all(m_enemies);
     update_all(m_lasers);
     update_all(m_bullets);

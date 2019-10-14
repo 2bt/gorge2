@@ -50,12 +50,10 @@ void SpriteRenderer::init() {
 }
 
 void SpriteRenderer::free() {
-    LOGI("SpriteRenderer::free()");
     delete m_va;
     delete m_vb;
     delete m_default_shader;
     delete m_default_tex;
-    LOGI("SpriteRenderer::free() done");
 }
 
 void SpriteRenderer::push() {

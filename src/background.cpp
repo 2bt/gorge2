@@ -57,12 +57,10 @@ void Background::init() {
 }
 
 void Background::free() {
-    LOGI("Background::free()");
     delete m_noise_tex;
     delete m_cloud_shader;
     delete m_framebuffer;
     delete m_canvas;
-    LOGI("Background::free() done");
 }
 
 void Background::reset(uint32_t seed) {

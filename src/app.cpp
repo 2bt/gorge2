@@ -60,8 +60,33 @@ void resize(int width, int height) {
     m_world.resized();
 }
 
-void touch(int id, int action, int x, int y) {
-    LOGI("touch %d %d %d %d", id, action, x, y);
+
+struct Touch {
+    SpriteRenderer::Color color;
+    vec2                  pos;
+    bool                  pressed;
+};
+
+std::array<Touch, 3> m_touches = {
+    Touch{
+        { 255, 0, 0, 255 },
+    },
+    Touch{
+        { 0, 255, 0, 255 },
+    },
+    Touch{
+        { 0, 0, 255, 255 },
+    },
+};
+
+
+void touch(int id, bool pressed, int x, int y) {
+    LOGI("touch %d %d %d %d", id, pressed, x, y);
+
+    if (id >= (int) m_touches.size()) return;
+    Touch& t = m_touches[id];
+    t.pos = { x, y };
+    t.pressed = pressed;
 }
 
 
@@ -81,6 +106,7 @@ void draw() {
     float r = gfx::screen()->height() / (float) gfx::screen()->width();
     m_ren.scale({s * r, s});
 
+    // debug
 //    m_ren.translate({0, 25});
 //    m_ren.scale(0.4);
 
@@ -88,13 +114,25 @@ void draw() {
 
     m_world.draw(m_ren);
 
-    m_ren.set_color({255, 255, 255, 50});
-    rectangle(m_ren, {-300, -78}, {300, -75});
-    rectangle(m_ren, {-300, 75}, {300, 78});
+    // debug
+//    m_ren.set_color({255, 255, 255, 50});
+//    rectangle(m_ren, {-300, -78}, {300, -75});
+//    rectangle(m_ren, {-300, 75}, {300, 78});
 
 //    // title
 //    m_ren.set_color();
 //    m_ren.draw(frame(Sprite::TITLE));
+
+    // touches
+    for (Touch const& t : m_touches) {
+        if (!t.pressed) continue;
+        vec2 p = t.pos - vec2(gfx::screen()->width(), gfx::screen()->height()) * 0.5f;
+        p *= 150.0f / gfx::screen()->height();
+
+        m_ren.set_color(t.color);
+        m_ren.draw(frame(Sprite::EXPLOSION), p);
+    }
+
 
     m_ren.flush();
     DB_REN.flush();

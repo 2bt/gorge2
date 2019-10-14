@@ -1,6 +1,5 @@
 #include "wall.hpp"
 #include "populator.hpp"
-#include "debug_renderer.hpp"
 #include <algorithm>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/norm.hpp>
@@ -163,6 +162,7 @@ glm::ivec2 Wall::get_tile_address(vec2 const& pos) const {
 void Wall::draw(SpriteRenderer& ren) {
 
     // DEBUG
+    if (0)
     for (int y = 0; y < (int) m_gen_data.size(); ++y) {
         auto const& row = m_gen_data[y];
         ren.set_color({70, 70, 70});

@@ -1,6 +1,9 @@
 #include "app.hpp"
 #include "log.hpp"
 
+#include "player.hpp"
+Player::Input g_keyboard_input;
+
 #ifdef ANDROID
 
 #include <jni.h>
@@ -27,8 +30,8 @@ extern "C" {
         app::update();
         app::draw();
     }
-    JNIEXPORT void JNICALL Java_com_twobit_gorge_Lib_touch(JNIEnv * env, jobject obj, jint id, jint action, jint x, jint y) {
-        app::touch(id, action, x, y);
+    JNIEXPORT void JNICALL Java_com_twobit_gorge_Lib_touch(JNIEnv * env, jobject obj, jint id, jboolean pressed, jint x, jint y) {
+        app::touch(id, pressed, x, y);
     }
     JNIEXPORT void JNICALL Java_com_twobit_gorge_Lib_key(JNIEnv * env, jobject obj, jint key, jint unicode) {
         app::key(key, unicode);
@@ -126,15 +129,15 @@ int main(int argc, char** argv) {
 
             case SDL_MOUSEBUTTONDOWN:
                 if (e.button.button != SDL_BUTTON_LEFT) break;
-                app::touch(0, 1, e.motion.x, e.motion.y);
+                app::touch(0, true, e.motion.x, e.motion.y);
                 break;
             case SDL_MOUSEBUTTONUP:
                 if (e.button.button != SDL_BUTTON_LEFT) break;
-                app::touch(0, 0, e.motion.x, e.motion.y);
+                app::touch(0, false, e.motion.x, e.motion.y);
                 break;
             case SDL_MOUSEMOTION:
                 if (!(e.motion.state & SDL_BUTTON_LMASK)) break;
-                app::touch(0, 2, e.motion.x, e.motion.y);
+                app::touch(0, true, e.motion.x, e.motion.y);
                 break;
 
             default: break;
@@ -142,12 +145,12 @@ int main(int argc, char** argv) {
         }
 
         const Uint8* ks = SDL_GetKeyboardState(nullptr);
-        int  input_x = !!ks[SDL_SCANCODE_RIGHT] - !!ks[SDL_SCANCODE_LEFT];
-        int  input_y = !!ks[SDL_SCANCODE_DOWN] - !!ks[SDL_SCANCODE_UP];
-        bool input_a = !!ks[SDL_SCANCODE_X];
-        bool input_b = !!ks[SDL_SCANCODE_Y] | !!ks[SDL_SCANCODE_Z];
+        g_keyboard_input.x = !!ks[SDL_SCANCODE_RIGHT] - !!ks[SDL_SCANCODE_LEFT];
+        g_keyboard_input.y = !!ks[SDL_SCANCODE_DOWN] - !!ks[SDL_SCANCODE_UP];
+        g_keyboard_input.a = !!ks[SDL_SCANCODE_X];
+        g_keyboard_input.b = !!ks[SDL_SCANCODE_Y] | !!ks[SDL_SCANCODE_Z];
 
-        const Uint8* ks = SDL_GetKeyboardState(nullptr);
+
         if (ks[SDL_SCANCODE_TAB]) {
             for (int i = 0; i < 7; ++i) app::update();
         }

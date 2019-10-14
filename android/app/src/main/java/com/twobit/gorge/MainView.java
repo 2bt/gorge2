@@ -22,12 +22,12 @@ class MainView extends GLSurfaceView {
     }
 
 
-    void touch(final int id, final int action, float x, float y) {
+    void touch(final int id, final boolean pressed, float x, float y) {
         final int ix = (int) x;
         final int iy = (int) y;
         queueEvent(new Runnable() {
             public void run() {
-                Lib.touch(id, action, ix, iy);
+                Lib.touch(id, pressed, ix, iy);
             }
         });
     }
@@ -40,16 +40,16 @@ class MainView extends GLSurfaceView {
         switch (e.getActionMasked()) {
         case MotionEvent.ACTION_DOWN:
         case MotionEvent.ACTION_POINTER_DOWN:
-            touch(id, MotionEvent.ACTION_DOWN, e.getX(), e.getY());
+            touch(id, true, e.getX(index), e.getY(index));
             return true;
         case MotionEvent.ACTION_UP:
         case MotionEvent.ACTION_POINTER_UP:
-            touch(id, MotionEvent.ACTION_UP, e.getX(), e.getY());
+            touch(id, false, e.getX(index), e.getY(index));
             return true;
         case MotionEvent.ACTION_MOVE:
             int count = e.getPointerCount();
             for (int i = 0; i < count; ++i) {
-                touch(e.getPointerId(i), MotionEvent.ACTION_MOVE, e.getX(), e.getY());
+                touch(e.getPointerId(i), true, e.getX(i), e.getY(i));
             }
             return true;
         }

@@ -57,13 +57,14 @@ private:
 };
 
 
-struct Input {
-    int x, y;
-    bool a, b;
-};
 
 class Player {
 public:
+    struct Input {
+        int x, y;
+        bool a, b;
+    };
+
     Player(World& world)
         : m_world(world)
         , m_balls({ Ball(world, -1), Ball(world, 1) })
