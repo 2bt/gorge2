@@ -145,11 +145,10 @@ int main(int argc, char** argv) {
         }
 
         const Uint8* ks = SDL_GetKeyboardState(nullptr);
-        g_keyboard_input.x = !!ks[SDL_SCANCODE_RIGHT] - !!ks[SDL_SCANCODE_LEFT];
-        g_keyboard_input.y = !!ks[SDL_SCANCODE_DOWN] - !!ks[SDL_SCANCODE_UP];
-        g_keyboard_input.a = !!ks[SDL_SCANCODE_X];
-        g_keyboard_input.b = !!ks[SDL_SCANCODE_Y] | !!ks[SDL_SCANCODE_Z];
-
+        g_keyboard_input.mov.x = !!ks[SDL_SCANCODE_RIGHT] - !!ks[SDL_SCANCODE_LEFT];
+        g_keyboard_input.mov.y = !!ks[SDL_SCANCODE_DOWN] - !!ks[SDL_SCANCODE_UP];
+        g_keyboard_input.a     = !!ks[SDL_SCANCODE_X];
+        g_keyboard_input.b     = !!ks[SDL_SCANCODE_Y] | !!ks[SDL_SCANCODE_Z];
 
         if (ks[SDL_SCANCODE_TAB]) {
             for (int i = 0; i < 7; ++i) app::update();

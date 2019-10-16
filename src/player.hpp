@@ -61,8 +61,9 @@ private:
 class Player {
 public:
     struct Input {
-        int x, y;
-        bool a, b;
+        vec2 mov;
+        bool a;
+        bool b;
     };
 
     Player(World& world)

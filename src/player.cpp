@@ -197,13 +197,10 @@ void Player::reset() {
     m_alive            = true;
     m_shield           = MAX_SHIELD;
     m_score            = 0;
-    m_energy           = MAX_ENERGY;
+    m_energy           = 0;
 
     m_balls[0].reset();
     m_balls[1].reset();
-
-    m_balls[0].activate();
-    m_balls[1].activate();
 }
 
 void Player::hit(CollisionInfo const& info) {
@@ -244,7 +241,7 @@ void Player::update(Input const& input) {
     }
 
     // move
-    m_pos += m_blast_vel + vec2(input.x, input.y) * speed;
+    m_pos += m_blast_vel + input.mov * speed;
     m_pos = clamp(m_pos, { -124, -72 }, { 124, 71 });
 
     // collision with wall
@@ -274,8 +271,8 @@ void Player::update(Input const& input) {
     m_balls[1].update();
 
     // shoot
-    if (input.y > 0) m_side_shot = false;
-    if (input.y < 0) m_side_shot = true;
+    if (input.mov.y > 0) m_side_shot = false;
+    if (input.mov.y < 0) m_side_shot = true;
     if (m_shoot_delay > 0) --m_shoot_delay;
     if (input.a && m_shoot_delay == 0 && m_blast_delay == 0) {
         m_shoot_delay = m_shoot_period;

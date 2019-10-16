@@ -32,10 +32,10 @@ enum class Sprite {
     SQUARE,
     STARS,
     TITLE,
+    TOUCH,
     TWISTER,
     WALLS,
 };
 
 SpriteRenderer::Rect const& frame(Sprite s, int frame = 0);
 int frame_count(Sprite s);
-

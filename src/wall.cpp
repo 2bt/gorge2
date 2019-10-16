@@ -1,3 +1,4 @@
+#include "log.hpp"
 #include "wall.hpp"
 #include "populator.hpp"
 #include <algorithm>
@@ -35,7 +36,7 @@ void Wall::generate() {
     m_gen_data.front().fill(1);
     std::rotate(m_gen_data.begin(), m_gen_data.begin() + 1, m_gen_data.end());
 
-    constexpr int P = 4;
+    const int P = std::min(5, m_row_counter / 2);
 
     m_cursor.y -= 1;
     while (m_cursor.y < 25) {

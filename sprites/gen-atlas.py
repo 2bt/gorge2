@@ -10,7 +10,7 @@ sprite_sizes = {
 }
 
 W = 256
-H = 128
+H = 256
 
 
 atlas = Image.new("RGBA", (W, H))
@@ -31,7 +31,7 @@ def add_to_atlas(sprite):
             xx = x
             found = True
 
-    assert found
+    assert found, "image is too small"
 
     for i in range(sprite.width):
         heights[xx + i] = yy + sprite.height
@@ -116,26 +116,27 @@ for f in os.listdir("."):
 
     info[f[:-4].upper()] = rects
 
-atlas.save("../media/atlas.png")
+atlas.save("../assets/atlas.png")
 
 
 
 # generate code
-f = open("../src/sprite.hpp", "w")
-
 keys = sorted(info.keys())
-print >>f, """#pragma once
+content = """#pragma once
 #include "sprite_renderer.hpp"
 
-enum class Sprite {"""
-for k in keys: print >>f, "    %s," % k
-print >>f, "};"
-print >>f, """
+enum class Sprite {
+"""
+for k in keys: content += "    %s,\n" % k
+content += """};
+
 SpriteRenderer::Rect const& frame(Sprite s, int frame = 0);
 int frame_count(Sprite s);
 """
+if content != open("../src/sprite.hpp").read():
+    open("../src/sprite.hpp", "w").write(content)
 
-f.close()
+
 f = open("../src/sprite.cpp", "w")
 
 print >>f, """#include "sprite.hpp"
