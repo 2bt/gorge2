@@ -11,7 +11,7 @@ void Wall::reset(uint32_t seed) {
     m_row_counter = 0;
     m_offset = 0;
     m_cursor = { W * 0.5 - 0.5, 10 };
-    m_radius = W * 0.4;
+    m_radius = W * 0.5;
     m_island_delay = 80;
 
     for (auto& row : m_data) row.fill(1);
@@ -36,7 +36,7 @@ void Wall::generate() {
     m_gen_data.front().fill(1);
     std::rotate(m_gen_data.begin(), m_gen_data.begin() + 1, m_gen_data.end());
 
-    const int P = std::min(5, m_row_counter / 2);
+    const int P = glm::clamp(m_row_counter / 2 - 10, 0, 5);
 
     m_cursor.y -= 1;
     while (m_cursor.y < 25) {
