@@ -47,5 +47,5 @@ protected:
         bool needs_wall;
         std::function<void(vec2 const&, float)> spawn_func;
     };
-    std::vector<SpawnGroup>         m_spawn_groups;
+    std::vector<SpawnGroup> m_spawn_groups;
 };

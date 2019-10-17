@@ -1,3 +1,4 @@
+#include "log.hpp"
 #include "populator.hpp"
 #include "world.hpp"
 #include "square_enemy.hpp"
@@ -19,11 +20,10 @@ void Populator::reset(uint32_t seed) {
     m_spots.clear();
     m_wall_spots.clear();
 
-    m_spawn_groups =  {
+    m_spawn_groups = {
         { 30, false, [this](vec2 const& pos, float    ){ m_world.spawn_enemy<SquareEnemy>(pos); } },
         { 20, false, [this](vec2 const& pos, float    ){ m_world.spawn_enemy<RingEnemy>(pos); } },
         {  7, false, [this](vec2 const& pos, float    ){ m_world.spawn_particle<TwisterEnemyChain>(m_world, pos); } },
-        {  1, false, [this](vec2 const& pos, float    ){ m_world.spawn_enemy<SaucerEnemy>(pos); } },
         { 20, true,  [this](vec2 const& pos, float ang){ m_world.spawn_enemy<CannonEnemy>(pos, ang); } },
         { 20, true,  [this](vec2 const& pos, float ang){ m_world.spawn_enemy<RocketEnemy>(pos, ang); } },
         { 20, true,  [this](vec2 const& pos, float ang){ m_world.spawn_enemy<SpiderEnemy>(pos, ang); } },
@@ -104,6 +104,15 @@ vec2 Populator::get_spot_pos(Spot s) const {
 
 void Populator::update() {
     ++m_tick;
+
+    switch (m_tick) {
+    case 60 * 60: // after one minute
+        m_spawn_groups.push_back({ 1, false, [this](vec2 const& pos, float){ m_world.spawn_enemy<SaucerEnemy>(pos); } });
+        LOGI("Populator::update: start spawning SaucerEnemy");
+        break;
+    default: break;
+    }
+
 
     if (m_tick % 70 == 0) {
         std::vector<int> weights;
