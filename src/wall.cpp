@@ -36,13 +36,13 @@ void Wall::generate() {
     m_gen_data.front().fill(1);
     std::rotate(m_gen_data.begin(), m_gen_data.begin() + 1, m_gen_data.end());
 
-    const int P = glm::clamp(m_row_counter / 2 - 10, 0, 5);
+    const int P = glm::clamp(m_row_counter - 10, 2, 8);
 
     m_cursor.y -= 1;
     while (m_cursor.y < 25) {
 
         // make hole
-        constexpr float padding = 13;
+        const float padding = 10 + P;
 
         float r = m_radius * m_radius;
         for (int y = 3; y < (int) m_gen_data.size(); ++y)

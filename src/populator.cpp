@@ -113,8 +113,9 @@ void Populator::update() {
     default: break;
     }
 
-
-    if (m_tick % 70 == 0) {
+    // TODO: clever difficulty
+    int mod = std::max<int>(50, 300 * (1 - m_tick / (60.0 * 60 * 7)));
+    if (m_tick % mod == 0) {
         std::vector<int> weights;
         for (SpawnGroup const& g : m_spawn_groups) weights.push_back(g.weight);
         auto dist = std::discrete_distribution<int>(weights.begin(), weights.end());
@@ -122,7 +123,6 @@ void Populator::update() {
         Spot s;
         if (!g.needs_wall && !get_random_spot(s)) return;
         if (g.needs_wall && !get_random_wall_spot(s)) return;
-
 
         static constexpr std::array<float, 5> ANGLES = {
             0, // F_NONE

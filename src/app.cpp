@@ -19,13 +19,33 @@ struct Touch {
     bool pressed;
     bool prev_pressed;
 };
-std::array<Touch, 3> m_touches;
-Touch*               m_touch_move;
-Touch*               m_touch_a;
-Touch*               m_touch_b;
-vec2                 m_mov_pos;
-vec2                 m_a_pos;
-vec2                 m_b_pos;
+struct Button {
+    int    id;
+    vec2   default_pos;
+    vec2   pos;
+    Touch* touch;
+    void reset(vec2 const& p) { pos = default_pos = p; }
+    bool is_pressed() const { return !!touch; }
+    vec2 get_move() {
+        if (!touch) return {};
+        return (touch->pos - pos) * (1.0f / 8);
+    }
+    void update() {
+        if (touch && !touch->pressed) touch = nullptr;
+        if (touch) {
+            if (id == 0) pos = glm::clamp(pos, touch->pos - vec2(8), touch->pos + vec2(8));
+            else pos = glm::mix(pos, touch->pos, 0.6f);
+        }
+        else pos = glm::mix(pos, default_pos, 0.3f);
+    }
+};
+
+std::array<Touch, 3>    m_touches;
+std::array<Button, 3>   m_buttons     = { Button{ 0 }, Button{ 1 }, Button{ 2 } };
+Button&                 m_button_dpad = m_buttons[0];
+Button&                 m_button_a    = m_buttons[1];
+Button&                 m_button_b    = m_buttons[2];
+
 
 
 bool            m_initialized = false;
@@ -41,13 +61,15 @@ void init() {
     m_initialized = true;
 
     gfx::init();
-
     resource::init();
-
     DB_REN.init();
-
     m_ren.init();
     m_ren.set_texture(resource::texture(resource::TID_SPRITES));
+
+    float aspect_ratio = (float) gfx::screen()->width() / gfx::screen()->height();
+    m_button_dpad.reset({-75 * aspect_ratio + 20, 25});
+    m_button_a.reset({75 * aspect_ratio - 20, 25});
+    m_button_b.reset({75 * aspect_ratio - 20, -25});
 
     m_world.init();
 
@@ -76,6 +98,11 @@ void resize(int width, int height) {
     gfx::screen()->resize(width, height);
 
     m_world.resized();
+
+    float aspect_ratio = (float) gfx::screen()->width() / gfx::screen()->height();
+    m_button_dpad.reset({-75 * aspect_ratio + 20, 25});
+    m_button_a.reset({75 * aspect_ratio - 20, 25});
+    m_button_b.reset({75 * aspect_ratio - 20, -25});
 }
 
 
@@ -103,50 +130,20 @@ void update() {
     // input
     for (Touch& t : m_touches) {
         if (!(t.pressed && !t.prev_pressed)) continue;
-
-        // move
-        if (!m_touch_move && t.pos.x < 0) {
-            m_touch_move = &t;
-            m_mov_pos = t.pos;
-            continue;
+        if (!m_button_dpad.touch && t.pos.x < 0) {
+            m_button_dpad.touch = &t;
         }
-
-        // a
-        if (!m_touch_a && t.pos.x > 0 && t.pos.y > 0) {
-            m_touch_a = &t;
-            continue;
+        else if (!m_button_a.touch && t.pos.x > 0 && t.pos.y > 0) {
+            m_button_a.touch = &t;
         }
-
-        // b
-        if (!m_touch_b && t.pos.x > 0 && (t.pos.y < 0 || m_touch_a)) {
-            m_touch_b = &t;
-            continue;
+        else if (!m_button_b.touch && t.pos.x > 0 && (t.pos.y < 0 || m_button_a.touch)) {
+            m_button_b.touch = &t;
         }
     }
-
-    if (m_touch_move && !m_touch_move->pressed) m_touch_move = nullptr;
-    if (m_touch_a && !m_touch_a->pressed) m_touch_a = nullptr;
-    if (m_touch_b && !m_touch_b->pressed) m_touch_b = nullptr;
-
-    // move
-    float aspect_ratio = (float) gfx::screen()->width() / gfx::screen()->height();
-    if (m_touch_move) {
-        vec2 dist(8);
-        m_mov_pos = glm::clamp(m_mov_pos, m_touch_move->pos - dist, m_touch_move->pos + dist);
-//        g_keyboard_input.mov = (m_touch_move->pos - m_mov_pos) * (1.0f / 8);
-    }
-    else {
-
-//        g_keyboard_input.mov = {};
-    }
-//    g_keyboard_input.a = !!m_touch_a;
-//    g_keyboard_input.b = !!m_touch_b;
-
-    if (!m_touch_move) m_mov_pos = glm::mix(m_mov_pos, vec2(-75 * aspect_ratio + 25, 25), 0.1f);
-    if (m_touch_a) m_a_pos = m_touch_a->pos;
-    else m_a_pos = glm::mix(m_a_pos, vec2(75 * aspect_ratio - 25, 25), 0.1f);
-    if (m_touch_b) m_b_pos = m_touch_b->pos;
-    else m_b_pos = glm::mix(m_b_pos, vec2(75 * aspect_ratio - 25, -25), 0.1f);
+    for (auto& b : m_buttons) b.update();
+    g_keyboard_input.a   = m_button_a.is_pressed();
+    g_keyboard_input.b   = m_button_b.is_pressed();
+    g_keyboard_input.mov = m_button_dpad.get_move();
 
     m_world.update();
 
@@ -181,12 +178,18 @@ void draw() {
 //    m_ren.draw(frame(Sprite::TITLE));
 
     // touch
-    int alpha = m_world.get_player().is_alive() ? 100 : 30;
-    m_ren.set_color({255, 255, 255, alpha});
-    if (m_touch_move) m_ren.draw(frame(Sprite::TOUCH), m_touch_move->pos);
-    m_ren.draw(frame(Sprite::TOUCH, 1), m_mov_pos);
-    m_ren.draw(frame(Sprite::TOUCH, 2), m_a_pos);
-    m_ren.draw(frame(Sprite::TOUCH, 3), m_b_pos);
+//    if (m_world.get_player().is_alive())
+    {
+        for (auto const& b : m_buttons) {
+            if (b.is_pressed()) m_ren.set_color({255, 255, 255, 100});
+            else m_ren.set_color({255, 255, 255, 50});
+            m_ren.draw(frame(Sprite::TOUCH, b.id + 1), b.pos);
+        }
+        if (m_button_dpad.is_pressed()) {
+            m_ren.set_color({255, 255, 255, 100});
+            m_ren.draw(frame(Sprite::TOUCH, 0), m_button_dpad.touch->pos);
+        }
+    }
 
     m_ren.flush();
     DB_REN.flush();

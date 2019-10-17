@@ -51,7 +51,8 @@ void Background::init() {
             gl_FragColor = vec4(c, 1.0);
         })");
 
-    m_canvas = gfx::Texture2D::create(gfx::TextureFormat::RGB, 267, 151);
+    //m_canvas = gfx::Texture2D::create(gfx::TextureFormat::RGB, 267, 151);
+    m_canvas = gfx::Texture2D::create(gfx::TextureFormat::RGB, 8 * 36, 151);
     m_framebuffer = gfx::Framebuffer::create();
     m_framebuffer->attach_color(m_canvas);
 }
@@ -103,7 +104,7 @@ void Background::draw(SpriteRenderer& ren) {
 
     ren.push_state();
     ren.set_texture(m_canvas);
-    ren.draw({{}, {267, 151}}, {0, m_tick % 10 * 0.1 - 0.5});
+    ren.draw({0, m_tick % 10 * 0.1 - 0.5});
     ren.pop_state();
 
     ren.push_state();

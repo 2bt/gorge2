@@ -92,7 +92,7 @@ namespace {
 
 SaucerEnemy::SaucerEnemy(World& world, uint32_t seed, vec2 const& pos) : Enemy(world, seed, pos) {
     m_sprite = Sprite::SAUCER;
-    m_shield = 40;
+    m_shield = 30;
     m_score  = 5000;
     m_energy = 10;
 
