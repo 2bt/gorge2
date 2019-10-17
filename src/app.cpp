@@ -23,7 +23,9 @@ std::array<Touch, 3> m_touches;
 Touch*               m_touch_move;
 Touch*               m_touch_a;
 Touch*               m_touch_b;
-vec2                 m_touch_move_prev_pos;
+vec2                 m_mov_pos;
+vec2                 m_a_pos;
+vec2                 m_b_pos;
 
 
 bool            m_initialized = false;
@@ -105,7 +107,7 @@ void update() {
         // move
         if (!m_touch_move && t.pos.x < 0) {
             m_touch_move = &t;
-            m_touch_move_prev_pos = t.pos;
+            m_mov_pos = t.pos;
             continue;
         }
 
@@ -127,16 +129,24 @@ void update() {
     if (m_touch_b && !m_touch_b->pressed) m_touch_b = nullptr;
 
     // move
+    float aspect_ratio = (float) gfx::screen()->width() / gfx::screen()->height();
     if (m_touch_move) {
         vec2 dist(8);
-        m_touch_move_prev_pos = glm::clamp(m_touch_move_prev_pos, m_touch_move->pos - dist, m_touch_move->pos + dist);
-        g_keyboard_input.mov = (m_touch_move->pos - m_touch_move_prev_pos) * (1.0f / 8);
+        m_mov_pos = glm::clamp(m_mov_pos, m_touch_move->pos - dist, m_touch_move->pos + dist);
+//        g_keyboard_input.mov = (m_touch_move->pos - m_mov_pos) * (1.0f / 8);
     }
     else {
-        g_keyboard_input.mov = {};
+
+//        g_keyboard_input.mov = {};
     }
-    g_keyboard_input.a = !!m_touch_a;
-    g_keyboard_input.b = !!m_touch_b;
+//    g_keyboard_input.a = !!m_touch_a;
+//    g_keyboard_input.b = !!m_touch_b;
+
+    if (!m_touch_move) m_mov_pos = glm::mix(m_mov_pos, vec2(-75 * aspect_ratio + 25, 25), 0.1f);
+    if (m_touch_a) m_a_pos = m_touch_a->pos;
+    else m_a_pos = glm::mix(m_a_pos, vec2(75 * aspect_ratio - 25, 25), 0.1f);
+    if (m_touch_b) m_b_pos = m_touch_b->pos;
+    else m_b_pos = glm::mix(m_b_pos, vec2(75 * aspect_ratio - 25, -25), 0.1f);
 
     m_world.update();
 
@@ -171,13 +181,12 @@ void draw() {
 //    m_ren.draw(frame(Sprite::TITLE));
 
     // touch
-    m_ren.set_color({255, 255, 255, 100});
-    if (m_touch_move) {
-        m_ren.draw(frame(Sprite::TOUCH), m_touch_move->pos);
-        m_ren.draw(frame(Sprite::TOUCH, 1), m_touch_move_prev_pos);
-    }
-    if (m_touch_a) m_ren.draw(frame(Sprite::TOUCH), m_touch_a->pos);
-    if (m_touch_b) m_ren.draw(frame(Sprite::TOUCH), m_touch_b->pos);
+    int alpha = m_world.get_player().is_alive() ? 100 : 30;
+    m_ren.set_color({255, 255, 255, alpha});
+    if (m_touch_move) m_ren.draw(frame(Sprite::TOUCH), m_touch_move->pos);
+    m_ren.draw(frame(Sprite::TOUCH, 1), m_mov_pos);
+    m_ren.draw(frame(Sprite::TOUCH, 2), m_a_pos);
+    m_ren.draw(frame(Sprite::TOUCH, 3), m_b_pos);
 
     m_ren.flush();
     DB_REN.flush();
