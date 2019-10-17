@@ -9,16 +9,24 @@ class World;
 
 class Populator {
 public:
-    Populator(World& world);
+    Populator(World& world) : m_world(world) {}
     void reset(uint32_t seed);
     void next_wall_row();
     void update();
 
 protected:
 
+    enum Footing {
+        F_NONE,
+        F_NORTH,
+        F_WEST,
+        F_SOUTH,
+        F_EAST,
+    };
+
     struct Spot {
         int x;
-        Footing footing;
+        Footing footing = F_NONE;
     };
 
     bool get_random_spot(Spot& s);
@@ -37,8 +45,7 @@ protected:
     struct SpawnGroup {
         int  weight;
         bool needs_wall;
-        std::function<void(vec2 const&, Footing)> spawn_func;
+        std::function<void(vec2 const&, float)> spawn_func;
     };
-    const std::vector<SpawnGroup>   m_spawn_groups;
-    std::discrete_distribution<int> m_spawn_dist;
+    std::vector<SpawnGroup>         m_spawn_groups;
 };

@@ -11,12 +11,12 @@ namespace {
     };
 }
 
-CannonEnemy::CannonEnemy(World& world, uint32_t seed, vec2 const& pos, Footing footing) : Enemy(world, seed, pos) {
+CannonEnemy::CannonEnemy(World& world, uint32_t seed, vec2 const& pos, float ang) : Enemy(world, seed, pos) {
     m_sprite     = Sprite::CANNON;
     m_shield     = 2;
     m_score      = 300;
     m_energy     = 2;
-    m_ang        = get_angle(footing);
+    m_ang        = ang;
     m_cannon_ang = m_ang + m_random.get_float(-1.3, 1.3);
     m_delay      = m_random.get_int(100, 150);
     m_polygon.resize(CANNON_ENEMY_POLYGON.size());

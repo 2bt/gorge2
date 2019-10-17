@@ -51,7 +51,7 @@ TwisterEnemy::TwisterEnemy(World& world, uint32_t seed, vec2 const& pos, Twister
     m_path->add_twister(this);
     if (m_path->is_leader(this)) {
         m_path->elements.push_back({
-            get_angle(F_NORTH) - (float) M_PI * 0.5f,
+            (float) M_PI * 0.5f,
             m_random.get_int(10, 200)
         });
     }

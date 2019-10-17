@@ -26,16 +26,16 @@ namespace {
     };
 }
 
-SpiderEnemy::SpiderEnemy(World& world, uint32_t seed, vec2 const& pos, Footing footing) : Enemy(world, seed, pos) {
+SpiderEnemy::SpiderEnemy(World& world, uint32_t seed, vec2 const& pos, float ang) : Enemy(world, seed, pos) {
     m_sprite     = Sprite::SPIDER;
     m_shield     = 2;
     m_score      = 550;
     m_energy     = 2;
-    m_sprite_ang = get_angle(footing);
+    m_sprite_ang = ang;
     m_delay      = m_random.get_int(200, 300);
     m_normal     = { std::sin(m_sprite_ang), -std::cos(m_sprite_ang) };
-    if      (footing == F_WEST) m_dir = 1;
-    else if (footing == F_EAST) m_dir = -1;
+    if      (ang ==  M_PI / 2) m_dir = 1;
+    else if (ang == -M_PI / 2) m_dir = -1;
     else                        m_dir = m_random.get_int(0, 1) ?: -1;
     m_polygon.resize(SPIDER_ENEMY_POLYGON.size());
     transform_points(m_polygon, SPIDER_ENEMY_POLYGON, m_pos);

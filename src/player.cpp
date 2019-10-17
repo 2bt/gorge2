@@ -147,6 +147,7 @@ void Ball::update() {
     m_glide = std::min(m_glide + 0.02f, 0.3f);
     m_pos += (m_world.get_player().get_pos() + m_offset - m_pos) * m_glide;
     transform_points(m_polygon, BALL_POLYGON, m_pos);
+    transform_points(m_field_polygon, BALL_FIELD_POLYGON, m_pos);
 
     // collision with wall
     CollisionInfo info = m_world.get_wall().check_collision(m_polygon, true);
@@ -193,7 +194,7 @@ void Player::reset() {
     m_field_active     = false;
     m_old_input_b      = false;
 
-    m_shoot_period     = 10;
+    m_shoot_period     = 12;
     m_alive            = true;
     m_shield           = MAX_SHIELD;
     m_score            = 0;

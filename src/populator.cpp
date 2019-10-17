@@ -10,20 +10,6 @@
 #include "blockade_enemy.hpp"
 
 
-Populator::Populator(World& world) : m_world(world), m_spawn_groups({
-        { 30, false, [this](vec2 const& p, Footing  ){ m_world.spawn_enemy<SquareEnemy>(p); } },
-        { 20, false, [this](vec2 const& p, Footing  ){ m_world.spawn_enemy<RingEnemy>(p); } },
-        {  7, false, [this](vec2 const& p, Footing  ){ m_world.spawn_particle<TwisterEnemyChain>(m_world, p); } },
-        {  1, false, [this](vec2 const& p, Footing  ){ m_world.spawn_enemy<SaucerEnemy>(p); } },
-        { 20, true,  [this](vec2 const& p, Footing f){ m_world.spawn_enemy<CannonEnemy>(p, f); } },
-        { 20, true,  [this](vec2 const& p, Footing f){ m_world.spawn_enemy<RocketEnemy>(p, f); } },
-        { 20, true,  [this](vec2 const& p, Footing f){ m_world.spawn_enemy<SpiderEnemy>(p, f); } },
-    })
-{
-    std::vector<int> weights;
-    for (SpawnGroup const& g : m_spawn_groups) weights.push_back(g.weight);
-    m_spawn_dist = std::discrete_distribution<int>(weights.begin(), weights.end());
-}
 
 void Populator::reset(uint32_t seed) {
     m_random.seed(seed);
@@ -32,6 +18,16 @@ void Populator::reset(uint32_t seed) {
     m_blockades_todo = 0;
     m_spots.clear();
     m_wall_spots.clear();
+
+    m_spawn_groups =  {
+        { 30, false, [this](vec2 const& pos, float    ){ m_world.spawn_enemy<SquareEnemy>(pos); } },
+        { 20, false, [this](vec2 const& pos, float    ){ m_world.spawn_enemy<RingEnemy>(pos); } },
+        {  7, false, [this](vec2 const& pos, float    ){ m_world.spawn_particle<TwisterEnemyChain>(m_world, pos); } },
+        {  1, false, [this](vec2 const& pos, float    ){ m_world.spawn_enemy<SaucerEnemy>(pos); } },
+        { 20, true,  [this](vec2 const& pos, float ang){ m_world.spawn_enemy<CannonEnemy>(pos, ang); } },
+        { 20, true,  [this](vec2 const& pos, float ang){ m_world.spawn_enemy<RocketEnemy>(pos, ang); } },
+        { 20, true,  [this](vec2 const& pos, float ang){ m_world.spawn_enemy<SpiderEnemy>(pos, ang); } },
+    };
 }
 
 enum {
@@ -110,10 +106,22 @@ void Populator::update() {
     ++m_tick;
 
     if (m_tick % 70 == 0) {
-        SpawnGroup const& g = m_spawn_groups[m_random.get(m_spawn_dist)];
+        std::vector<int> weights;
+        for (SpawnGroup const& g : m_spawn_groups) weights.push_back(g.weight);
+        auto dist = std::discrete_distribution<int>(weights.begin(), weights.end());
+        SpawnGroup const& g = m_spawn_groups[m_random.get(dist)];
         Spot s;
         if (!g.needs_wall && !get_random_spot(s)) return;
         if (g.needs_wall && !get_random_wall_spot(s)) return;
-        g.spawn_func(get_spot_pos(s), s.footing);
+
+
+        static constexpr std::array<float, 5> ANGLES = {
+            0, // F_NONE
+            M_PI,
+            M_PI / 2,
+            0,
+            -M_PI / 2,
+        };
+        g.spawn_func(get_spot_pos(s), ANGLES[s.footing]);
     }
 }

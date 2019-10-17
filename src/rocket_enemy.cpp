@@ -9,12 +9,12 @@ namespace {
     };
 }
 
-RocketEnemy::RocketEnemy(World& world, uint32_t seed, vec2 const& pos, Footing footing) : Enemy(world, seed, pos) {
+RocketEnemy::RocketEnemy(World& world, uint32_t seed, vec2 const& pos, float ang) : Enemy(world, seed, pos) {
     m_sprite     = Sprite::ROCKET;
     m_shield     = 2;
     m_score      = 150;
     m_energy     = 1;
-    m_ang        = get_angle(footing);
+    m_ang        = ang;
     m_normal     = { std::sin(m_ang), -std::cos(m_ang) };
     m_polygon.resize(ROCKET_ENEMY_POLYGON.size());
     transform_points(m_polygon, ROCKET_ENEMY_POLYGON, m_pos, m_ang);

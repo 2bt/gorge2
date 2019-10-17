@@ -5,7 +5,7 @@
 
 class RocketEnemy : public Enemy {
 public:
-    RocketEnemy(World& world, uint32_t seed, vec2 const& pos, Footing footing);
+    RocketEnemy(World& world, uint32_t seed, vec2 const& pos, float ang);
     void sub_update() override;
     void die() override {
         if (m_score > 0) m_world.maybe_spawn_spawn_flame(m_pos);

@@ -25,18 +25,6 @@ namespace {
 }
 
 
-float get_angle(Footing f) {
-    static constexpr std::array<float, 5> ANGLES = {
-        0, // F_NONE
-        M_PI,
-        M_PI / 2,
-        0,
-        -M_PI / 2,
-    };
-    return ANGLES[f];
-}
-
-
 void Enemy::hit(int damage) {
     if (!m_alive) return;
     m_flash = 5;

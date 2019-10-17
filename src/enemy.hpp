@@ -7,18 +7,6 @@
 class World;
 
 
-enum Footing {
-    F_NONE,
-    F_NORTH,
-    F_WEST,
-    F_SOUTH,
-    F_EAST,
-};
-
-
-float get_angle(Footing f);
-
-
 class Enemy {
 public:
     Enemy(World& world, uint32_t seed, vec2 const& pos) : m_world(world), m_random(seed), m_pos(pos) {}
