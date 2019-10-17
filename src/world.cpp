@@ -17,10 +17,11 @@ void World::resized() {
 }
 
 void World::reset(uint32_t seed) {
-    printf("seed %u\n", seed);
+    m_tick            = 0;
+    m_shake           = 0;
+    m_powerup_balance = 0;
+    m_flame_balance   = 0;
 
-    m_tick  = 0;
-    m_shake = 0;
     m_random.seed(seed);
     m_bump.reset();
     m_background.reset(m_random.get_int(0, 0x7fffffff));
@@ -50,6 +51,34 @@ void World::spawn_enemy(std::unique_ptr<Enemy> e) {
 }
 void World::spawn_item(std::unique_ptr<Item> i) {
     m_items.push_back(std::move(i));
+}
+
+void World::maybe_spawn_spawn_powerup(vec2 const& pos, int amount) {
+    m_powerup_balance += amount;
+    if (m_powerup_balance >= 15 &&
+        (!m_player.get_balls()[0].is_alive() || !m_player.get_balls()[1].is_alive())) {
+        m_powerup_balance -= 15;
+        spawn_item<BallItem>(pos);
+        return;
+    }
+    if (m_powerup_balance >= 25 && m_player.get_shield() < Player::MAX_SHIELD) {
+        m_powerup_balance -= 25;
+        spawn_item<HeartItem>(pos);
+        return;
+    }
+    if (m_powerup_balance >= 25) {
+        m_powerup_balance -= 25;
+        spawn_item<MoneyItem>(pos);
+        return;
+    }
+}
+void World::maybe_spawn_spawn_flame(vec2 const& pos, int amount) {
+    m_flame_balance += amount;
+    if (m_flame_balance >= 10) {
+        m_flame_balance -= 10;
+        spawn_item<FlameItem>(pos);
+        return;
+    }
 }
 
 

@@ -18,7 +18,7 @@ public:
 
 protected:
     World& m_world;
-    int    m_frame_length = 3;
+    int    m_frame_length = 6;
     Sprite m_sprite;
 
     vec2   m_pos;
@@ -42,7 +42,6 @@ private:
     vec2 m_vel;
 };
 
-
 class BigItem : public Item {
 public:
     BigItem(World& World, vec2 const& pos) : Item(World, pos) {}
@@ -61,6 +60,34 @@ public:
     BallItem(World& World, vec2 const& pos) : BigItem(World, pos) {
         m_sprite = Sprite::BALL_ITEM;
         m_score  = 1000;
+    }
+    void collect() override;
+};
+
+class FlameItem : public BigItem {
+public:
+    FlameItem(World& World, vec2 const& pos) : BigItem(World, pos) {
+        m_sprite = Sprite::FLAME_ITEM;
+        m_score  = 1000;
+        m_frame_length = 5;
+    }
+    void collect() override;
+};
+
+class HeartItem : public BigItem {
+public:
+    HeartItem(World& World, vec2 const& pos) : BigItem(World, pos) {
+        m_sprite = Sprite::HEART_ITEM;
+        m_score  = 2500;
+    }
+    void collect() override;
+};
+
+class MoneyItem : public BigItem {
+public:
+    MoneyItem(World& World, vec2 const& pos) : BigItem(World, pos) {
+        m_sprite = Sprite::MONEY_ITEM;
+        m_score  = 10000;
     }
     void collect() override;
 };

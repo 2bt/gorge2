@@ -38,6 +38,9 @@ public:
     void spawn_enemy(std::unique_ptr<Enemy> e);
     void spawn_item(std::unique_ptr<Item> i);
 
+    void maybe_spawn_spawn_powerup(vec2 const& pos, int amount = 1);
+    void maybe_spawn_spawn_flame(vec2 const& pos, int amount = 1);
+
     template<class T, typename... Args>
     T* spawn_particle(Args&&... args) {
         auto unique = std::make_unique<T>(std::forward<Args>(args)...);
@@ -74,6 +77,8 @@ private:
     Populator                              m_populator{*this};
     int                                    m_tick;
     float                                  m_shake;
+    int                                    m_powerup_balance;
+    int                                    m_flame_balance;
 
     ShockWave                              m_shock_wave;
     Player                                 m_player{*this};

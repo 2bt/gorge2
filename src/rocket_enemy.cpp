@@ -38,7 +38,6 @@ void RocketEnemy::sub_update() {
             m_energy = 0;
             hit(m_shield);
         }
-
     }
 
     vec2 d = player.get_pos() - m_pos;

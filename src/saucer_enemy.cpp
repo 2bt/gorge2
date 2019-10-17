@@ -78,6 +78,7 @@ namespace {
                 make_explosion(m_world, m_pos + vec2(rnd.get_float(-10, 0), rnd.get_float(0, 6)));
                 make_explosion(m_world, m_pos + vec2(rnd.get_float(0, 10), rnd.get_float(0, 6)));
                 m_world.spawn_particle<PraxisParticle>(m_pos);
+                m_world.maybe_spawn_spawn_powerup(m_pos, 5);
             }
             return m_ttl >= 0;
         }
@@ -103,7 +104,6 @@ SaucerEnemy::SaucerEnemy(World& world, uint32_t seed, vec2 const& pos) : Enemy(w
 }
 
 void SaucerEnemy::die() {
-//    m_world.spawn_item<BallItem>(m_pos);
     m_world.spawn_particle<SaucerParticle>(m_world, m_pos);
 }
 

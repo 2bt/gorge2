@@ -52,10 +52,6 @@ SquareEnemy::SquareEnemy(World& world, uint32_t seed, vec2 const& pos) : Enemy(w
     transform_points(m_polygon, SQUARE_ENEMY_POLYGON, m_pos);
 }
 
-void SquareEnemy::die() {
-//    m_world.spawn_item<BallItem>(m_pos);
-}
-
 void SquareEnemy::sub_update() {
     m_pos += m_vel + vec2(0, Wall::SPEED);
     float p = std::sin(m_tick * 0.1);

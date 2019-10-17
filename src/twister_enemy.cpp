@@ -64,6 +64,7 @@ TwisterEnemy::TwisterEnemy(World& world, uint32_t seed, vec2 const& pos, Twister
 
 void TwisterEnemy::die() {
     m_path->remove_twister(this);
+    m_world.maybe_spawn_spawn_powerup(m_pos);
 }
 
 void TwisterEnemy::sub_update() {

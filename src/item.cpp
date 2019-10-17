@@ -120,3 +120,14 @@ void BallItem::collect() {
     m_world.get_player().get_balls()[0].activate();
     m_world.get_player().get_balls()[1].activate();
 }
+
+void FlameItem::collect() {
+    m_world.get_player().inc_speed();
+}
+
+void HeartItem::collect() {
+    m_world.get_player().inc_shield();
+}
+
+void MoneyItem::collect() {
+}

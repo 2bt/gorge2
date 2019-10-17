@@ -88,12 +88,15 @@ public:
     std::array<Ball, 2>& get_balls() { return m_balls; }
 
     void inc_score(int points) { m_score += points; }
+    void inc_speed() { m_speed_boost = std::min<int>(MAX_SPEED_BOOST, m_speed_boost + 1); }
+    void inc_shield() { m_shield = std::min<int>(MAX_SHIELD, m_shield + 1); }
     void inc_energy() { m_energy = std::min<int>(MAX_ENERGY, m_energy + 1); }
     void hit(CollisionInfo const& info = {});
 
     enum {
-        MAX_SHIELD = 3,
-        MAX_ENERGY = 30,
+        MAX_SHIELD      = 3,
+        MAX_ENERGY      = 30,
+        MAX_SPEED_BOOST = 30,
     };
 
 private:
