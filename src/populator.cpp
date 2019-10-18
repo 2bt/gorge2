@@ -96,7 +96,6 @@ vec2 Populator::get_spot_pos(Spot s) const {
 }
 
 void Populator::update() {
-    if (m_tick % 60 == 0) LOGI("%d", m_tick / 60);
 
     if (m_tick % 60 == 0)
     switch (m_tick / 60) {

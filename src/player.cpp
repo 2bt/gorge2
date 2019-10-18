@@ -1,3 +1,4 @@
+#include "log.hpp"
 #include "player.hpp"
 #include "world.hpp"
 #include "debug_renderer.hpp"
@@ -190,8 +191,9 @@ void Player::reset() {
     m_blast_delay      = 0;
     m_shoot_delay      = 0;
     m_side_shot        = false;
-    m_invincible_delay = 0;
     m_field_active     = false;
+    m_speed_boost      = 0;
+    m_invincible_delay = 0;
     m_old_input_b      = false;
 
     m_shoot_period     = 12;
@@ -237,7 +239,7 @@ void Player::update(Input const& input) {
         --m_blast_delay;
     }
     else {
-        speed = 0.75;
+        speed = 0.75 + std::pow(m_speed_boost, 0.8f) * 0.1;
         if (input.a || m_shoot_delay > 0) speed *= 0.5;
     }
 
