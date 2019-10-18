@@ -23,20 +23,22 @@ struct Button {
     int    id;
     vec2   default_pos;
     vec2   pos;
+    vec2   trg_pos;
     Touch* touch;
     void reset(vec2 const& p) { pos = default_pos = p; }
     bool is_pressed() const { return !!touch; }
     vec2 get_move() {
         if (!touch) return {};
-        return (touch->pos - pos) * (1.0f / 8);
+        return glm::clamp((touch->pos - trg_pos) * (1.0f / 8), -1.0f, 1.0f);
     }
     void update() {
         if (touch && !touch->pressed) touch = nullptr;
         if (touch) {
-            if (id == 0) pos = glm::clamp(pos, touch->pos - vec2(8), touch->pos + vec2(8));
-            else pos = glm::mix(pos, touch->pos, 0.6f);
+            if (id == 0) trg_pos = glm::clamp(trg_pos, touch->pos - vec2(8), touch->pos + vec2(8));
+            else trg_pos = touch->pos;
         }
-        else pos = glm::mix(pos, default_pos, 0.3f);
+        else trg_pos = default_pos;
+        pos = glm::mix(pos, trg_pos, 0.5f);
     }
 };
 
@@ -46,6 +48,12 @@ Button&                 m_button_dpad = m_buttons[0];
 Button&                 m_button_a    = m_buttons[1];
 Button&                 m_button_b    = m_buttons[2];
 
+void init_buttons() {
+    float aspect_ratio = (float) gfx::screen()->width() / gfx::screen()->height();
+    m_button_dpad.reset({-75 * aspect_ratio + 25, 20});
+    m_button_a.reset({75 * aspect_ratio - 25, 20});
+    m_button_b.reset({75 * aspect_ratio - 25, -20});
+}
 
 
 bool            m_initialized = false;
@@ -66,17 +74,14 @@ void init() {
     m_ren.init();
     m_ren.set_texture(resource::texture(resource::TID_SPRITES));
 
-    float aspect_ratio = (float) gfx::screen()->width() / gfx::screen()->height();
-    m_button_dpad.reset({-75 * aspect_ratio + 20, 25});
-    m_button_a.reset({75 * aspect_ratio - 20, 25});
-    m_button_b.reset({75 * aspect_ratio - 20, -25});
-
     m_world.init();
 
     rnd.seed();
 
     static int i = 0;
     if (i++ == 0) m_world.reset(rnd.get_int(0, 0x7fffffff));
+
+    init_buttons();
 }
 
 void free() {
@@ -99,10 +104,7 @@ void resize(int width, int height) {
 
     m_world.resized();
 
-    float aspect_ratio = (float) gfx::screen()->width() / gfx::screen()->height();
-    m_button_dpad.reset({-75 * aspect_ratio + 20, 25});
-    m_button_a.reset({75 * aspect_ratio - 20, 25});
-    m_button_b.reset({75 * aspect_ratio - 20, -25});
+    init_buttons();
 }
 
 
@@ -132,6 +134,7 @@ void update() {
         if (!(t.pressed && !t.prev_pressed)) continue;
         if (!m_button_dpad.touch && t.pos.x < 0) {
             m_button_dpad.touch = &t;
+            m_button_dpad.trg_pos = t.pos;
         }
         else if (!m_button_a.touch && t.pos.x > 0 && t.pos.y > 0) {
             m_button_a.touch = &t;
@@ -173,12 +176,9 @@ void draw() {
 //    rectangle(m_ren, {-300, -78}, {300, -75});
 //    rectangle(m_ren, {-300, 75}, {300, 78});
 
-//    // title
-//    m_ren.set_color();
-//    m_ren.draw(frame(Sprite::TITLE));
 
     // touch
-//    if (m_world.get_player().is_alive())
+    //if (m_world.get_player().is_alive())
     {
         for (auto const& b : m_buttons) {
             if (b.is_pressed()) m_ren.set_color({255, 255, 255, 100});
