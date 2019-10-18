@@ -36,7 +36,7 @@ void Wall::generate() {
     m_gen_data.front().fill(1);
     std::rotate(m_gen_data.begin(), m_gen_data.begin() + 1, m_gen_data.end());
 
-    const int P = glm::clamp(m_row_counter - 10, 2, 6 + m_random.get_int(0, 2));
+    const int P = glm::clamp(m_row_counter / 2, 2, 6 + m_random.get_int(0, 2));
     const float padding = P + std::sin(m_row_counter * 0.05f) * 5 + 5;
 
     m_cursor.y -= 1;
