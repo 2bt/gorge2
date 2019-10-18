@@ -176,9 +176,9 @@ void Ball::draw_field(SpriteRenderer& ren) const {
     if (!m_alive) return;
     int f1 = tick / 4 % frame_count(Sprite::BALL_FIELD);
     int f2 = (tick + 3) / 4 % frame_count(Sprite::BALL_FIELD);
-    ren.set_color({0, 100, 100, 80});
+    ren.set_color({0, 255, 255, 50});
     ren.draw(frame(Sprite::BALL_FIELD, f1), m_pos);
-    ren.set_color({100 + 100 * std::sin(tick / 2), 200, 200, 30});
+    ren.set_color({100 + 100 * std::sin(tick / 2), 255, 255, 50});
     ren.draw(frame(Sprite::BALL_FIELD, f2), m_pos);
 }
 
@@ -318,9 +318,9 @@ void Player::draw(SpriteRenderer& ren) const {
         m_balls[1].draw_field(ren);
         int f1 = m_tick / 4 % frame_count(Sprite::FIELD);
         int f2 = (m_tick + 3) / 4 % frame_count(Sprite::FIELD);
-        ren.set_color({0, 100, 100, 80});
+        ren.set_color({0, 255, 255, 50});
         ren.draw(frame(Sprite::FIELD, f1), m_pos);
-        ren.set_color({100 + 100 * std::sin(m_tick / 2), 200, 200, 30});
+        ren.set_color({100 + 100 * std::sin(m_tick / 2), 255, 255, 50});
         ren.draw(frame(Sprite::FIELD, f2), m_pos);
     }
 
