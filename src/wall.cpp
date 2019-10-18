@@ -36,14 +36,13 @@ void Wall::generate() {
     m_gen_data.front().fill(1);
     std::rotate(m_gen_data.begin(), m_gen_data.begin() + 1, m_gen_data.end());
 
-    const int P = glm::clamp(m_row_counter - 10, 2, 8);
+    const int P = glm::clamp(m_row_counter - 10, 2, 6 + m_random.get_int(0, 2));
+    const float padding = P + std::sin(m_row_counter * 0.05f) * 5 + 5;
 
     m_cursor.y -= 1;
     while (m_cursor.y < 25) {
 
         // make hole
-        const float padding = 10 + P;
-
         float r = m_radius * m_radius;
         for (int y = 3; y < (int) m_gen_data.size(); ++y)
         for (int x = P; x < W - P; ++x) {
@@ -57,9 +56,8 @@ void Wall::generate() {
         if (m_random.get_int(0, 1) == 1) ang = -ang;
         m_cursor.y += std::cos(ang) * m_radius;
         m_cursor.x += std::sin(ang) * m_radius;
-        m_cursor.x = clamp(m_cursor.x, padding, W - 1 - padding);
+        m_cursor.x = glm::clamp(m_cursor.x, padding, W - 1 - padding);
         m_radius = m_random.get_float(2.6, 10.8);
-
     }
 
 
@@ -71,7 +69,7 @@ void Wall::generate() {
             m_random.get_float(8.5, 10)
         };
         float r = m_random.get_float(1.9, 5.3);
-        float r2 = r + 3.7;
+        float r2 = r + 3.8;
         r2 *= r2;
         r *= r;
 
@@ -87,7 +85,7 @@ void Wall::generate() {
         }
 
         if (!occupied) {
-            m_island_delay = m_random.get_int(2, 70);
+            m_island_delay = m_random.get_int(10, 80);
 
             // write island
             for (int y = 0; y < (int) m_gen_data.size(); ++y)

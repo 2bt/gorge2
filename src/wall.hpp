@@ -28,7 +28,7 @@ public:
 
     bool check_sight(vec2 const& a, vec2 const& b) const;
 
-    enum { W = 38, H = 30, G = 38 };
+    enum { W = 40, H = 30, G = 38 };
     Grid<H, W> const& get_data() const { return m_data; }
     vec2 get_tile_position(int x, int y) const;
 

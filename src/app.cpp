@@ -22,8 +22,8 @@ struct Touch {
 struct Button {
     int    id;
     vec2   default_pos;
-    vec2   pos;
     vec2   trg_pos;
+    vec2   pos;
     Touch* touch;
     void reset(vec2 const& p) { pos = default_pos = p; }
     bool is_pressed() const { return !!touch; }
@@ -42,11 +42,11 @@ struct Button {
     }
 };
 
-std::array<Touch, 3>    m_touches;
-std::array<Button, 3>   m_buttons     = { Button{ 0 }, Button{ 1 }, Button{ 2 } };
-Button&                 m_button_dpad = m_buttons[0];
-Button&                 m_button_a    = m_buttons[1];
-Button&                 m_button_b    = m_buttons[2];
+std::array<Touch, 3>  m_touches;
+std::array<Button, 3> m_buttons     = { Button{ 0 }, Button{ 1 }, Button{ 2 } };
+Button&               m_button_dpad = m_buttons[0];
+Button&               m_button_a    = m_buttons[1];
+Button&               m_button_b    = m_buttons[2];
 
 void init_buttons() {
     float aspect_ratio = (float) gfx::screen()->width() / gfx::screen()->height();
@@ -56,9 +56,9 @@ void init_buttons() {
 }
 
 
-bool            m_initialized = false;
-SpriteRenderer  m_ren;
-World           m_world;
+bool           m_initialized = false;
+SpriteRenderer m_ren;
+World          m_world;
 
 } // namespace
 
@@ -111,15 +111,11 @@ void resize(int width, int height) {
 void touch(int id, bool pressed, int x, int y) {
     // LOGI("touch %d %d %d %d", id, pressed, x, y);
     if (id >= (int) m_touches.size()) return;
-
     // transform to game coordinates
     vec2 p = vec2(x - gfx::screen()->width() * 0.5f, y - gfx::screen()->height() * 0.5f);
     p *= 150.0f / gfx::screen()->height();
-
-    Touch& t = m_touches[id];
-    t.pos = p;
-    t.pressed = pressed;
-
+    m_touches[id].pos = p;
+    m_touches[id].pressed = pressed;
 }
 
 
