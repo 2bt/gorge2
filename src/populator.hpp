@@ -48,4 +48,5 @@ protected:
         std::function<void(vec2 const&, float)> spawn_func;
     };
     std::vector<SpawnGroup> m_spawn_groups;
+    int                     m_spawn_rate;
 };

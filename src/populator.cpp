@@ -19,15 +19,8 @@ void Populator::reset(uint32_t seed) {
     m_blockades_todo = 0;
     m_spots.clear();
     m_wall_spots.clear();
-
-    m_spawn_groups = {
-        { 30, false, [this](vec2 const& pos, float    ){ m_world.spawn_enemy<SquareEnemy>(pos); } },
-        { 20, false, [this](vec2 const& pos, float    ){ m_world.spawn_enemy<RingEnemy>(pos); } },
-        {  7, false, [this](vec2 const& pos, float    ){ m_world.spawn_particle<TwisterEnemyChain>(m_world, pos); } },
-        { 20, true,  [this](vec2 const& pos, float ang){ m_world.spawn_enemy<CannonEnemy>(pos, ang); } },
-        { 20, true,  [this](vec2 const& pos, float ang){ m_world.spawn_enemy<RocketEnemy>(pos, ang); } },
-        { 20, true,  [this](vec2 const& pos, float ang){ m_world.spawn_enemy<SpiderEnemy>(pos, ang); } },
-    };
+    m_spawn_groups.clear();
+    m_spawn_rate = 0;
 }
 
 enum {
@@ -106,16 +99,68 @@ void Populator::update() {
     ++m_tick;
 
     switch (m_tick) {
-    case 60 * 60: // after one minute
+    case 1:
+        m_spawn_rate = 70;
+        m_spawn_groups = {
+            { 20, false, [this](vec2 const& pos, float    ){ m_world.spawn_enemy<RingEnemy>(pos); } },
+        };
+        break;
+
+    case 60 * 10:
+        m_spawn_rate = 120;
+        m_spawn_groups.push_back(
+            { 7, false, [this](vec2 const& pos, float ){ m_world.spawn_particle<TwisterEnemyChain>(m_world, pos); } }
+        );
+        break;
+
+    case 60 * 15:
+        m_spawn_groups = {};
+        break;
+
+    case 60 * 20:
+        m_spawn_groups = {
+            { 20, false, [this](vec2 const& pos, float    ){ m_world.spawn_enemy<SquareEnemy>(pos); } },
+            { 20, false, [this](vec2 const& pos, float    ){ m_world.spawn_enemy<RingEnemy>(pos); } },
+            {  7, false, [this](vec2 const& pos, float    ){ m_world.spawn_particle<TwisterEnemyChain>(m_world, pos); } },
+        };
+        break;
+
+    case 60 * 40:
+        m_spawn_groups = {
+            { 20, false, [this](vec2 const& pos, float    ){ m_world.spawn_enemy<SquareEnemy>(pos); } },
+            { 20, false, [this](vec2 const& pos, float    ){ m_world.spawn_enemy<RingEnemy>(pos); } },
+            {  7, false, [this](vec2 const& pos, float    ){ m_world.spawn_particle<TwisterEnemyChain>(m_world, pos); } },
+            { 20, true,  [this](vec2 const& pos, float ang){ m_world.spawn_enemy<CannonEnemy>(pos, ang); } },
+            { 20, true,  [this](vec2 const& pos, float ang){ m_world.spawn_enemy<RocketEnemy>(pos, ang); } },
+        };
+        break;
+
+    case 60 * 90:
+        m_spawn_groups = {
+            { 20, false, [this](vec2 const& pos, float    ){ m_world.spawn_enemy<SquareEnemy>(pos); } },
+            { 20, false, [this](vec2 const& pos, float    ){ m_world.spawn_enemy<RingEnemy>(pos); } },
+            {  7, false, [this](vec2 const& pos, float    ){ m_world.spawn_particle<TwisterEnemyChain>(m_world, pos); } },
+            { 20, true,  [this](vec2 const& pos, float ang){ m_world.spawn_enemy<CannonEnemy>(pos, ang); } },
+            { 20, true,  [this](vec2 const& pos, float ang){ m_world.spawn_enemy<RocketEnemy>(pos, ang); } },
+            { 20, true,  [this](vec2 const& pos, float ang){ m_world.spawn_enemy<SpiderEnemy>(pos, ang); } },
+        };
+        break;
+
+    case 60 * 120:
+        m_spawn_rate = 100;
+        break;
+
+    case 60 * 160:
         m_spawn_groups.push_back({ 1, false, [this](vec2 const& pos, float){ m_world.spawn_enemy<SaucerEnemy>(pos); } });
         LOGI("Populator::update: start spawning SaucerEnemy");
         break;
+
     default: break;
     }
 
-    // TODO: clever difficulty
-    int mod = std::max<int>(50, 300 * (1 - m_tick / (60.0 * 60 * 7)));
-    if (m_tick % mod == 0) {
+
+
+    if (m_tick % m_spawn_rate == 0) {
         std::vector<int> weights;
         for (SpawnGroup const& g : m_spawn_groups) weights.push_back(g.weight);
         auto dist = std::discrete_distribution<int>(weights.begin(), weights.end());
