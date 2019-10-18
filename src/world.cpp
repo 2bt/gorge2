@@ -74,8 +74,8 @@ void World::maybe_spawn_spawn_powerup(vec2 const& pos, int amount) {
 }
 void World::maybe_spawn_spawn_flame(vec2 const& pos, int amount) {
     m_flame_balance += amount;
-    if (m_flame_balance >= 10) {
-        m_flame_balance -= 10;
+    if (m_flame_balance >= 7) {
+        m_flame_balance -= 7;
         spawn_item<FlameItem>(pos);
         return;
     }
