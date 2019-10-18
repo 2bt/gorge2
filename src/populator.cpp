@@ -96,61 +96,62 @@ vec2 Populator::get_spot_pos(Spot s) const {
 }
 
 void Populator::update() {
-    ++m_tick;
+    if (m_tick % 60 == 0) LOGI("%d", m_tick / 60);
 
-    switch (m_tick) {
-    case 1:
+    if (m_tick % 60 == 0)
+    switch (m_tick / 60) {
+    case 0:
         m_spawn_rate = 70;
         m_spawn_groups = {
-            { 20, false, [this](vec2 const& pos, float    ){ m_world.spawn_enemy<RingEnemy>(pos); } },
+            { 20, false, [this](vec2 const& pos, float ){ m_world.spawn_enemy<RingEnemy>(pos); } },
         };
         break;
 
-    case 60 * 10:
+    case 10:
         m_spawn_rate = 120;
         m_spawn_groups.push_back(
             { 7, false, [this](vec2 const& pos, float ){ m_world.spawn_particle<TwisterEnemyChain>(m_world, pos); } }
         );
         break;
 
-    case 60 * 15:
+    case 17:
         m_spawn_groups = {};
         break;
 
-    case 60 * 20:
+    case 23:
         m_spawn_groups = {
-            { 20, false, [this](vec2 const& pos, float    ){ m_world.spawn_enemy<SquareEnemy>(pos); } },
             { 20, false, [this](vec2 const& pos, float    ){ m_world.spawn_enemy<RingEnemy>(pos); } },
             {  7, false, [this](vec2 const& pos, float    ){ m_world.spawn_particle<TwisterEnemyChain>(m_world, pos); } },
+            { 10, false, [this](vec2 const& pos, float    ){ m_world.spawn_enemy<SquareEnemy>(pos); } },
         };
         break;
 
-    case 60 * 40:
+    case 40:
         m_spawn_groups = {
-            { 20, false, [this](vec2 const& pos, float    ){ m_world.spawn_enemy<SquareEnemy>(pos); } },
             { 20, false, [this](vec2 const& pos, float    ){ m_world.spawn_enemy<RingEnemy>(pos); } },
             {  7, false, [this](vec2 const& pos, float    ){ m_world.spawn_particle<TwisterEnemyChain>(m_world, pos); } },
+            { 20, false, [this](vec2 const& pos, float    ){ m_world.spawn_enemy<SquareEnemy>(pos); } },
             { 20, true,  [this](vec2 const& pos, float ang){ m_world.spawn_enemy<CannonEnemy>(pos, ang); } },
             { 20, true,  [this](vec2 const& pos, float ang){ m_world.spawn_enemy<RocketEnemy>(pos, ang); } },
         };
         break;
 
-    case 60 * 90:
+    case 90:
         m_spawn_groups = {
-            { 20, false, [this](vec2 const& pos, float    ){ m_world.spawn_enemy<SquareEnemy>(pos); } },
             { 20, false, [this](vec2 const& pos, float    ){ m_world.spawn_enemy<RingEnemy>(pos); } },
             {  7, false, [this](vec2 const& pos, float    ){ m_world.spawn_particle<TwisterEnemyChain>(m_world, pos); } },
+            { 20, false, [this](vec2 const& pos, float    ){ m_world.spawn_enemy<SquareEnemy>(pos); } },
             { 20, true,  [this](vec2 const& pos, float ang){ m_world.spawn_enemy<CannonEnemy>(pos, ang); } },
             { 20, true,  [this](vec2 const& pos, float ang){ m_world.spawn_enemy<RocketEnemy>(pos, ang); } },
             { 20, true,  [this](vec2 const& pos, float ang){ m_world.spawn_enemy<SpiderEnemy>(pos, ang); } },
         };
         break;
 
-    case 60 * 120:
+    case 120:
         m_spawn_rate = 100;
         break;
 
-    case 60 * 160:
+    case 160:
         m_spawn_groups.push_back({ 1, false, [this](vec2 const& pos, float){ m_world.spawn_enemy<SaucerEnemy>(pos); } });
         LOGI("Populator::update: start spawning SaucerEnemy");
         break;
@@ -178,4 +179,7 @@ void Populator::update() {
         };
         g.spawn_func(get_spot_pos(s), ANGLES[s.footing]);
     }
+
+
+    ++m_tick;
 }
