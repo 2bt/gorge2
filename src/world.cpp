@@ -2,9 +2,19 @@
 #include "world.hpp"
 
 
+void World::init_buttons() {
+    float aspect_ratio = (float) gfx::screen()->width() / gfx::screen()->height();
+    m_button_dpad.reset({-75 * aspect_ratio + 25, 20});
+    m_button_a.reset({75 * aspect_ratio - 25, 20});
+    m_button_b.reset({75 * aspect_ratio - 25, -20});
+}
+
+
 void World::init() {
     m_bump.init();
     m_background.init();
+
+    init_buttons();
 }
 
 void World::free() {
@@ -14,6 +24,8 @@ void World::free() {
 
 void World::resized() {
     m_bump.resized();
+
+    init_buttons();
 }
 
 void World::reset(uint32_t seed) {
@@ -83,17 +95,36 @@ void World::maybe_spawn_spawn_flame(vec2 const& pos, int amount) {
 
 
 template<class T>
-void update_all(std::vector<std::unique_ptr<T>>& vs) {
-    // don't use iterators because vs might grow during update
-    for (int i = 0; i < (int) vs.size();) {
-        if (vs[i]->update()) ++i;
-        else vs.erase(vs.begin() + i);
+void update_all(std::vector<std::unique_ptr<T>>& v) {
+    // don't use iterators because v might grow during update
+    for (int i = 0; i < (int) v.size();) {
+        if (v[i]->update()) ++i;
+        else v.erase(v.begin() + i);
     }
 }
 
 extern Player::Input g_keyboard_input;
 
 void World::update() {
+
+    // input
+    for (auto const& t : app::get_touches()) {
+        if (!(t.pressed && !t.prev_pressed)) continue;
+        if (!m_button_dpad.touch && t.pos.x < 0) {
+            m_button_dpad.touch = &t;
+            m_button_dpad.trg_pos = t.pos;
+        }
+        else if (!m_button_a.touch && t.pos.x > 0 && t.pos.y > 0) {
+            m_button_a.touch = &t;
+        }
+        else if (!m_button_b.touch && t.pos.x > 0 && (t.pos.y < 0 || m_button_a.touch)) {
+            m_button_b.touch = &t;
+        }
+    }
+    for (auto& b : m_buttons) b.update();
+//    g_keyboard_input.a   = m_button_a.is_pressed();
+//    g_keyboard_input.b   = m_button_b.is_pressed();
+//    g_keyboard_input.mov = m_button_dpad.get_move();
 
     Player::Input input = g_keyboard_input;
 
@@ -178,4 +209,21 @@ void World::draw(SpriteRenderer& ren) {
         if (m_tick % 8 < 4) ren.set_color();
     }
     rectangle(ren, {Player::MAX_ENERGY * -0.5, -73}, {Player::MAX_ENERGY * -0.5 + m_player.get_energy(), -72});
+
+
+
+    // buttons
+    //if (m_player.is_alive())
+    {
+        for (auto const& b : m_buttons) {
+            if (b.is_pressed()) ren.set_color({255, 255, 255, 100});
+            else ren.set_color({255, 255, 255, 50});
+            ren.draw(frame(Sprite::TOUCH, b.id + 1), b.pos);
+        }
+        if (m_button_dpad.is_pressed()) {
+            ren.set_color({255, 255, 255, 100});
+            ren.draw(frame(Sprite::TOUCH, 0), m_button_dpad.touch->pos);
+        }
+    }
+
 }

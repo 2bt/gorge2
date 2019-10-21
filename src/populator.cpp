@@ -160,7 +160,7 @@ void Populator::update() {
 
 
 
-    if (m_tick % m_spawn_rate == 0) {
+    if (m_spawn_rate > 0 && m_tick % m_spawn_rate == 0) {
         std::vector<int> weights;
         for (SpawnGroup const& g : m_spawn_groups) weights.push_back(g.weight);
         auto dist = std::discrete_distribution<int>(weights.begin(), weights.end());

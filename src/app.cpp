@@ -14,54 +14,16 @@ namespace app {
 namespace {
 
 
-struct Touch {
-    vec2 pos;
-    bool pressed;
-    bool prev_pressed;
-};
-struct Button {
-    int    id;
-    vec2   default_pos;
-    vec2   trg_pos;
-    vec2   pos;
-    Touch* touch;
-    void reset(vec2 const& p) { pos = default_pos = p; }
-    bool is_pressed() const { return !!touch; }
-    vec2 get_move() {
-        if (!touch) return {};
-        return glm::clamp((touch->pos - trg_pos) * (1.0f / 8), -1.0f, 1.0f);
-    }
-    void update() {
-        if (touch && !touch->pressed) touch = nullptr;
-        if (touch) {
-            if (id == 0) trg_pos = glm::clamp(trg_pos, touch->pos - vec2(8), touch->pos + vec2(8));
-            else trg_pos = touch->pos;
-        }
-        else trg_pos = default_pos;
-        pos = glm::mix(pos, trg_pos, 0.5f);
-    }
-};
-
+bool                  m_initialized = false;
 std::array<Touch, 3>  m_touches;
-std::array<Button, 3> m_buttons     = { Button{ 0 }, Button{ 1 }, Button{ 2 } };
-Button&               m_button_dpad = m_buttons[0];
-Button&               m_button_a    = m_buttons[1];
-Button&               m_button_b    = m_buttons[2];
 
-void init_buttons() {
-    float aspect_ratio = (float) gfx::screen()->width() / gfx::screen()->height();
-    m_button_dpad.reset({-75 * aspect_ratio + 25, 20});
-    m_button_a.reset({75 * aspect_ratio - 25, 20});
-    m_button_b.reset({75 * aspect_ratio - 25, -20});
-}
-
-
-bool           m_initialized = false;
-SpriteRenderer m_ren;
-World          m_world;
+SpriteRenderer        m_ren;
+World                 m_world;
 
 } // namespace
 
+
+std::array<Touch, 3> const& get_touches() { return m_touches; }
 
 
 void init() {
@@ -80,8 +42,6 @@ void init() {
 
     static int i = 0;
     if (i++ == 0) m_world.reset(rnd.get_int(0, 0x7fffffff));
-
-    init_buttons();
 }
 
 void free() {
@@ -103,8 +63,6 @@ void resize(int width, int height) {
     gfx::screen()->resize(width, height);
 
     m_world.resized();
-
-    init_buttons();
 }
 
 
@@ -124,26 +82,6 @@ void key(int key, int unicode) {
 
 
 void update() {
-
-    // input
-    for (Touch& t : m_touches) {
-        if (!(t.pressed && !t.prev_pressed)) continue;
-        if (!m_button_dpad.touch && t.pos.x < 0) {
-            m_button_dpad.touch = &t;
-            m_button_dpad.trg_pos = t.pos;
-        }
-        else if (!m_button_a.touch && t.pos.x > 0 && t.pos.y > 0) {
-            m_button_a.touch = &t;
-        }
-        else if (!m_button_b.touch && t.pos.x > 0 && (t.pos.y < 0 || m_button_a.touch)) {
-            m_button_b.touch = &t;
-        }
-    }
-    for (auto& b : m_buttons) b.update();
-    g_keyboard_input.a   = m_button_a.is_pressed();
-    g_keyboard_input.b   = m_button_b.is_pressed();
-    g_keyboard_input.mov = m_button_dpad.get_move();
-
     m_world.update();
 
     // remember touch pressed
@@ -165,27 +103,13 @@ void draw() {
 
     DB_REN.transform() = m_ren.transform();
 
+
     m_world.draw(m_ren);
 
     // debug
 //    m_ren.set_color({255, 255, 255, 50});
 //    rectangle(m_ren, {-300, -78}, {300, -75});
 //    rectangle(m_ren, {-300, 75}, {300, 78});
-
-
-    // touch
-    //if (m_world.get_player().is_alive())
-    {
-        for (auto const& b : m_buttons) {
-            if (b.is_pressed()) m_ren.set_color({255, 255, 255, 100});
-            else m_ren.set_color({255, 255, 255, 50});
-            m_ren.draw(frame(Sprite::TOUCH, b.id + 1), b.pos);
-        }
-        if (m_button_dpad.is_pressed()) {
-            m_ren.set_color({255, 255, 255, 100});
-            m_ren.draw(frame(Sprite::TOUCH, 0), m_button_dpad.touch->pos);
-        }
-    }
 
     m_ren.flush();
     DB_REN.flush();

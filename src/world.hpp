@@ -1,4 +1,5 @@
 #pragma once
+#include "app.hpp"
 #include "bump.hpp"
 #include "background.hpp"
 #include "wall.hpp"
@@ -70,6 +71,32 @@ public:
 
 
 private:
+    void init_buttons();
+
+    struct Button {
+        const int         id;
+        vec2              default_pos;
+        vec2              trg_pos;
+        vec2              pos;
+        app::Touch const* touch;
+        void reset(vec2 const& p) { pos = default_pos = p; }
+        bool is_pressed() const { return !!touch; }
+        vec2 get_move() {
+            if (!touch) return {};
+            return glm::clamp((touch->pos - trg_pos) * (1.0f / 8), -1.0f, 1.0f);
+        }
+        void update() {
+            if (touch && !touch->pressed) touch = nullptr;
+            if (touch) {
+                if (id == 0) trg_pos = glm::clamp(trg_pos, touch->pos - vec2(8), touch->pos + vec2(8));
+                else trg_pos = touch->pos;
+            }
+            else trg_pos = default_pos;
+            pos = glm::mix(pos, trg_pos, 0.5f);
+        }
+    };
+
+
     Random                                 m_random;
     Bump                                   m_bump;
     Background                             m_background;
@@ -87,4 +114,11 @@ private:
     std::vector<std::unique_ptr<Bullet>>   m_bullets;
     std::vector<std::unique_ptr<Particle>> m_particles;
     std::vector<std::unique_ptr<Item>>     m_items;
+
+    std::array<Button, 3> m_buttons     = { Button{ 0 }, Button{ 1 }, Button{ 2 } };
+    Button&               m_button_dpad = m_buttons[0];
+    Button&               m_button_a    = m_buttons[1];
+    Button&               m_button_b    = m_buttons[2];
+
+
 };
