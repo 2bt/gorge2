@@ -35,7 +35,7 @@ public:
     void set_shader(gfx::Shader* shader = nullptr);
     void set_framebuffer(gfx::RenderTarget* fb);
 
-    void clear(Color const& color);
+    void clear();
     void draw(Rect const& quad, vec2 const& pos = {});
     void draw(Rect const& quad, vec2 const& pos, float ang);
     void draw(vec2 const& pos = {});

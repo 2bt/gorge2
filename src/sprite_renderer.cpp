@@ -110,12 +110,13 @@ void SpriteRenderer::set_color(Color const& c) {
     state().color = c;
 }
 
-void SpriteRenderer::clear(Color const& color) {
+void SpriteRenderer::clear() {
+    Color c = state().color;
     state().framebuffer->clear({
-        color.r * (1 / 255.0f),
-        color.g * (1 / 255.0f),
-        color.g * (1 / 255.0f),
-        color.b * (1 / 255.0f),
+        c.r * (1 / 255.0f),
+        c.g * (1 / 255.0f),
+        c.g * (1 / 255.0f),
+        c.b * (1 / 255.0f),
     });
 }
 

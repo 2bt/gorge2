@@ -29,6 +29,6 @@ private:
     gfx::Shader*          m_cloud_shader;
     gfx::Framebuffer*     m_framebuffer;
     gfx::Texture2D*       m_canvas;
-
+    bool                  m_first_frame;
 };
 

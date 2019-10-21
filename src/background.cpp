@@ -65,7 +65,8 @@ void Background::free() {
 
 void Background::reset(uint32_t seed) {
     m_random.seed(seed);
-	m_tick = m_random.get_int(0, 999999);
+    m_tick = m_random.get_int(0, 999999);
+    m_first_frame = true;
     for (Star& s : m_stars) {
         reset_star(s);
 		s.pos.y = m_random.get_float(-77, 77);
@@ -86,7 +87,8 @@ void Background::update() {
 void Background::draw(SpriteRenderer& ren) {
     ren.set_color();
 
-    if (m_tick % 10 == 0) {
+    if (m_first_frame || m_tick % 10 == 0) {
+        m_first_frame = false;
         m_cloud_shader->set_uniform("tick", float(m_tick / 10));
         ren.push();
         ren.push_state();

@@ -65,18 +65,18 @@ void Wall::generate() {
     if (m_island_delay > 0) --m_island_delay;
     else {
         vec2 c = {
-            m_random.get_float(P + 1, W - 2 - P),
+            m_random.get_float(P + 2, W - P - 1 - 2),
             m_random.get_float(8.5, 10)
         };
         float r = m_random.get_float(1.9, 5.3);
-        float r2 = r + 3.8;
+        float r2 = r + 4.4;
         r2 *= r2;
         r *= r;
 
         // check for available space
         bool occupied = false;
         for (int y = 0; y < (int) m_gen_data.size(); ++y)
-        for (int x = P - 1; x < W - P + 1; ++x) {
+        for (int x = P - 3; x < W - P + 3; ++x) {
             vec2 p = { x, y };
             if (m_gen_data[y][x] == 1 && glm::length2(p - c) < r2) {
                 occupied = true;

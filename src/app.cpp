@@ -20,6 +20,13 @@ std::array<Touch, 3>  m_touches;
 SpriteRenderer        m_ren;
 World                 m_world;
 
+enum {
+    MS_MAIN,
+    MS_GAME,
+    MS_HIGHSCORE,
+} m_menu_state;
+
+
 } // namespace
 
 
@@ -29,6 +36,7 @@ std::array<Touch, 3> const& get_touches() { return m_touches; }
 void init() {
     if (m_initialized) free();
     m_initialized = true;
+
 
     gfx::init();
     resource::init();
@@ -41,7 +49,10 @@ void init() {
     rnd.seed();
 
     static int i = 0;
-    if (i++ == 0) m_world.reset(rnd.get_int(0, 0x7fffffff));
+    if (i++ == 0) {
+        m_menu_state = MS_MAIN;
+//        m_world.reset(rnd.get_int(0, 0x7fffffff));
+    }
 }
 
 void free() {
@@ -82,7 +93,21 @@ void key(int key, int unicode) {
 
 
 void update() {
-    m_world.update();
+    switch (m_menu_state) {
+    case MS_MAIN:
+        if (!m_touches[0].pressed && m_touches[0].prev_pressed) {
+            m_menu_state = MS_GAME;
+            m_world.reset(rnd.get_int(0, 0x7fffffff));
+        }
+        break;
+    case MS_GAME:
+    default:
+        m_world.update();
+        if (!m_world.get_player().is_alive()) {
+            m_menu_state = MS_MAIN;
+        }
+        break;
+    }
 
     // remember touch pressed
     for (Touch& t : m_touches) t.prev_pressed = t.pressed;
@@ -103,8 +128,21 @@ void draw() {
 
     DB_REN.transform() = m_ren.transform();
 
+    switch (m_menu_state) {
+    case MS_MAIN:
+        m_ren.set_color(Color());
+        m_ren.clear();
+        m_ren.set_color();
+        m_ren.draw(frame(Sprite::TITLE));
+        break;
 
-    m_world.draw(m_ren);
+    case MS_GAME:
+    default:
+
+        m_world.draw(m_ren);
+        break;
+    }
+
 
     // debug
 //    m_ren.set_color({255, 255, 255, 50});

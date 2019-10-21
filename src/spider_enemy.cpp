@@ -1,4 +1,5 @@
 #include "spider_enemy.hpp"
+#include <glm/gtc/epsilon.hpp>
 
 namespace {
     std::array<vec2, 8> SPIDER_ENEMY_POLYGON = {
@@ -34,8 +35,8 @@ SpiderEnemy::SpiderEnemy(World& world, uint32_t seed, vec2 const& pos, float ang
     m_sprite_ang = ang;
     m_delay      = m_random.get_int(200, 300);
     m_normal     = { std::sin(m_sprite_ang), -std::cos(m_sprite_ang) };
-    if      (ang ==  M_PI / 2) m_dir = 1;
-    else if (ang == -M_PI / 2) m_dir = -1;
+    if      (glm::epsilonEqual<float>(ang, -M_PI / 2, 0.01)) m_dir = -1;
+    else if (glm::epsilonEqual<float>(ang,  M_PI / 2, 0.01)) m_dir = 1;
     else                        m_dir = m_random.get_int(0, 1) ?: -1;
     m_polygon.resize(SPIDER_ENEMY_POLYGON.size());
     transform_points(m_polygon, SPIDER_ENEMY_POLYGON, m_pos);
