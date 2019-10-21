@@ -122,9 +122,12 @@ void World::update() {
         }
     }
     for (auto& b : m_buttons) b.update();
-//    g_keyboard_input.a   = m_button_a.is_pressed();
-//    g_keyboard_input.b   = m_button_b.is_pressed();
-//    g_keyboard_input.mov = m_button_dpad.get_move();
+
+#ifdef ANDROID
+    g_keyboard_input.a   = m_button_a.is_pressed();
+    g_keyboard_input.b   = m_button_b.is_pressed();
+    g_keyboard_input.mov = m_button_dpad.get_move();
+#endif
 
     Player::Input input = g_keyboard_input;
 
