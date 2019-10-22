@@ -31,23 +31,22 @@ public:
 
     void switch_state(State s) {
         m_next_state = s;
-        m_blend      = 1;
+        m_blend      = 0;
+        m_blend_vel  = 0.05;
     }
 
     void update() {
-        if (m_blend > 0) {
-            m_blend = std::max<float>(0, m_blend - 0.05);
-            if (m_blend == 0) {
-                m_blend = -1;
-                m_state = m_next_state;
-            }
+        m_blend += m_blend_vel;
+        if (m_blend > 1) {
+            m_blend = 1;
+            m_blend_vel = -0.05;
+            m_state = m_next_state;
         }
         if (m_blend < 0) {
-            m_blend = std::min<float>(0, m_blend + 0.05);
+            m_blend = 0;
+            m_blend_vel = 0;
         }
         if (m_blend != 0) return;
-
-
 
         switch (m_state) {
         case MS_MAIN:
@@ -84,8 +83,8 @@ public:
             break;
         }
 
-        if (m_blend != 0) {
-            ren.set_color({0, 100, 0, 255 *(1 - std::abs(m_blend))});
+        if (m_blend > 0) {
+            ren.set_color({0, 0, 0, 255 * m_blend});
             rectangle(ren, {-150, -75}, {150, 75});
         }
     }
@@ -94,7 +93,8 @@ private:
 
     State m_state = MS_MAIN;
     State m_next_state;
-    float m_blend = -1;
+    float m_blend = 1;
+    float m_blend_vel = -0.01;
 
 
 } m_menu;
