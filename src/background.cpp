@@ -51,7 +51,7 @@ void Background::init() {
             gl_FragColor = vec4(c, 1.0);
         })");
 
-    m_canvas = gfx::Texture2D::create(gfx::TextureFormat::RGB, 8 * 36, 151);
+    m_canvas = gfx::Texture2D::create(gfx::TextureFormat::RGB, 8 * 40, 151);
     m_framebuffer = gfx::Framebuffer::create();
     m_framebuffer->attach_color(m_canvas);
 }
