@@ -30,6 +30,7 @@ public:
 
 
     void switch_state(State s) {
+        if (m_next_state == s) return;
         m_next_state = s;
         m_blend      = 0;
         m_blend_vel  = 0.05;
@@ -46,12 +47,18 @@ public:
             m_blend = 0;
             m_blend_vel = 0;
         }
-        if (m_blend != 0) return;
+
+
+        bool pressed = false;
+        if (m_blend == 0) {
+            pressed = m_touches[0].pressed && !m_touches[0].prev_pressed;
+        }
 
         switch (m_state) {
         case MS_MAIN:
-            if (!m_touches[0].pressed && m_touches[0].prev_pressed) {
-                switch_state(MS_MAIN);
+            if (pressed) {
+                switch_state(MS_GAME);
+                m_death_delay = 0;
                 m_world.reset(rnd.get_int(0, 0x7fffffff));
             }
             break;
@@ -59,7 +66,7 @@ public:
         default:
             m_world.update();
             if (!m_world.get_player().is_alive()) {
-                switch_state(MS_MAIN);
+                if (++m_death_delay > 180) switch_state(MS_MAIN);
             }
             break;
         }
@@ -78,7 +85,6 @@ public:
 
         case MS_GAME:
         default:
-
             m_world.draw(ren);
             break;
         }
@@ -94,7 +100,8 @@ private:
     State m_state = MS_MAIN;
     State m_next_state;
     float m_blend = 1;
-    float m_blend_vel = -0.01;
+    float m_blend_vel = -0.05;
+    int   m_death_delay = 0;
 
 
 } m_menu;
