@@ -186,7 +186,7 @@ void Ball::draw_field(SpriteRenderer& ren) const {
 
 void Player::reset() {
     m_tick             = 0;
-    m_pos              = { 0, 40 };
+    m_pos              = { 0, 75 };
     m_blast_vel        = {};
     m_blast_delay      = 0;
     m_shoot_delay      = 0;
@@ -244,8 +244,13 @@ void Player::update(Input const& input) {
     }
 
     // move
-    m_pos += m_blast_vel + input.mov * speed;
-    m_pos = clamp(m_pos, { -124, -72 }, { 124, 71 });
+    if (m_tick < 60) {
+        m_pos.y -= std::min<float>(0.75, (1 - m_tick / 60.0f) * 2);
+    }
+    else {
+        m_pos += m_blast_vel + input.mov * speed;
+        m_pos = clamp(m_pos, { -124, -72 }, { 124, 71 });
+    }
 
     // collision with wall
     transform_points(m_polygon, PLAYER_POLYGON, m_pos);
