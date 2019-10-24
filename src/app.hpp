@@ -14,7 +14,8 @@ namespace app {
         bool      prev_pressed;
     };
 
-    std::array<Touch, 3> const& get_touches();
+    std::array<Touch, 3> const& touches();
+    glm::ivec2 const& screen_size();
 
     void init();
     void free();

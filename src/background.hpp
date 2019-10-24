@@ -24,7 +24,7 @@ private:
 
     Random                m_random;
     int                   m_tick;
-    std::array<Star, 200> m_stars;
+    std::array<Star, 250> m_stars;
     gfx::Texture2D*       m_noise_tex;
     gfx::Shader*          m_cloud_shader;
     gfx::Framebuffer*     m_framebuffer;

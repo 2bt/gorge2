@@ -15,6 +15,7 @@ namespace {
 
 
 bool                  m_initialized = false;
+glm::ivec2            m_screen_size;
 std::array<Touch, 3>  m_touches;
 
 SpriteRenderer        m_ren;
@@ -39,6 +40,10 @@ public:
     void update() {
         m_blend += m_blend_vel;
         if (m_blend > 1) {
+            if (m_next_state == MS_GAME || m_state == MS_GAME) {
+                m_death_delay = 0;
+                m_world.reset(rnd.get_int(0, 0x7fffffff));
+            }
             m_blend = 1;
             m_blend_vel = -0.05;
             m_state = m_next_state;
@@ -56,10 +61,9 @@ public:
 
         switch (m_state) {
         case MS_MAIN:
+            m_world.menu_update();
             if (pressed) {
                 switch_state(MS_GAME);
-                m_death_delay = 0;
-                m_world.reset(rnd.get_int(0, 0x7fffffff));
             }
             break;
         case MS_GAME:
@@ -77,10 +81,10 @@ public:
     void draw(SpriteRenderer& ren) {
         switch (m_state) {
         case MS_MAIN:
-            ren.set_color(Color());
-            ren.clear();
-            ren.set_color();
-            ren.draw(frame(Sprite::TITLE));
+            m_world.menu_draw(ren, [this, &ren](){
+                ren.set_color();
+                ren.draw(frame(Sprite::TITLE));
+            });
             break;
 
         case MS_GAME:
@@ -91,7 +95,7 @@ public:
 
         if (m_blend > 0) {
             ren.set_color({0, 0, 0, 255 * m_blend});
-            rectangle(ren, {-150, -75}, {150, 75});
+            rectangle(ren, {-160, -75}, {160, 75});
         }
     }
 
@@ -112,7 +116,8 @@ private:
 } // namespace
 
 
-std::array<Touch, 3> const& get_touches() { return m_touches; }
+std::array<Touch, 3> const& touches() { return m_touches; }
+glm::ivec2 const& screen_size() { return m_screen_size; }
 
 
 void init() {
@@ -132,7 +137,7 @@ void init() {
 
     static int i = 0;
     if (i++ == 0) {
-//        m_world.reset(rnd.get_int(0, 0x7fffffff));
+        m_world.reset(rnd.get_int(0, 0x7fffffff));
     }
 }
 
@@ -153,6 +158,21 @@ void resize(int width, int height) {
     if (width == gfx::screen()->width() && height == gfx::screen()->height()) return;
     LOGI("resize %d %d", width, height);
     gfx::screen()->resize(width, height);
+
+
+    // screen size
+    float aspect_ratio = height / (float) width;
+    if (aspect_ratio < 75 / 160.0) {
+        aspect_ratio = 75 / 160.0;
+    }
+    m_screen_size.x = int(height / aspect_ratio);
+    m_screen_size.y = height;
+    m_ren.set_viewport({ (width - m_screen_size.x) / 2, 0, m_screen_size.x, m_screen_size.y });
+
+    // init transform
+    m_ren.origin();
+    const float s = 1.0 / 75;
+    m_ren.scale({s * aspect_ratio, s});
 
     m_world.resized();
 }
@@ -184,11 +204,8 @@ void update() {
 
 
 void draw() {
-    // init transform
-    m_ren.origin();
-    float s = 2.0 / 150;
-    float r = gfx::screen()->height() / (float) gfx::screen()->width();
-    m_ren.scale({s * r, s});
+    m_ren.set_color(Color{});
+    m_ren.clear();
 
     // debug
 //    m_ren.translate({0, 25});

@@ -3,14 +3,14 @@
 
 
 void Background::reset_star(Star& s) {
-	s.frame = m_random.get_int(0, 3);
-	float b = m_random.get_float(0.3, 1);
-	float c = (b - 0.3) * 0.4;
-	float d = c * m_random.get_float(1, 2);
-	s.color = { c * 255, d * 255, d * 255, 255 };
-	s.vel = b * 0.127;
-	s.pos.x = m_random.get_float(-135, 135);
-	s.pos.y = -77;
+    s.frame = m_random.get_int(0, 3);
+    float b = m_random.get_float(0.3, 1);
+    float c = (b - 0.3) * 0.4;
+    float d = c * m_random.get_float(1, 2);
+    s.color = { c * 255, d * 255, d * 255, 255 };
+    s.vel = b * 0.127;
+    s.pos.x = m_random.get_float(-160, 160);
+    s.pos.y = -77;
 }
 
 
@@ -69,7 +69,7 @@ void Background::reset(uint32_t seed) {
     m_first_frame = true;
     for (Star& s : m_stars) {
         reset_star(s);
-		s.pos.y = m_random.get_float(-77, 77);
+        s.pos.y = m_random.get_float(-77, 77);
     }
 }
 
@@ -77,11 +77,11 @@ void Background::update() {
     ++m_tick;
 
     for (Star& s : m_stars) {
-		s.pos.y += s.vel;
-		if (s.pos.y > 77) {
-			reset_star(s);
-		}
-	}
+        s.pos.y += s.vel;
+        if (s.pos.y > 77) {
+            reset_star(s);
+        }
+    }
 }
 
 void Background::draw(SpriteRenderer& ren) {
@@ -92,6 +92,7 @@ void Background::draw(SpriteRenderer& ren) {
         m_cloud_shader->set_uniform("tick", float(m_tick / 10));
         ren.push();
         ren.push_state();
+        ren.set_viewport({ 0, 0, m_framebuffer->width(), m_framebuffer->height() });
 
         ren.origin();
         ren.set_shader(m_cloud_shader);
@@ -111,9 +112,9 @@ void Background::draw(SpriteRenderer& ren) {
     ren.push_state();
     ren.set_blendmode(SpriteRenderer::BM_ADD);
     for (Star& s : m_stars) {
-		ren.set_color(s.color);
+        ren.set_color(s.color);
         ren.draw(frame(Sprite::STARS, s.frame), s.pos);
-	}
+    }
 
     ren.pop_state();
 

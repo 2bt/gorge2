@@ -22,6 +22,10 @@ public:
     void update();
     void draw(SpriteRenderer& ren);
 
+
+    void menu_update();
+    void menu_draw(SpriteRenderer& ren, std::function<void()> const& f);
+
     void shake() { m_shake += 2.5; }
 
     Bump& get_bump() { return m_bump; }

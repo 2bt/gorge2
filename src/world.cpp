@@ -3,7 +3,7 @@
 
 
 void World::init_buttons() {
-    float aspect_ratio = (float) gfx::screen()->width() / gfx::screen()->height();
+    float aspect_ratio = (float) app::screen_size().x / app::screen_size().y;
     m_button_dpad.reset({-75 * aspect_ratio + 25, 20});
     m_button_a.reset({75 * aspect_ratio - 25, 20});
     m_button_b.reset({75 * aspect_ratio - 25, -20});
@@ -108,7 +108,7 @@ extern Player::Input g_keyboard_input;
 void World::update() {
 
     // input
-    for (auto const& t : app::get_touches()) {
+    for (auto const& t : app::touches()) {
         if (!(t.pressed && !t.prev_pressed)) continue;
         if (!m_button_dpad.touch && t.pos.x < 0) {
             m_button_dpad.touch = &t;
@@ -152,7 +152,7 @@ void World::update() {
 
 void World::draw(SpriteRenderer& ren) {
     ren.push();
-    ren.translate(vec2(rnd.get_float(-m_shake, m_shake), rnd.get_float(-m_shake, m_shake)));
+    ren.translate({ rnd.get_float(-m_shake, m_shake), rnd.get_float(-m_shake, m_shake) });
 
     m_bump.draw_begin(ren);
     {
@@ -182,7 +182,7 @@ void World::draw(SpriteRenderer& ren) {
     ren.pop();
 
     // HUD
-    float w = gfx::screen()->width() / (float) gfx::screen()->height() * 75;
+    float w = (float) app::screen_size().x / app::screen_size().y * 75;
     // hearts
     ren.set_color();
     for (int i = 0; i < Player::MAX_SHIELD; ++i) {
@@ -229,4 +229,25 @@ void World::draw(SpriteRenderer& ren) {
         }
     }
 
+}
+
+
+void World::menu_update() {
+    m_background.update();
+    update_all(m_enemies);
+    update_all(m_particles);
+}
+
+
+void World::menu_draw(SpriteRenderer& ren, std::function<void()> const& f) {
+    m_background.draw(ren);
+    for (auto& p : m_particles) {
+        if (p->get_layer() == Particle::BACK) p->draw(ren);
+    }
+
+    f();
+
+    for (auto& p : m_particles) {
+        if (p->get_layer() == Particle::FRONT) p->draw(ren);
+    }
 }
