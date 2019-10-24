@@ -76,18 +76,19 @@ namespace {
         ExplosionParticle(vec2 const& pos)
             : AnimationParticle(Sprite::EXPLOSION)
         {
-            m_layer    = FRONT;
-            m_pos      = pos;
+            m_layer = FRONT;
+            m_pos   = pos;
         }
     };
 
     class SparkleParticle : public AnimationParticle {
     public:
-        SparkleParticle(vec2 const& pos)
+        SparkleParticle(vec2 const& pos, bool menu = false)
             : AnimationParticle(Sprite::SPARKLE)
         {
-            m_layer    = FRONT;
-            m_pos      = pos;
+            m_layer = FRONT;
+            m_pos   = pos;
+            if (menu) m_vel = vec2(0, -Wall::SPEED);
         }
         int& ttl() { return m_ttl; }
     };
@@ -125,8 +126,8 @@ void make_small_explosion(World& world, vec2 const& pos, bool smoke) {
     }
 }
 
-void make_sparkle(World& world, vec2 const& pos) {
-    world.spawn_particle<SparkleParticle>(pos);
+void make_sparkle(World& world, vec2 const& pos, bool menu) {
+    world.spawn_particle<SparkleParticle>(pos, menu);
 }
 
 void make_sparkles(World& world, vec2 const& pos) {

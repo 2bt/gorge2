@@ -123,13 +123,16 @@ void World::update() {
     }
     for (auto& b : m_buttons) b.update();
 
-#ifdef ANDROID
-    g_keyboard_input.a   = m_button_a.is_pressed();
-    g_keyboard_input.b   = m_button_b.is_pressed();
-    g_keyboard_input.mov = m_button_dpad.get_move();
-#endif
+    Player::Input input;
+    input.a   = m_button_a.is_pressed();
+    input.b   = m_button_b.is_pressed();
+    input.mov = m_button_dpad.get_move();
 
-    Player::Input input = g_keyboard_input;
+    // keyboard input
+    input.a |= g_keyboard_input.a;
+    input.b |= g_keyboard_input.b;
+    input.mov = glm::clamp(input.mov + g_keyboard_input.mov, -1.0f, 1.0f);
+
 
     ++m_tick;
     m_shake *= 0.95;

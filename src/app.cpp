@@ -62,9 +62,12 @@ public:
         switch (m_state) {
         case MS_MAIN:
             m_world.menu_update();
-            if (pressed) {
-                switch_state(MS_GAME);
+            if (rnd.get_int(0, 10) < 3) {
+                make_sparkle(m_world, {rnd.get_float(-55, 55), rnd.get_float(-11, 11)}, true);
             }
+
+            if (pressed) switch_state(MS_GAME);
+
             break;
         case MS_GAME:
         default:
@@ -161,10 +164,7 @@ void resize(int width, int height) {
 
 
     // screen size
-    float aspect_ratio = height / (float) width;
-    if (aspect_ratio < 75 / 160.0) {
-        aspect_ratio = 75 / 160.0;
-    }
+    float aspect_ratio = std::max(height / (float) width, 75 / 160.0f);
     m_screen_size.x = int(height / aspect_ratio);
     m_screen_size.y = height;
     m_ren.set_viewport({ (width - m_screen_size.x) / 2, 0, m_screen_size.x, m_screen_size.y });
