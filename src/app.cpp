@@ -84,7 +84,7 @@ public:
     void draw(SpriteRenderer& ren) {
         switch (m_state) {
         case MS_MAIN:
-            m_world.menu_draw(ren, [this, &ren](){
+            m_world.menu_draw(ren, [&ren](){
                 ren.set_color();
                 ren.draw(frame(Sprite::TITLE));
             });
@@ -127,8 +127,26 @@ void init() {
     if (m_initialized) free();
     m_initialized = true;
 
-
     gfx::init();
+
+    // XXX
+    {
+        int width = gfx::screen()->width();
+        int height = gfx::screen()->height();
+
+        // screen size
+        float aspect_ratio = std::max(height / (float) width, 75 / 160.0f);
+        m_screen_size.x = int(height / aspect_ratio);
+        m_screen_size.y = height;
+        m_ren.set_viewport({ (width - m_screen_size.x) / 2, 0, m_screen_size.x, m_screen_size.y });
+
+        // init transform
+        m_ren.origin();
+        const float s = 1.0 / 75;
+        m_ren.scale({s * aspect_ratio, s});
+    }
+
+
     resource::init();
     DB_REN.init();
     m_ren.init();
@@ -173,6 +191,7 @@ void resize(int width, int height) {
     m_ren.origin();
     const float s = 1.0 / 75;
     m_ren.scale({s * aspect_ratio, s});
+
 
     m_world.resized();
 }

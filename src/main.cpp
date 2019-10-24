@@ -54,8 +54,8 @@ namespace {
 
 SDL_Window*   s_window;
 bool          s_running       = true;
-int           s_screen_width  = app::WIDTH;
-int           s_screen_height = app::MIN_HEIGHT;
+int           s_screen_width  = 1000;
+int           s_screen_height = 600;
 SDL_GLContext s_gl_context;
 
 void free() {

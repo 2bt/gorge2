@@ -3,11 +3,6 @@
 #include <glm/glm.hpp>
 
 namespace app {
-    enum {
-        WIDTH      = 360,
-        MIN_HEIGHT = 590,
-    };
-
     struct Touch {
         glm::vec2 pos;
         bool      pressed;
