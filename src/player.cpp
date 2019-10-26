@@ -223,7 +223,8 @@ void Player::hit(CollisionInfo const& info) {
         if (--m_shield <= 0) {
             // game over
             make_explosion(m_world, m_pos);
-            m_alive = false;
+            m_alive  = false;
+            m_energy = 0;
         }
     }
 }
@@ -239,7 +240,7 @@ void Player::update(Input const& input) {
         --m_blast_delay;
     }
     else {
-        speed = 0.75 + std::pow(m_speed_boost, 0.8f) * 0.1;
+        speed = 0.75 + (1 - std::pow(0.95f, m_speed_boost)) * 1;
         if (input.a || m_shoot_delay > 0) speed *= 0.5;
     }
 
@@ -291,7 +292,7 @@ void Player::update(Input const& input) {
 
     // field
     if (m_field_active) {
-        m_energy -= 0.075;
+        m_energy -= 0.06;
         if (m_energy < 0) {
             m_energy = 0;
             m_field_active = false;

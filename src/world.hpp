@@ -123,6 +123,4 @@ private:
     Button&               m_button_dpad = m_buttons[0];
     Button&               m_button_a    = m_buttons[1];
     Button&               m_button_b    = m_buttons[2];
-
-
 };

@@ -87,8 +87,8 @@ void World::maybe_spawn_spawn_powerup(vec2 const& pos, int amount) {
 }
 void World::maybe_spawn_spawn_flame(vec2 const& pos, int amount) {
     m_flame_balance += amount;
-    if (m_flame_balance >= 3) {
-        m_flame_balance -= 3;
+    if (m_flame_balance >= 5) {
+        m_flame_balance -= 5;
         spawn_item<FlameItem>(pos);
         return;
     }
@@ -205,32 +205,38 @@ void World::draw(SpriteRenderer& ren) {
     shadow_print(ren, str);
     ren.pop();
 
-    // energy
-    ren.set_color({60, 60, 60, 100});
-    rectangle(ren, {Player::MAX_ENERGY * -0.5, -73}, {Player::MAX_ENERGY * 0.5, -72});
-    ren.set_color({0, 200, 200});
-    if (m_player.is_field_active()) {
-        if (m_tick % 8 < 4) ren.set_color({0, 127, 127});
-    }
-    else if (m_player.get_energy() == Player::MAX_ENERGY) {
-        if (m_tick % 8 < 4) ren.set_color();
-    }
-    rectangle(ren, {Player::MAX_ENERGY * -0.5, -73}, {Player::MAX_ENERGY * -0.5 + m_player.get_energy(), -72});
-
-
-
     // buttons
-    //if (m_player.is_alive())
-    {
-        for (auto const& b : m_buttons) {
-            if (b.is_pressed()) ren.set_color({255, 255, 255, 100});
-            else ren.set_color({255, 255, 255, 50});
+    for (auto const& b : m_buttons) {
+
+
+        if (b.id == 2) {
+            vec2 pos = b.pos;
+            auto rect = frame(Sprite::TOUCH, 3);
+
+            ren.set_color({255, 255, 255, 30});
+            ren.draw(rect, pos);
+
+            // energy
+            float e = m_player.get_energy() / Player::MAX_ENERGY;
+            rect.pos.y += rect.size.y * (1 - e);
+            pos.y      += rect.size.y * (1 - e) * 0.5;
+            rect.size.y *= e;
+
+            ren.set_color({0, 200, 200, 100});
+            if (m_player.is_field_active() || m_player.get_energy() == Player::MAX_ENERGY) {
+                if (m_tick % 8 < 4) ren.set_color({255, 255, 255, 100});
+            }
+
+            ren.draw(rect, pos);
+        }
+        else {
+            ren.set_color({255, 255, 255, 100});
             ren.draw(frame(Sprite::TOUCH, b.id + 1), b.pos);
         }
-        if (m_button_dpad.is_pressed()) {
-            ren.set_color({255, 255, 255, 100});
-            ren.draw(frame(Sprite::TOUCH, 0), m_button_dpad.touch->pos);
-        }
+    }
+    if (m_button_dpad.is_pressed()) {
+        ren.set_color({255, 255, 255, 100});
+        ren.draw(frame(Sprite::TOUCH, 0), m_button_dpad.touch->pos);
     }
 
 }
