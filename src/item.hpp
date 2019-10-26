@@ -59,9 +59,14 @@ class BallItem : public BigItem {
 public:
     BallItem(World& World, vec2 const& pos) : BigItem(World, pos) {
         m_sprite = Sprite::BALL_ITEM;
-        m_score  = 1000;
+        m_score  = 500;
+        ++s_count;
     }
     void collect() override;
+    ~BallItem() override { --s_count; }
+    static int count() { return s_count; }
+private:
+    static int s_count;
 };
 
 class FlameItem : public BigItem {
@@ -79,15 +84,20 @@ public:
     HeartItem(World& World, vec2 const& pos) : BigItem(World, pos) {
         m_sprite = Sprite::HEART_ITEM;
         m_score  = 2500;
+        ++s_count;
     }
     void collect() override;
+    ~HeartItem() override { --s_count; }
+    static int count() { return s_count; }
+private:
+    static int s_count;
 };
 
 class MoneyItem : public BigItem {
 public:
     MoneyItem(World& World, vec2 const& pos) : BigItem(World, pos) {
         m_sprite = Sprite::MONEY_ITEM;
-        m_score  = 10000;
+        m_score  = 5000;
     }
     void collect() override;
 };

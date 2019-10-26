@@ -49,3 +49,7 @@ void RocketEnemy::sub_update() {
         }
     }
 }
+
+void RocketEnemy::sub_draw(SpriteRenderer& ren) const {
+    ren.draw(frame(m_sprite, m_tick / m_frame_length % (m_active ? 2 : 1)), m_pos, m_ang);
+}

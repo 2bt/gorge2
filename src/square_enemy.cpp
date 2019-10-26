@@ -41,7 +41,7 @@ namespace {
 
 SquareEnemy::SquareEnemy(World& world, uint32_t seed, vec2 const& pos) : Enemy(world, seed, pos) {
     m_sprite = Sprite::SQUARE;
-    m_shield = 4;
+    m_shield = 3;
     m_score  = 350;
     m_energy = 2;
     m_tick   = m_random.get_int(0, 100);

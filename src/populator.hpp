@@ -16,6 +16,8 @@ public:
 
 protected:
 
+    void spawn();
+
     enum Footing {
         F_NONE,
         F_NORTH,
@@ -49,4 +51,5 @@ protected:
     };
     std::vector<SpawnGroup> m_spawn_groups;
     int                     m_spawn_rate;
+    int                     m_saucer_spawn_delay;
 };

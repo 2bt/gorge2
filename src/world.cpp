@@ -67,27 +67,28 @@ void World::spawn_item(std::unique_ptr<Item> i) {
 
 void World::maybe_spawn_spawn_powerup(vec2 const& pos, int amount) {
     m_powerup_balance += amount;
-    if (m_powerup_balance >= 15 &&
-        (!m_player.get_balls()[0].is_alive() || !m_player.get_balls()[1].is_alive())) {
-        m_powerup_balance -= 15;
+    if (m_powerup_balance >= 7 && BallItem::count() == 0 &&
+            (!m_player.get_balls()[0].is_alive() || !m_player.get_balls()[1].is_alive())) {
+        m_powerup_balance -= 7;
         spawn_item<BallItem>(pos);
         return;
     }
-    if (m_powerup_balance >= 25 && m_player.get_shield() < Player::MAX_SHIELD) {
-        m_powerup_balance -= 25;
+    if (m_powerup_balance >= 15 && HeartItem::count() == 0 &&
+            m_player.get_shield() < Player::MAX_SHIELD) {
+        m_powerup_balance -= 15;
         spawn_item<HeartItem>(pos);
         return;
     }
-    if (m_powerup_balance >= 25) {
-        m_powerup_balance -= 25;
+    if (m_powerup_balance >= 20) {
+        m_powerup_balance -= 20;
         spawn_item<MoneyItem>(pos);
         return;
     }
 }
 void World::maybe_spawn_spawn_flame(vec2 const& pos, int amount) {
     m_flame_balance += amount;
-    if (m_flame_balance >= 7) {
-        m_flame_balance -= 7;
+    if (m_flame_balance >= 3) {
+        m_flame_balance -= 3;
         spawn_item<FlameItem>(pos);
         return;
     }

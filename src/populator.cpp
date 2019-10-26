@@ -21,6 +21,7 @@ void Populator::reset(uint32_t seed) {
     m_wall_spots.clear();
     m_spawn_groups.clear();
     m_spawn_rate = 0;
+    m_saucer_spawn_delay = 0;
 }
 
 enum {
@@ -100,7 +101,7 @@ void Populator::update() {
     if (m_tick % 60 == 0)
     switch (m_tick / 60) {
     case 0:
-        m_spawn_rate = 70;
+        m_spawn_rate = 90;
         m_spawn_groups = {
             { 20, false, [this](vec2 const& pos, float ){ m_world.spawn_enemy<RingEnemy>(pos); } },
         };
@@ -113,9 +114,6 @@ void Populator::update() {
         );
         break;
 
-    case 17:
-        m_spawn_groups = {};
-        break;
 
     case 23:
         m_spawn_groups = {
@@ -151,14 +149,28 @@ void Populator::update() {
         break;
 
     case 160:
-        m_spawn_groups.push_back({ 1, false, [this](vec2 const& pos, float){ m_world.spawn_enemy<SaucerEnemy>(pos); } });
-        LOGI("Populator::update: start spawning SaucerEnemy");
+        m_saucer_spawn_delay = 1;
         break;
 
     default: break;
     }
 
+    spawn();
 
+
+    ++m_tick;
+}
+
+void Populator::spawn() {
+    if (m_saucer_spawn_delay > 0) {
+        if (--m_saucer_spawn_delay == 0) {
+            m_saucer_spawn_delay = m_random.get_int(30, 90) * 60;
+            Spot s;
+            if (get_random_spot(s)) {
+                m_world.spawn_enemy<SaucerEnemy>(get_spot_pos(s));
+            }
+        }
+    }
 
     if (m_spawn_rate > 0 && m_tick % m_spawn_rate == 0) {
         std::vector<int> weights;
@@ -178,7 +190,4 @@ void Populator::update() {
         };
         g.spawn_func(get_spot_pos(s), ANGLES[s.footing]);
     }
-
-
-    ++m_tick;
 }

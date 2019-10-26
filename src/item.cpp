@@ -1,6 +1,9 @@
 #include "item.hpp"
 #include "world.hpp"
 
+int BallItem::s_count;
+int HeartItem::s_count;
+
 namespace {
 
     std::array<vec2, 4> BIG_ITEM_POLYGON = {
