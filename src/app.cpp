@@ -1,4 +1,5 @@
 #include "app.hpp"
+#include "audio.hpp"
 #include "log.hpp"
 #include "gfx.hpp"
 #include "resource.hpp"
@@ -127,6 +128,7 @@ void init() {
     if (m_initialized) free();
     m_initialized = true;
 
+    audio::init();
     gfx::init();
 
     // XXX
@@ -172,6 +174,7 @@ void free() {
     m_ren.free();
 
     DB_REN.free();
+    audio::free();
 }
 
 void resize(int width, int height) {
