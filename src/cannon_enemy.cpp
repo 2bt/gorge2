@@ -1,4 +1,5 @@
 #include "cannon_enemy.hpp"
+#include "audio.hpp"
 
 namespace {
     std::array<vec2, 6> CANNON_ENEMY_POLYGON = {
@@ -49,6 +50,7 @@ void CannonEnemy::sub_update() {
                 m_delay = m_random.get_int(150, 250);
                 dir = glm::normalize(dir);
                 m_world.spawn_bullet(m_pos + dir * 4.0f, dir * 1.0f, PLASMA_BULLET_DESC);
+                audio::play_sound(audio::ST_PLASMA, m_pos);
             }
         }
     }

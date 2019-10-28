@@ -1,4 +1,5 @@
 #include "square_enemy.hpp"
+#include "audio.hpp"
 
 namespace {
     std::array<vec2, 8> SQUARE_ENEMY_POLYGON = {
@@ -84,6 +85,7 @@ void SquareEnemy::sub_update() {
         float ang = std::atan2(dir.x, dir.y) + m_random.get_float(-0.2, 0.2);
         vec2 vel = vec2(std::sin(ang), std::cos(ang)) * m_random.get_float(1, 1.06);
         m_world.spawn_bullet(m_pos, vel, RAPID_BULLET_DESC);
+        audio::play_sound(audio::ST_BULLET, m_pos);
     }
     if (m_delay <= 0) m_delay = m_random.get_int(200, 300);
 }

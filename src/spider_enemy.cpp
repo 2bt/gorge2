@@ -1,4 +1,5 @@
 #include "spider_enemy.hpp"
+#include "audio.hpp"
 #include <glm/gtc/epsilon.hpp>
 
 namespace {
@@ -106,6 +107,7 @@ void SpiderEnemy::sub_update() {
             float ang = l * M_PI - m_sprite_ang;
             vec2 vel = vec2(std::cos(ang), -std::sin(ang)) * 0.75f;
             m_world.spawn_bullet(m_pos, vel, SPIDER_BULLET_DESC);
+            audio::play_sound(audio::ST_SPIDER, m_pos);
         }
 
     }

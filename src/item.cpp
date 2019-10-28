@@ -1,4 +1,5 @@
 #include "item.hpp"
+#include "audio.hpp"
 #include "world.hpp"
 
 int BallItem::s_count;
@@ -66,6 +67,7 @@ bool EnergyItem::update() {
 
         CollisionInfo info = polygon_collision(m_polygon, player.get_polygon());
         if (info.distance > 0) {
+            audio::play_sound(audio::ST_COIN, m_pos);
             make_sparkle(m_world, m_pos);
             player.inc_score(80);
             player.inc_energy();
@@ -84,6 +86,10 @@ void make_energy_items(World& world, Random& rnd, vec2 const& pos, int count) {
     }
 }
 
+
+BigItem::BigItem(World& World, vec2 const& pos) : Item(World, pos) {
+    audio::play_sound(audio::ST_DROP, m_pos);
+}
 
 bool BigItem::update() {
     ++m_tick;
@@ -110,6 +116,7 @@ bool BigItem::update() {
         if (info.distance > 0) {
             make_sparkles(m_world, m_pos);
             player.inc_score(m_score);
+            audio::play_sound(audio::ST_COLLECT, m_pos);
             collect();
             return false;
         }

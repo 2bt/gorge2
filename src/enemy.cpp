@@ -1,5 +1,6 @@
 #include "enemy.hpp"
 #include "world.hpp"
+#include "audio.hpp"
 #include "debug_renderer.hpp"
 
 
@@ -26,6 +27,7 @@ namespace {
 
 
 void Enemy::hit(int damage) {
+    audio::play_sound(audio::ST_HIT, m_pos);
     if (!m_alive) return;
     m_flash = 5;
     m_shield -= damage;
@@ -107,12 +109,14 @@ bool Bullet::update() {
         transform_points(m_polygon, m_desc.polygon, m_pos, m_ang);
         CollisionInfo info = m_world.get_wall().check_collision(m_polygon);
         if (info.distance > 0) {
+            audio::play_sound(audio::ST_MISS, m_pos);
             make_sparks(info.where);
             return false;
         }
 
         // collision with shock wave
         if (m_world.get_shock_wave().overlap(m_polygon)) {
+            audio::play_sound(audio::ST_MISS, m_pos);
             make_sparks(m_pos);
             return false;
         }

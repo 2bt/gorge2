@@ -1,5 +1,6 @@
-#include "log.hpp"
 #include "player.hpp"
+#include "log.hpp"
+#include "audio.hpp"
 #include "world.hpp"
 #include "debug_renderer.hpp"
 #include "resource.hpp"
@@ -79,6 +80,7 @@ void ShockWave::reset() {
     m_alive = false;
 }
 void ShockWave::activate(vec2 const& pos) {
+    audio::play_sound(audio::ST_BLAST, pos);
     m_alive  = true;
     m_pos    = pos;
     m_tick   = 0;
@@ -138,6 +140,7 @@ void Ball::shoot(bool side_shot) {
     m_world.spawn_laser(std::make_unique<Laser>(m_world, pos, vel, true));
 }
 void Ball::hit(CollisionInfo const& info) {
+    audio::play_sound(audio::ST_HIT, info.where);
     if (m_world.get_player().is_field_active() && info.distance == 0) return;
     assert(m_alive);
     m_alive = false;
@@ -202,11 +205,14 @@ void Player::reset() {
     m_score            = 0;
     m_energy           = 0;
 
+    m_field_sound      = audio::get_sound(audio::ST_FIELD);
+
     m_balls[0].reset();
     m_balls[1].reset();
 }
 
 void Player::hit(CollisionInfo const& info) {
+    audio::play_sound(audio::ST_HIT, info.where);
     if (m_field_active && info.distance == 0) return;
     // blast
     if (info.distance > 0) {
@@ -225,6 +231,7 @@ void Player::hit(CollisionInfo const& info) {
             make_explosion(m_world, m_pos);
             m_alive  = false;
             m_energy = 0;
+            audio::set_sound_playing(m_field_sound, false);
         }
     }
 }
@@ -284,6 +291,7 @@ void Player::update(Input const& input) {
     if (input.mov.y < 0) m_side_shot = true;
     if (m_shoot_delay > 0) --m_shoot_delay;
     if (input.a && m_shoot_delay == 0 && m_blast_delay == 0) {
+        audio::play_sound(audio::ST_LASER, m_pos);
         m_shoot_delay = m_shoot_period;
         m_world.spawn_laser(std::make_unique<Laser>(m_world, m_pos - vec2(0, 1), vec2(0, -1), false));
         m_balls[0].shoot(m_side_shot);
@@ -296,19 +304,27 @@ void Player::update(Input const& input) {
         if (m_energy < 0) {
             m_energy = 0;
             m_field_active = false;
+            audio::set_sound_playing(m_field_sound, false);
         }
         if (input.b && !m_old_input_b) {
             // BLAST
             m_energy = 0;
             m_field_active = false;
             m_world.get_shock_wave().activate(m_pos);
+            audio::set_sound_playing(m_field_sound, false);
         }
     }
     else if (input.b && m_energy >= MAX_ENERGY) {
         m_field_active = true;
+        audio::set_sound_playing(m_field_sound, true, true);
     }
     if (m_field_active) {
         transform_points(m_field_polygon, PLAYER_FIELD_POLYGON, m_pos);
+
+
+        audio::set_sound_position(m_field_sound, m_pos);
+        float p = m_energy / MAX_ENERGY;
+        audio::set_sound_pitch(m_field_sound, 1 - std::pow<float>(p - 0.95, 8));
     }
 
     m_old_input_b = input.b;
@@ -364,6 +380,7 @@ bool Laser::update() {
         // collision with wall
         CollisionInfo info = m_world.get_wall().check_collision(m_polygon, true);
         if (info.distance > 0) {
+            audio::play_sound(audio::ST_MISS, info.where);
             for (int i = 0; i < 10; ++i) {
                 m_world.spawn_particle<LaserParticle>(info.where);
             }

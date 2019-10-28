@@ -1,5 +1,6 @@
 #include "particle.hpp"
 #include "world.hpp"
+#include "audio.hpp"
 
 
 bool Particle::update() {
@@ -100,6 +101,7 @@ void make_rocket_smoke(World& world, vec2 const& pos) {
 }
 
 void make_explosion(World& world, vec2 const& pos) {
+    audio::play_sound(audio::ST_EXPLOSION, pos);
     for (int i = 0; i < 10; ++i) world.spawn_particle<SmokeParticle>(pos);
     for (int i = 0; i < 20; ++i) {
         vec2 p = {

@@ -1,5 +1,6 @@
 #include "saucer_enemy.hpp"
 #include "resource.hpp"
+#include "audio.hpp"
 
 namespace {
     std::array<vec2, 8> SAUCER_ENEMY_POLYGON = {
@@ -71,6 +72,7 @@ namespace {
                 make_explosion(m_world, m_pos + vec2(rnd.get_float(-10, 10), rnd.get_float(-7, 6)));
             }
             if (m_ttl == 0) {
+                audio::play_sound(audio::ST_BIG_EXPLOSION, m_pos);
                 m_world.shake();
                 make_explosion(m_world, m_pos);
                 make_explosion(m_world, m_pos + vec2(rnd.get_float(-10, 0), rnd.get_float(-7, 0)));
@@ -145,5 +147,6 @@ void SaucerEnemy::sub_update() {
         int p = t / 5 % 4 - 1;
         if (p == 2) p = 0;
         m_world.spawn_bullet(m_pos + vec2(p * 5, 6), {0, 2.5}, SAUCER_BULLET_DESC);
+        audio::play_sound(audio::ST_SAUCER, m_pos);
     }
 }

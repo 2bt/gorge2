@@ -44,7 +44,7 @@ private:
 
 class BigItem : public Item {
 public:
-    BigItem(World& World, vec2 const& pos) : Item(World, pos) {}
+    BigItem(World& World, vec2 const& pos);
     bool update() override;
     virtual void collect() = 0;
 protected:

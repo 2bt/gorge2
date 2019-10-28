@@ -117,6 +117,7 @@ private:
     int                 m_speed_boost;
     int                 m_invincible_delay;
     bool                m_old_input_b;
+    int                 m_field_sound;
 
     int                 m_shoot_delay;
     bool                m_side_shot;

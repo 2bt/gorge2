@@ -1,4 +1,5 @@
 #include "twister_enemy.hpp"
+#include "audio.hpp"
 
 namespace {
     std::array<vec2, 6> TWISTER_ENEMY_POLYGON = {
@@ -122,5 +123,6 @@ void TwisterEnemy::sub_update() {
         ang += m_random.get_float(-0.2, 0.2);
         vec2 vel = vec2(std::cos(ang), std::sin(ang)) * 1.0f;
         m_world.spawn_bullet(m_pos, vel, PLASMA_BULLET_DESC);
+        audio::play_sound(audio::ST_PLASMA, m_pos);
     }
 }
