@@ -26,10 +26,10 @@ struct Wave {
 };
 
 
-ALCdevice*                     m_device;
-ALCcontext*                    m_context;
-std::array<ALuint, SoundCount> m_buffers;
-std::vector<ALuint>            m_sources;
+ALCdevice*                     m_al_device;
+ALCcontext*                    m_al_context;
+std::array<ALuint, SoundCount> m_al_buffers;
+std::vector<ALuint>            m_al_sources;
 
 struct MetaSource {
     char const*      file_name;
@@ -37,7 +37,9 @@ struct MetaSource {
     MetaSource(char const* f, size_t c) : file_name(f), source_indices(c) {}
 };
 
-std::array<MetaSource, SoundCount> meta_sources = {
+int                                m_source_id_counter;
+std::vector<int>                   m_source_ids;
+std::array<MetaSource, SoundCount> m_meta_source = {
     MetaSource{ "back.wav",          1 },
     MetaSource{ "big_explosion.wav", 2 },
     MetaSource{ "blast.wav",         1 },
@@ -58,34 +60,32 @@ std::array<MetaSource, SoundCount> meta_sources = {
     MetaSource{ "spider.wav",        2 },
 };
 
-int              m_source_id_counter;
-std::vector<int> m_source_ids;      // index -> id
 
 
 } // namespace
 
 
 void init() {
-    m_device = alcOpenDevice(nullptr);
-    if (!m_device) {
+    m_al_device = alcOpenDevice(nullptr);
+    if (!m_al_device) {
         LOGE("audio::init: alcOpenDevice");
         return;
     }
 
-    m_context = alcCreateContext(m_device, nullptr);
-    alcMakeContextCurrent(m_context);
+    m_al_context = alcCreateContext(m_al_device, nullptr);
+    alcMakeContextCurrent(m_al_context);
 
-    alGenBuffers(m_buffers.size(), m_buffers.data());
+    alGenBuffers(m_al_buffers.size(), m_al_buffers.data());
 
     int source_count = 0;
-    for (auto const& m : meta_sources) source_count += m.source_indices.size();
+    for (auto const& m : m_meta_source) source_count += m.source_indices.size();
     m_source_ids.resize(source_count);
-    m_sources.resize(source_count);
-    alGenSources(m_sources.size(), m_sources.data());
+    m_al_sources.resize(source_count);
+    alGenSources(m_al_sources.size(), m_al_sources.data());
 
     int j = 0;
-    for (int i = 0; i < (int) meta_sources.size(); ++i) {
-        MetaSource& m = meta_sources[i];
+    for (int i = 0; i < (int) m_meta_source.size(); ++i) {
+        MetaSource& m = m_meta_source[i];
         std::vector<uint8_t> buf;
         android::load_asset(m.file_name, buf);
         Wave& w = *(Wave*) buf.data();
@@ -96,11 +96,11 @@ void init() {
         else if (w.fmt_channels == 2 && w.fmt_bits_per_sample == 16) format = AL_FORMAT_STEREO16;
         else LOGE("audio::init: %s: unknown format", m.file_name);
 
-        alBufferData(m_buffers[i], format, w.data, w.data_size, w.fmt_sample_rate);
+        alBufferData(m_al_buffers[i], format, w.data, w.data_size, w.fmt_sample_rate);
 
         for (int& index : m.source_indices) {
             index = j++;
-            alSourcei(m_sources[index], AL_BUFFER, m_buffers[i]);
+            alSourcei(m_al_sources[index], AL_BUFFER, m_al_buffers[i]);
         }
     }
 
@@ -111,37 +111,37 @@ void init() {
 
 void free() {
     alcMakeContextCurrent(nullptr);
-    alcDestroyContext(m_context);
-    alDeleteBuffers(m_buffers.size(), m_buffers.data());
-    alcCloseDevice(m_device);
+    alcDestroyContext(m_al_context);
+    alDeleteBuffers(m_al_buffers.size(), m_al_buffers.data());
+    alcCloseDevice(m_al_device);
 }
 
 template<class Func>
 void sound_do(int id, Func const& f) {
-    for (int i = 0; i < (int) m_source_ids.size(); ++i) {
+    for (size_t i = 0; i < m_source_ids.size(); ++i) {
         if (m_source_ids[i] == id) {
-            f(m_sources[i]);
+            f(m_al_sources[i]);
             break;
         }
     }
 }
 
 int get_sound(SoundType s) {
-    MetaSource& m = meta_sources[s];
+    MetaSource& m = m_meta_source[s];
     int index = m.source_indices.front();
-    alSourceStop(m_sources[index]);
+    alSourceStop(m_al_sources[index]);
     std::rotate(m.source_indices.begin(), m.source_indices.begin() + 1, m.source_indices.end());
 
     return m_source_ids[index] = ++m_source_id_counter;
 }
 void set_sound_position(int id, vec2 const& pos) {
-    sound_do(id, [&pos](int s) { alSource3f(s, AL_POSITION, pos.x, pos.y, 0); });
+    sound_do(id, [&pos](ALuint s) { alSource3f(s, AL_POSITION, pos.x, pos.y, 0); });
 }
 void set_sound_pitch(int id, float pitch) {
-    sound_do(id, [pitch](int s) { alSourcef(s, AL_PITCH, pitch); });
+    sound_do(id, [pitch](ALuint s) { alSourcef(s, AL_PITCH, pitch); });
 }
 void set_sound_playing(int id, bool playing, bool looping) {
-    sound_do(id, [playing, looping](int s) {
+    sound_do(id, [playing, looping](ALuint s) {
         if (!playing) {
             alSourceStop(s);
         }
