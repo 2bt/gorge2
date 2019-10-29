@@ -9,7 +9,7 @@ public:
     void sub_update() override;
     void die() override { m_world.maybe_spawn_spawn_powerup(m_pos); }
 
-protected:
+private:
     void turn(float ang1, float ang2);
 
     vec2 m_vel;

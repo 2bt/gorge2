@@ -9,7 +9,7 @@ public:
     void sub_update() override;
     void sub_draw(SpriteRenderer& ren) const override;
     void die() override { m_world.maybe_spawn_spawn_powerup(m_pos, 2); }
-protected:
+private:
     float m_cannon_ang;
     int   m_delay;
 };

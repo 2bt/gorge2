@@ -51,7 +51,7 @@ public:
     TwisterEnemy(World& world, uint32_t seed, vec2 const& pos, TwisterPath::Ptr path);
     void sub_update() override;
     void die() override;
-protected:
+private:
     float            m_dst_ang;
     int              m_count = 0;
     int              m_index = 0;

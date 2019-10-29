@@ -14,7 +14,7 @@ public:
     void next_wall_row();
     void update();
 
-protected:
+private:
 
     void spawn();
 

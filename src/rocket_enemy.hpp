@@ -11,7 +11,7 @@ public:
     void die() override;
     ~RocketEnemy() override;
 
-protected:
+private:
     vec2 m_vel = {};
     vec2 m_normal;
     bool m_active = false;

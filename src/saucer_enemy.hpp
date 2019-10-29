@@ -9,7 +9,7 @@ public:
     void die() override;
     void sub_update() override;
 
-protected:
+private:
     vec2  m_vel = {};
     vec2  m_dst_vel;
     float m_phase;
