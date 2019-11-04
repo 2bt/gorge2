@@ -208,7 +208,6 @@ void World::draw(SpriteRenderer& ren) {
     // buttons
     for (auto const& b : m_buttons) {
 
-
         if (b.id == 2) {
             vec2 pos = b.pos;
             auto rect = frame(Sprite::TOUCH, 3);
@@ -224,7 +223,13 @@ void World::draw(SpriteRenderer& ren) {
 
             ren.set_color({0, 200, 200, 100});
             if (m_player.is_field_active() || m_player.get_energy() == Player::MAX_ENERGY) {
-                if (m_tick % 8 < 4) ren.set_color({255, 255, 255, 100});
+                float l = m_tick % 16 / 16.0;
+                l = 0.5 + std::sin(l * 2 * M_PI) * 0.5;
+                ren.set_color({
+                    glm::mix(0,   255, l),
+                    glm::mix(200, 255, l),
+                    glm::mix(200, 255, l),
+                    100});
             }
 
             ren.draw(rect, pos);
