@@ -76,6 +76,7 @@ public:
 
 private:
     void init_buttons();
+    void draw_buttons(SpriteRenderer& ren);
 
     struct Button {
         const int         id;

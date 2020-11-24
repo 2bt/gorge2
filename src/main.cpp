@@ -105,9 +105,9 @@ int main(int argc, char** argv) {
                 case SDL_SCANCODE_ESCAPE:
                     s_running = false;
                     break;
-//                case SDL_SCANCODE_RETURN:
-//                    app::key(KEYCODE_ENTER, 0);
-//                    break;
+                case SDL_SCANCODE_RETURN:
+                    app::key(SDL_SCANCODE_RETURN, 0);
+                    break;
 //                case SDL_SCANCODE_BACKSPACE:
 //                    app::key(KEYCODE_DEL, 0);
 //                    break;
@@ -155,6 +155,7 @@ int main(int argc, char** argv) {
         }
 
         app::update();
+
         app::draw();
         SDL_GL_SwapWindow(s_window);
     }

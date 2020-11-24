@@ -205,7 +205,9 @@ void World::draw(SpriteRenderer& ren) {
     shadow_print(ren, str);
     ren.pop();
 
-    // buttons
+    draw_buttons(ren);
+}
+void World::draw_buttons(SpriteRenderer& ren) {
     for (auto const& b : m_buttons) {
 
         if (b.id == 2) {
@@ -243,7 +245,6 @@ void World::draw(SpriteRenderer& ren) {
         ren.set_color({255, 255, 255, 100});
         ren.draw(frame(Sprite::TOUCH, 0), m_button_dpad.touch->pos);
     }
-
 }
 
 

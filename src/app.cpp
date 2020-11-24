@@ -21,6 +21,7 @@ std::array<Touch, 3>  m_touches;
 
 SpriteRenderer        m_ren;
 World                 m_world;
+bool                  m_update_paused = false;
 
 class Menu {
 public:
@@ -57,7 +58,10 @@ public:
 
         bool pressed = false;
         if (m_blend == 0) {
-            pressed = m_touches[0].pressed && !m_touches[0].prev_pressed;
+
+            pressed |= g_keyboard_input.a;
+            pressed |= g_keyboard_input.b;
+            pressed |= m_touches[0].pressed && !m_touches[0].prev_pressed;
         }
 
         switch (m_state) {
@@ -212,10 +216,12 @@ void touch(int id, bool pressed, int x, int y) {
 
 
 void key(int key, int unicode) {
+    if (key) m_update_paused ^= 1;
 }
 
 
 void update() {
+    if (m_update_paused) return;
 
     m_menu.update();
 
