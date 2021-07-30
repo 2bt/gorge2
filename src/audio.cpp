@@ -2,31 +2,11 @@
 #include "log.hpp"
 #include "foo.hpp"
 #include <algorithm>
-//#include <AL/al.h>
-//#include <AL/alc.h>
-using ALCdevice = int;
-using ALCcontext = int;
-using ALuint = uint32_t;
-#define alcOpenDevice(...) new int
-#define alcCreateContext(...) {}
-#define alcMakeContextCurrent(...)
-#define alcDestroyContext(...)
-#define alcCloseDevice(...)
-#define alDeleteBuffers(...)
-#define alSourceStop(...)
-#define alSourcef(...)
-#define alSourcei(...)
-#define alBufferData(...)
-#define alDistanceModel(...)
-#define alSourcePlay(...)
-#define alGenBuffers(...)
-#define alGenSources(...)
-#define alListener3f(...)
-#define alSource3f(...)
-#define AL_FORMAT_MONO8 0
-#define AL_FORMAT_MONO16 0
-#define AL_FORMAT_STEREO8 1
-#define AL_FORMAT_STEREO16 1
+
+#define AL_LIBTYPE_STATIC
+#include <AL/al.h>
+#include <AL/alc.h>
+
 
 namespace audio {
 namespace {
