@@ -10,7 +10,6 @@ public:
     void sub_draw(SpriteRenderer& ren) const override;
     void die() override { m_world.maybe_spawn_spawn_powerup(m_pos, 2); }
 private:
-    vec2  m_vel = {};
     vec2  m_normal;
     int   m_dir;
     float m_sprite_ang;

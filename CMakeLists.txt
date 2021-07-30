@@ -2,8 +2,11 @@ cmake_minimum_required(VERSION 3.7)
 
 project(gorge)
 
-#add_compile_options(-std=c++17 -Wall -O2)
-add_compile_options(-std=c++17 -Wall -Og -g)
+add_compile_options(
+    -std=c++17
+    -Wall
+    -O2
+    )
 
 file(GLOB SRC
     "src/*.hpp"

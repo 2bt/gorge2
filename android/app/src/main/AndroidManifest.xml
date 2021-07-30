@@ -7,15 +7,15 @@
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:theme="@style/AppTheme" >
+        android:roundIcon="@mipmap/ic_launcher_round" >
 
         <activity
             android:name="com.twobit.gorge.MainActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:label="@string/app_name"
             android:screenOrientation="landscape"
-            android:configChanges="orientation|keyboard|keyboardHidden|screenSize" >
+            android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
+            android:exported="false" >
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

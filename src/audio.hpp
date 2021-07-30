@@ -27,7 +27,7 @@ namespace audio {
         SoundCount,
     };
 
-    void init();
+    bool init();
     void free();
 
     void play_sound(SoundType s, vec2 const& pos = {});
