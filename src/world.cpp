@@ -110,9 +110,9 @@ void World::update() {
 
     // input
     for (auto const& t : app::touches()) {
-        if (!(t.pressed && !t.prev_pressed)) continue;
+        if (!t.just_pressed()) continue;
         if (!m_button_dpad.touch && t.pos.x < 0) {
-            m_button_dpad.touch = &t;
+            m_button_dpad.touch   = &t;
             m_button_dpad.trg_pos = t.pos;
         }
         else if (!m_button_a.touch && t.pos.x > 0 && t.pos.y > 0) {

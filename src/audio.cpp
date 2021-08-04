@@ -90,7 +90,7 @@ bool init() {
     for (int i = 0; i < (int) m_meta_source.size(); ++i) {
         MetaSource& m = m_meta_source[i];
         std::vector<uint8_t> buf;
-        android::load_asset(m.file_name, buf);
+        if (!android::load_asset(m.file_name, buf)) return false;
         Wave& w = *(Wave*) buf.data();
         int format = 0;
         if      (w.fmt_channels == 1 && w.fmt_bits_per_sample == 8)  format = AL_FORMAT_MONO8;

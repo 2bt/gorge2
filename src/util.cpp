@@ -76,7 +76,7 @@ void shadow_print(SpriteRenderer& ren, char const* str) {
     ren.pop();
 }
 
-void rectangle(SpriteRenderer& ren, vec2 const& min, vec2 const& max) {
+void draw_rectangle(SpriteRenderer& ren, vec2 const& min, vec2 const& max) {
     vec2 pos = (min + max) * 0.5f;
     vec2 size = max - min;
     ren.push();

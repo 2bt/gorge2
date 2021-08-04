@@ -2,11 +2,14 @@
 #include <array>
 #include <glm/glm.hpp>
 
+
 namespace app {
     struct Touch {
         glm::vec2 pos;
         bool      pressed;
         bool      prev_pressed;
+        bool just_pressed() const { return pressed && !prev_pressed; }
+        bool just_released() const { return !pressed && prev_pressed; }
     };
 
     std::array<Touch, 3> const& touches();

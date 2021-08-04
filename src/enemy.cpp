@@ -48,7 +48,7 @@ bool Enemy::can_see_player() const {
 bool Enemy::update() {
     if (!m_alive) return false;
     if (!m_entered_screen && m_pos.y < -85) m_entered_screen = true;
-    if (m_pos.y > 85) return false;
+    if (m_pos.y > 85 || m_pos.y < -145) return false;
     ++m_tick;
     if (m_flash > 0) --m_flash;
 

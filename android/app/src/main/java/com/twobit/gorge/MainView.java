@@ -32,8 +32,7 @@ class MainView extends GLSurfaceView {
         });
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent e) {
+    @Override public boolean onTouchEvent(MotionEvent e) {
         int index  = e.getActionIndex();
         int id     = e.getPointerId(index);
 

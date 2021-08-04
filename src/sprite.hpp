@@ -1,6 +1,5 @@
 #pragma once
 #include "sprite_renderer.hpp"
-
 enum class Sprite {
     BALL,
     BALL_FIELD,
@@ -36,6 +35,5 @@ enum class Sprite {
     TWISTER,
     WALLS,
 };
-
-SpriteRenderer::Rect const& frame(Sprite s, int frame = 0);
+Rect const& frame(Sprite s, int frame = 0);
 int frame_count(Sprite s);

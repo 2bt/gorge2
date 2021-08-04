@@ -31,7 +31,7 @@ namespace audio {
     void free();
 
     void play_sound(SoundType s, vec2 const& pos = {});
-    int get_sound(SoundType s);
+    int  get_sound(SoundType s);
     void set_sound_position(int id, vec2 const& pos);
     void set_sound_pitch(int id, float pitch);
     void set_sound_playing(int id, bool playing, bool looping = false);

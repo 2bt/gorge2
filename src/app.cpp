@@ -21,13 +21,12 @@ std::array<Touch, 3>  m_touches;
 
 SpriteRenderer        m_ren;
 World                 m_world;
-bool                  m_update_paused = false;
 
-class Menu {
+class Game {
 public:
     enum State {
-        MS_MAIN,
-        MS_GAME,
+        MS_MENU,
+        MS_PLAYING,
         MS_HIGHSCORE,
     };
 
@@ -39,10 +38,50 @@ public:
         m_blend_vel  = 0.05;
     }
 
+    Rect const m_button = { {-133, -75}, {50, 50} };
+
+    void menu_update() {
+        m_world.menu_update();
+        if (rnd.get_int(0, 10) < 3) {
+            make_sparkle(m_world, {rnd.get_float(-55, 55), rnd.get_float(-11, 11)}, true);
+        }
+
+        bool pressed = false;
+        if (m_blend == 0) {
+            pressed |= g_keyboard_input.a;
+            pressed |= g_keyboard_input.b;
+            pressed |= m_touches[0].just_pressed() && Rect{ {-55, -11}, {110, 22} }.contains(m_touches[0].pos);
+        }
+        if (pressed) switch_state(MS_PLAYING);
+
+        // check button
+        if (m_touches[0].just_pressed()) {
+            if (m_button.contains(m_touches[0].pos)) {
+            }
+        }
+    }
+
+    void menu_draw(SpriteRenderer& ren) {
+        m_world.menu_draw(ren, [&ren](){
+            ren.set_color();
+            ren.draw(frame(Sprite::TITLE));
+        });
+
+        // draw button
+        ren.set_color({255, 100, 100, 100});
+        draw_rectangle(ren, m_button.pos, m_button.pos + m_button.size);
+    }
+
     void update() {
+        if (m_touches[0].just_pressed()) {
+            if (Rect{ {-133, -75}, {30, 30} }.contains(m_touches[0].pos)) m_paused = !m_paused;
+        }
+
+        if (m_paused) return;
+
         m_blend += m_blend_vel;
         if (m_blend > 1) {
-            if (m_next_state == MS_GAME || m_state == MS_GAME) {
+            if (m_next_state == MS_PLAYING || m_state == MS_PLAYING) {
                 m_death_delay = 0;
                 m_world.reset(rnd.get_int(0, 0x7fffffff));
             }
@@ -56,31 +95,17 @@ public:
         }
 
 
-        bool pressed = false;
-        if (m_blend == 0) {
-
-            pressed |= g_keyboard_input.a;
-            pressed |= g_keyboard_input.b;
-            pressed |= m_touches[0].pressed && !m_touches[0].prev_pressed;
-        }
-
         switch (m_state) {
-        case MS_MAIN:
-            m_world.menu_update();
-            if (rnd.get_int(0, 10) < 3) {
-                make_sparkle(m_world, {rnd.get_float(-55, 55), rnd.get_float(-11, 11)}, true);
-            }
-
-            if (pressed) switch_state(MS_GAME);
-
+        case MS_MENU:
+            menu_update();
             break;
-        case MS_GAME:
-        default:
+        case MS_PLAYING:
             m_world.update();
             if (!m_world.get_player().is_alive()) {
-                if (++m_death_delay > 180) switch_state(MS_MAIN);
+                if (++m_death_delay > 180) switch_state(MS_MENU);
             }
             break;
+        default: assert(0);
         }
 
     }
@@ -88,35 +113,31 @@ public:
 
     void draw(SpriteRenderer& ren) {
         switch (m_state) {
-        case MS_MAIN:
-            m_world.menu_draw(ren, [&ren](){
-                ren.set_color();
-                ren.draw(frame(Sprite::TITLE));
-            });
+        case MS_MENU:
+            menu_draw(ren);
             break;
-
-        case MS_GAME:
+        case MS_PLAYING:
         default:
             m_world.draw(ren);
             break;
         }
-
         if (m_blend > 0) {
             ren.set_color({0, 0, 0, 255 * m_blend});
-            rectangle(ren, {-160, -75}, {160, 75});
+            draw_rectangle(ren, {-160, -75}, {160, 75});
         }
     }
 
 private:
 
-    State m_state = MS_MAIN;
+    State m_state = MS_MENU;
     State m_next_state;
     float m_blend = 1;
     float m_blend_vel = -0.05;
     int   m_death_delay = 0;
 
+    bool  m_paused = false;
 
-} m_menu;
+} m_game;
 
 
 
@@ -216,37 +237,41 @@ void touch(int id, bool pressed, int x, int y) {
 
 
 void key(int key, int unicode) {
-    if (key) m_update_paused ^= 1;
 }
 
 
 void update() {
-    if (m_update_paused) return;
-
-    m_menu.update();
+    m_game.update();
 
     // remember touch pressed
     for (Touch& t : m_touches) t.prev_pressed = t.pressed;
 }
 
 
+//#define DEBUG_ZOOM
+
 
 void draw() {
     m_ren.set_color(Color{});
     m_ren.clear();
 
+#ifdef DEBUG_ZOOM
     // debug
-//    m_ren.translate({0, 25});
-//    m_ren.scale(0.4);
-
+    m_ren.push();
+    m_ren.translate({0, 20});
+    m_ren.scale(0.5);
+#endif
     DB_REN.transform() = m_ren.transform();
 
-    m_menu.draw(m_ren);
+    m_game.draw(m_ren);
 
-    // debug
-//    m_ren.set_color({255, 255, 255, 50});
-//    rectangle(m_ren, {-300, -78}, {300, -75});
-//    rectangle(m_ren, {-300, 75}, {300, 78});
+#ifdef DEBUG_ZOOM
+    DB_REN.set_line_width(3);
+    DB_REN.set_color(255, 0, 0);
+    DB_REN.rect({-133.33, -75}, {133.33, 75});
+    m_ren.pop();
+#endif
+
 
     m_ren.flush();
     DB_REN.flush();

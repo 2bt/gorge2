@@ -3,11 +3,18 @@
 #include <array>
 
 
+struct Rect {
+    glm::vec2 pos, size;
+    bool contains(glm::vec2 const& p) const {
+        return p.x >= pos.x && p.y >= pos.y && p.x <= pos.x + size.x && p.y <= pos.y + size.y;
+    }
+};
+
+
 class SpriteRenderer {
 public:
     using vec2  = glm::vec2;
     using Color = glm::u8vec4;
-    struct Rect { vec2 pos, size; };
 
     enum BlendMode { BM_ALPHA, BM_ADD };
 
@@ -26,9 +33,8 @@ public:
     void push_state();
     void pop_state();
 
-    void set_color() { set_color({ 255, 255, 255, 255 }); }
     void set_color(glm::u8vec3 const& c) { set_color(Color(c, 255)); }
-    void set_color(Color const& c);
+    void set_color(Color const& c = { 255, 255, 255, 255 });
     void set_blendmode(BlendMode b);
     void set_viewport(gfx::Rect const& r);
     void set_texture(gfx::Texture2D* tex = nullptr);
@@ -74,9 +80,9 @@ private:
     gfx::Shader*               m_default_shader;
     gfx::Texture2D*            m_default_tex;
 
-    std::array<State, 4>       m_states;
+    std::array<State, 8>       m_states;
     int                        m_state_index = 0;
 
-    std::array<glm::mat3x2, 4> m_transforms;
+    std::array<glm::mat3x2, 8> m_transforms;
     int                        m_transform_index = 0;
 };

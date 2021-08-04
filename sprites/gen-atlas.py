@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 from PIL import Image
 import os
 
@@ -124,13 +124,11 @@ atlas.save("../assets/atlas.png")
 keys = sorted(info.keys())
 content = """#pragma once
 #include "sprite_renderer.hpp"
-
 enum class Sprite {
 """
 for k in keys: content += "    %s,\n" % k
 content += """};
-
-SpriteRenderer::Rect const& frame(Sprite s, int frame = 0);
+Rect const& frame(Sprite s, int frame = 0);
 int frame_count(Sprite s);
 """
 if content != open("../src/sprite.hpp").read():
@@ -139,33 +137,29 @@ if content != open("../src/sprite.hpp").read():
 
 f = open("../src/sprite.cpp", "w")
 
-print >>f, """#include "sprite.hpp"
-
-namespace {"""
-print >>f
-print >>f, "SpriteRenderer::Rect sprites[] = {"
+f.write("""#include "sprite.hpp"
+namespace {
+""")
+f.write("Rect sprites[] = {\n")
 for k in keys:
-    print >>f, "    // %s" % k
+    f.write("    // %s\n" % k)
     for p, s in info[k]:
-        print >>f, "    { { %d, %d }, { %d, %d } }," % (p + s)
-print >>f, "};"
-print >>f
-print >>f, "int offsets[] = {"
+        f.write("    { { %d, %d }, { %d, %d } },\n" % (p + s))
+f.write("""};
+int offsets[] = {
+""")
 o = 0
 for k in keys:
-    print >>f, "    %d," % o
+    f.write("    %d,\n" % o)
     o += len(info[k])
-print >>f, "    %d" % o
-print >>f, "};"
-print >>f
-print >>f, "}"
-print >>f, """
-SpriteRenderer::Rect const& frame(Sprite s, int frame) {
+f.write("    %d\n" % o)
+f.write("""};
+}
+Rect const& frame(Sprite s, int frame) {
     return sprites[offsets[static_cast<int>(s)] + frame];
 }
-
 int frame_count(Sprite s) {
     return offsets[static_cast<int>(s) + 1] - offsets[static_cast<int>(s)];
 }
-"""
+""")
 f.close()

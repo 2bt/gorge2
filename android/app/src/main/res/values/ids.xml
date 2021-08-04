@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Google Play game services IDs. Save this file as res/values/games-ids.xml in your project.-->
+<resources>
+    <!--app_id-->
+    <string name="app_id" translatable="false">61201259616</string>
+    <!--package_name-->
+    <string name="package_name" translatable="false">com.twobit.gorge</string>
+    <!--leaderboard Gorge Leaderboard-->
+    <string name="leaderboard_gorge_leaderboard" translatable="false">CgkI4LiE_-MBEAIQAA</string>
+</resources>

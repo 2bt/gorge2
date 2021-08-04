@@ -257,7 +257,7 @@ void Player::update(Input const& input) {
     }
     else {
         m_pos += m_blast_vel + input.mov * speed;
-        m_pos = clamp(m_pos, { -124, -72 }, { 124, 71 });
+        m_pos = clamp(m_pos, { -129, -72 }, { 129, 71 });
     }
 
     // collision with wall

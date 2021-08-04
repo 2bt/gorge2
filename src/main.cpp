@@ -34,6 +34,7 @@ extern "C" {
         app::touch(id, pressed, x, y);
     }
     JNIEXPORT void JNICALL Java_com_twobit_gorge_Lib_key(JNIEnv * env, jobject obj, jint key, jint unicode) {
+        LOGI("key %d %d", key, unicode);
         app::key(key, unicode);
     }
     JNIEXPORT void JNICALL Java_com_twobit_gorge_Lib_onPause(JNIEnv * env, jobject obj) {
@@ -108,9 +109,6 @@ int main(int argc, char** argv) {
                 case SDL_SCANCODE_RETURN:
                     app::key(SDL_SCANCODE_RETURN, 0);
                     break;
-//                case SDL_SCANCODE_BACKSPACE:
-//                    app::key(KEYCODE_DEL, 0);
-//                    break;
                 default: break;
                 }
                 break;
